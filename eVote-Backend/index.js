@@ -9,9 +9,8 @@ const appDiscussion = 'https://discord.gg/xGWdExk';
 
 /** Our Server Configuration */
 const host = '0.0.0.0';
-// const port = process.env.PORT || 80 || 8000;
-const portExpressPeer = 81;
-const portSocketIo = 80;
+const portSocketIo = process.env.PORT || 80;
+const portExpressPeer = process.env.PORT || 81;
 const apiVersion = '/api/v1';
 
 /********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
