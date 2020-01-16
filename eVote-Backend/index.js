@@ -34,7 +34,7 @@ const favicon = require('serve-favicon');
 /** Our Application */
 const expressApp = express();
 const expressServer = http.Server(expressApp);
-const expressPeerServer = ExpressPeerServer(expressServer, { proxied: true});
+const expressPeerServer = ExpressPeerServer(expressServer, { proxied: true });
 const socketApp = http.createServer(handler);
 const io = socket(socketApp);
 

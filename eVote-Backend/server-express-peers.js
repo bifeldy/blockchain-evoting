@@ -30,7 +30,7 @@ const favicon = require('serve-favicon');
 /** Our Application */
 const expressApp = express();
 const expressServer = http.Server(expressApp);
-const expressPeerServer = ExpressPeerServer(expressServer, { proxied: true});
+const expressPeerServer = ExpressPeerServer(expressServer, { proxied: true });
 
 /** Our ExpressJS & PeerJS Server */
 let expressAppServer = expressServer.listen(port, host, () => {

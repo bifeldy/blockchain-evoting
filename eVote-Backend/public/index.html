@@ -42,14 +42,33 @@
       let myPeerNodesIn = [];
       let myPeerMaxConnectionsOut = 5;
 
-      socketIo.on('connect', () => {});
-      socketIo.on('disconnect', () => {
-        console.log('[SOCKET_DISCONNECTED] Connection To Socker Server Tracker Loss');
+      socketIo.on('connect', () => {
+        console.log(`[SOCKET_CONNECTED] Connected To The Socket Server Tracker`);
+      });
+      socketIo.on('disconnect', reason => {
+        console.log(`[SOCKET_DISCONNECTED] ${reason.charAt(0).toUpperCase()+reason.slice(1)}`);
+        if(reason == 'io server disconnect') socketIo.connect();
+      });
+      socketIo.on('reconnecting', attemptNumber => {
+        console.log(`[SOCKET_RECONNECTING] Reconnecting.. ${attemptNumber} Attempt`);
+      });
+      socketIo.on('reconnect', attemptNumber => {
+        console.log(`[SOCKET_RECONNECTED] Reconnected After ${attemptNumber} Attempt`);
+        if(myPeer) PeerJsCreateConnectionOut();
+      });
+      socketIo.on('ping', () => {
+        console.log(`[SOCKET_PING] Pinging Server..`);
+      });
+      socketIo.on('pong', latency => {
+        console.log(`[SOCKET_PONG] Pong! Latency :: ${latency}ms`);
+      });
+      socketIo.on('error', error => {
+        console.log(`[SOCKET_ERROR] ${error.message}`);
       });
 
       socketIo.on('client-id', socketInformation => {
         mySocket = JSON.parse(socketInformation);
-        console.log(`[SOCKET_CONNECTED] My Socket Client Id :: ${mySocket.socketClientId}`);
+        console.log(`[SOCKET_INFORMATION] My Socket ClientId :: ${mySocket.socketClientId}`);
         if(!myPeer) {
           const peer = new Peer(mySocket.socketClientId, {host: 'localhost', port: 81, path: '/peers'});
           myPeer = peer;
@@ -64,7 +83,7 @@
 
       /********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 
-      function ShuffleArray(array = []) {
+      function ShuffleArray(array) {
         var currentIndex = array.length, temporaryValue, randomIndex;
         while (0 !== currentIndex) {
           randomIndex = Math.floor(Math.random() * currentIndex);
@@ -78,7 +97,7 @@
 
       function PeerJsStartedAndReady() {
         myPeer.on('open', peerId => {
-          console.log(`[PEER_OPENED] My Peer Id :: ${peerId}`);
+          console.log(`[PEER_OPENED] My PeerId :: ${peerId}`);
           PeerJsCreateConnectionOut();
         });
         myPeer.on('disconnected', () => {
@@ -94,7 +113,7 @@
       }
 
       function PeerJsCreateConnectionOut() {
-        if(mySocketNodes.length > 0) {
+        if(mySocketNodes.length > 0 && myPeerNodesOut.length <= myPeerMaxConnectionsOut) {
           console.log(`[PEER_FINDING] Finding Nework Peers`);
           const myPeerNodesShuffle = ShuffleArray(mySocketNodes);
           for (let i = 0; i < myPeerNodesShuffle.length; i++) {
@@ -102,13 +121,13 @@
             const myPeerNodesInIdx = myPeerNodesIn.findIndex(prNds => prNds == myPeerNodesShuffle[i].socketClientId);
             if(myPeerNodesOutIdx >= 0 || myPeerNodesInIdx >= 0) continue;
             else if(myPeerNodesOut.length >= myPeerMaxConnectionsOut) break;
-            else myPeerNodesOut.push(myPeerNodesShuffle[i].socketClientId);
+            else {
+              console.log(`[PEER_OUTGOING-CONNECTION] Connecting To PeerId :: ${myPeerNodesShuffle[i].socketClientId}`);
+              myPeerNodesOut.push(myPeerNodesShuffle[i].socketClientId);
+              const conn = myPeer.connect(myPeerNodesShuffle[i].socketClientId);
+              ConnectionHandler(conn, 'connection-out');
+            }
           }
-          myPeerNodesOut.forEach(rndmSckt => {
-            console.log(`[PEER_OUTGOING-CONNECTION] Connecting To PeerId :: ${rndmSckt}`);
-            const conn = myPeer.connect(rndmSckt);
-            ConnectionHandler(conn, 'connection-out');
-          });
         }
       }
 
