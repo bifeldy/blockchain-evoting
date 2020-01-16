@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Blockchain E-Voting | Bifeldy</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
+  </head>
+  <body>
+    <h1>Basilius Bias Astho Christyono</h1>
+    <h2>000.000.13536</h2>
+    <h3>Server Untuk Autentikasi User E-Voting</h3>
+    <h4>// DONE: Create Distributed Peer-to-Peer Client Connections</h4>
+    <h5>// TODO: Create Blockchain Data Structure</h5>
+    <h5>// TODO: Create Authentication Server API (Login, Regist, etc.)</h5>
+    <h5>// TODO: Create Angular / Ionic Apps (Hybrid-Mobile-WebDesktop)</h5>
+    <script>
+
+      const xClientId = prompt(
+        'Enter x-client-id !',
+        `x-client-id-is-up-to-you-user-${Math.floor(Math.random() * 10)}`
+      );
+
+      const socketIo = io('localhost:80', {
+        transportOptions: {
+          polling: {
+            extraHeaders: {
+              'x-client-id': xClientId
+            }
+          }
+        }
+      });
+
+      let mySocket = null;
+      let mySocketNodes = [];
+
+      let myPeer = null;
+      let myPeerConnection = [];
+      let myPeerNodesOut = [];
+      let myPeerNodesIn = [];
+      let myPeerMaxConnectionsOut = 5;
+
+      socketIo.on('connect', () => {});
+      socketIo.on('disconnect', () => {
+        console.log('[SOCKET_DISCONNECTED] Connection To Socker Server Tracker Loss');
+      });
+
+      socketIo.on('client-id', socketInformation => {
+        mySocket = JSON.parse(socketInformation);
+        console.log(`[SOCKET_CONNECTED] My Socket Client Id :: ${mySocket.socketClientId}`);
+        if(!myPeer) {
+          const peer = new Peer(mySocket.socketClientId, {host: 'localhost', port: 81, path: '/peers'});
+          myPeer = peer;
+          PeerJsStartedAndReady();
+        }
+      });
+
+      socketIo.on('add-or-remove-nodes', nodes => {
+        mySocketNodes = JSON.parse(nodes).filter(myScktNds => myScktNds.socketClientId != mySocket.socketClientId);
+        console.log(`[SOCKET_NODES-UPDATED] Total Other Nodes :: ${mySocketNodes.length}`);
+      });
+
+      /********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
+
+      function ShuffleArray(array = []) {
+        var currentIndex = array.length, temporaryValue, randomIndex;
+        while (0 !== currentIndex) {
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex -= 1;
+          temporaryValue = array[currentIndex];
+          array[currentIndex] = array[randomIndex];
+          array[randomIndex] = temporaryValue;
+        }
+        return array;
+      }
+
+      function PeerJsStartedAndReady() {
+        myPeer.on('open', peerId => {
+          console.log(`[PEER_OPENED] My Peer Id :: ${peerId}`);
+          PeerJsCreateConnectionOut();
+        });
+        myPeer.on('disconnected', () => {
+          console.log('[PEER_DISCONNECTED] Connection To Peer Server Tracker Loss');
+        });
+        myPeer.on('connection', conn => {
+          console.log(`[PEER_INCOMING-CONNECTION] Connection From PeerId :: ${conn.peer}`);
+          ConnectionHandler(conn, 'connection-in');
+        });
+        myPeer.on('error', error => {
+          console.log(`[PEER_ERROR] ${error.message}`);
+        });
+      }
+
+      function PeerJsCreateConnectionOut() {
+        if(mySocketNodes.length > 0) {
+          console.log(`[PEER_FINDING] Finding Nework Peers`);
+          const myPeerNodesShuffle = ShuffleArray(mySocketNodes);
+          for (let i = 0; i < myPeerNodesShuffle.length; i++) {
+            const myPeerNodesOutIdx = myPeerNodesOut.findIndex(prNds => prNds == myPeerNodesShuffle[i].socketClientId);
+            const myPeerNodesInIdx = myPeerNodesIn.findIndex(prNds => prNds == myPeerNodesShuffle[i].socketClientId);
+            if(myPeerNodesOutIdx >= 0 || myPeerNodesInIdx >= 0) continue;
+            else if(myPeerNodesOut.length >= myPeerMaxConnectionsOut) break;
+            else myPeerNodesOut.push(myPeerNodesShuffle[i].socketClientId);
+          }
+          myPeerNodesOut.forEach(rndmSckt => {
+            console.log(`[PEER_OUTGOING-CONNECTION] Connecting To PeerId :: ${rndmSckt}`);
+            const conn = myPeer.connect(rndmSckt);
+            ConnectionHandler(conn, 'connection-out');
+          });
+        }
+      }
+
+      function ConnectionHandler(conn, type) {
+        conn.on('open', () => {
+          if(type == 'connection-in') myPeerNodesIn.push(conn.peer);
+          myPeerConnection.push(conn);
+          console.log(`[PEER_CONNECTED] Connected To PeerId :: ${conn.peer}`);
+          conn.on('data', data => { ConnectionDataHandler(conn, data); });
+          conn.on('error', error => { ConnectionErrorHandler(conn, error); });
+          conn.on('close', () => { ConnectionCloseHandler(conn); });
+        });
+      }
+
+      function ConnectionDataHandler(conn, data) {
+        console.log(`[PEER_DATA] ${conn.peer} :: ${data}`);
+      }
+
+      function ConnectionErrorHandler(conn, error) {
+        console.log(`[PEER_ERROR] ${conn.peer} :: ${error.message}`);
+      }
+
+      function ConnectionCloseHandler(conn) {
+        myPeerNodesIn = myPeerNodesIn.filter(prCnn => prCnn != conn.peer);
+        myPeerNodesOut = myPeerNodesOut.filter(prCnn => prCnn != conn.peer);
+        myPeerConnection = myPeerConnection.filter(prCnn => prCnn.peer != conn.peer);
+        console.log(`[PEER_CLOSED] Connection Closed From PeerId :: ${conn.peer}`);
+      }
+
+    </script>
+  </body>
+</html>
