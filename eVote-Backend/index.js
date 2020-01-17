@@ -11,7 +11,7 @@ const appDiscussion = 'https://discord.gg/xGWdExk';
 const host = '0.0.0.0';
 const portSocketIo = process.env.PORT || 80;
 const portExpressPeer = process.env.PORT || 81;
-const apiVersion = '/api/v1';
+const apiVersion = '/api/v1/';
 
 /********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 
@@ -117,21 +117,21 @@ expressApp.get(`${apiVersion}`, (request, response) => {
 });
 
 /** Login User */
-expressApp.get(`${apiVersion}/login`, (request, response) => {
+expressApp.get(`${apiVersion}login`, (request, response) => {
   console.log(`${request.connection.remoteAddress}:${request.connection.remotePort} => /login`);
   // io.to(peers[1].id).emit('welcome-info', "Dari Luar");
   response.json({});
 });
 
 /** Register User */
-expressApp.get(`${apiVersion}/register`, (request, response) => {
+expressApp.get(`${apiVersion}register`, (request, response) => {
   console.log(`${request.connection.remoteAddress}:${request.connection.remotePort} => /register`);
   response.json({});
 });
 
 /** Error 404 - Harus Paling Bawah */
 expressApp.get('*', (request, response) => {
-  console.log(`${request.connection.remoteAddress}:${request.connection.remotePort} => /notFound`);
+  console.log(`${request.connection.remoteAddress}:${request.connection.remotePort} => /**`);
   response.status(404).json({
       info: 'Whoops Terjadi Kesalahan! 😫',
       message: 'Error 404 - API Not Found! 💩',
@@ -146,16 +146,51 @@ io.on('connection', socket => {
   const socketInformation = {
     socketId: socket.id,
     socketAddress: socket.handshake.headers['x-forwarded-for'] || socket.handshake.address,
-    socketClientId: socket.handshake.headers['x-client-id']
+    socketClientId: socket.handshake.headers['x-client-id'],
+    socketIceServer: [
+      { url:'stun:stun01.sipphone.com' },
+      { url:'stun:stun.ekiga.net' },
+      { url:'stun:stun.fwdnet.net' },
+      { url:'stun:stun.ideasip.com' },
+      { url:'stun:stun.iptel.org' },
+      { url:'stun:stun.rixtelecom.se' },
+      { url:'stun:stun.schlund.de' },
+      { url:'stun:stun.l.google.com:19302' },
+      { url:'stun:stun1.l.google.com:19302' },
+      { url:'stun:stun2.l.google.com:19302' },
+      { url:'stun:stun3.l.google.com:19302' },
+      { url:'stun:stun4.l.google.com:19302' },
+      { url:'stun:stunserver.org' },
+      { url:'stun:stun.softjoys.com' },
+      { url:'stun:stun.voiparound.com' },
+      { url:'stun:stun.voipbuster.com' },
+      { url:'stun:stun.voipstunt.com' },
+      { url:'stun:stun.voxgratia.org' },
+      { url:'stun:stun.xten.com' },
+      {
+        url: 'turn:numb.viagenie.ca',
+        credential: 'muazkh',
+        username: 'webrtc@live.com'
+      },
+      {
+        url: 'turn:192.158.29.39:3478?transport=udp',
+        credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+        username: '28224511:1379330808'
+      },
+      {
+        url: 'turn:192.158.29.39:3478?transport=tcp',
+        credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+        username: '28224511:1379330808'
+      }
+    ]
   };
   socketClient.push(socketInformation);
-  socket.emit('client-id', JSON.stringify(socketInformation));
-  io.emit('add-or-remove-nodes', JSON.stringify(socketClient));
+  socket.emit('client-id', socketInformation);
+  io.emit('add-or-remove-nodes', socketClient);
   console.log(`[SOCKET_CONNECTED] :: ${socket.id}`);
-  console.log(socketClient);
   socket.on('disconnect', () => {
     socketClient = socketClient.filter(p => p.socketId != socket.id);
-    io.emit('add-or-remove-nodes', JSON.stringify(socketClient));
+    io.emit('add-or-remove-nodes', socketClient);
     console.log(`[SOCKET_DISCONNECTED] ${socket.id}`);
     console.log(socketClient);
   });

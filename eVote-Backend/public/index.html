@@ -42,11 +42,13 @@
       let myPeerNodesIn = [];
       let myPeerMaxConnectionsOut = 5;
 
+      /********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
+
       socketIo.on('connect', () => {
         console.log(`[SOCKET_CONNECTED] Connected To The Socket Server Tracker`);
       });
       socketIo.on('disconnect', reason => {
-        console.log(`[SOCKET_DISCONNECTED] ${reason.charAt(0).toUpperCase()+reason.slice(1)}`);
+        console.log(`[SOCKET_DISCONNECTED] ${reason.replace(/\b[a-zA-Z]/g, str => str.toUpperCase())}`);
         if(reason == 'io server disconnect') socketIo.connect();
       });
       socketIo.on('reconnecting', attemptNumber => {
@@ -67,17 +69,24 @@
       });
 
       socketIo.on('client-id', socketInformation => {
-        mySocket = JSON.parse(socketInformation);
+        mySocket = socketInformation;
         console.log(`[SOCKET_INFORMATION] My Socket ClientId :: ${mySocket.socketClientId}`);
         if(!myPeer) {
-          const peer = new Peer(mySocket.socketClientId, {host: 'localhost', port: 81, path: '/peers'});
+          const peer = new Peer(mySocket.socketClientId, {
+            host: 'localhost',
+            port: 81,
+            path: '/peers',
+            config: {
+              'iceServers': mySocket.socketIceServer
+            }
+          });
           myPeer = peer;
           PeerJsStartedAndReady();
         }
       });
 
       socketIo.on('add-or-remove-nodes', nodes => {
-        mySocketNodes = JSON.parse(nodes).filter(myScktNds => myScktNds.socketClientId != mySocket.socketClientId);
+        mySocketNodes = nodes.filter(myScktNds => myScktNds.socketClientId != mySocket.socketClientId);
         console.log(`[SOCKET_NODES-UPDATED] Total Other Nodes :: ${mySocketNodes.length}`);
       });
 

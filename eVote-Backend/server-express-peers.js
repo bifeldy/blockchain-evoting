@@ -10,7 +10,7 @@ const appDiscussion = 'https://discord.gg/xGWdExk';
 /** Our Server Configuration */
 const host = '0.0.0.0';
 const port = process.env.PORT || 81;
-const apiVersion = '/api/v1';
+const apiVersion = '/api/v1/';
 
 /********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 
@@ -90,20 +90,20 @@ expressApp.get(`${apiVersion}`, (request, response) => {
 });
 
 /** Login User */
-expressApp.get(`${apiVersion}/login`, (request, response) => {
+expressApp.get(`${apiVersion}login`, (request, response) => {
   console.log(`${request.connection.remoteAddress}:${request.connection.remotePort} => /login`);
   response.json({});
 });
 
 /** Register User */
-expressApp.get(`${apiVersion}/register`, (request, response) => {
+expressApp.get(`${apiVersion}register`, (request, response) => {
   console.log(`${request.connection.remoteAddress}:${request.connection.remotePort} => /register`);
   response.json({});
 });
 
 /** Error 404 - Harus Paling Bawah */
 expressApp.get('*', (request, response) => {
-  console.log(`${request.connection.remoteAddress}:${request.connection.remotePort} => /notFound`);
+  console.log(`${request.connection.remoteAddress}:${request.connection.remotePort} => /**`);
   response.status(404).json({
       info: 'Whoops Terjadi Kesalahan! 😫',
       message: 'Error 404 - API Not Found! 💩',
