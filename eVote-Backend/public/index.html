@@ -22,16 +22,10 @@
         'Enter x-client-id !',
         `x-client-id-is-up-to-you-user-${Math.floor(Math.random() * 10)}`
       );
-
-      const socketIo = io('localhost:80', {
-        transportOptions: {
-          polling: {
-            extraHeaders: {
-              'x-client-id': xClientId
-            }
-          }
-        }
-      });
+      const socketIoNetwork = 'localhost:80';
+      const peersJsNetwork = {
+        host: 'localhost', port: 81, path: '/peers',
+      };
 
       let mySocket = null;
       let mySocketNodes = [];
@@ -41,6 +35,16 @@
       let myPeerNodesOut = [];
       let myPeerNodesIn = [];
       let myPeerMaxConnectionsOut = 5;
+
+      const socketIo = io(socketIoNetwork, {
+        transportOptions: {
+          polling: {
+            extraHeaders: {
+              'x-client-id': xClientId
+            }
+          }
+        }
+      });
 
       /********** ********** ********** ********** ********** ********** ********** ********** ********** **********/
 
@@ -73,9 +77,7 @@
         console.log(`[SOCKET_INFORMATION] My Socket ClientId :: ${mySocket.socketClientId}`);
         if(!myPeer) {
           const peer = new Peer(mySocket.socketClientId, {
-            host: 'localhost',
-            port: 81,
-            path: '/peers',
+            host: peersJsNetwork.host, port: peersJsNetwork.port, path: peersJsNetwork.path,
             config: {
               'iceServers': mySocket.socketIceServer
             }
