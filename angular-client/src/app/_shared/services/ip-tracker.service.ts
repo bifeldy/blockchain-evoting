@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 
+import { environment } from 'src/environments/environment';
+
 import * as io from 'socket.io-client';
+import adapter from 'webrtc-adapter';
 
 declare var Peer: any;
 
@@ -9,21 +12,13 @@ declare var Peer: any;
 })
 export class IpTrackerService {
 
-  tempClientId = prompt(
-    'Enter x-client-id !',
-    `x-client-id-is-up-to-you-user-${Math.floor(Math.random() * 10)}`
-  );
-
-  socketUrl = '127.0.0.1:81';
+  socketUrl = environment.socketIoNetwork;
   socketOptions = {
     query: {
-      client_id: this.tempClientId
+      client_id: new Date().getTime()
     }
   };
-
-  peersJsNetwork = {
-    host: 'localhost', port: 82, path: '/peer',
-  };
+  peersJsNetwork = environment.peersJsNetwork;
 
   mySocket = null;
   mySocketInfo = null;
@@ -34,6 +29,7 @@ export class IpTrackerService {
   myPeerNodesOut = [];
   myPeerNodesIn = [];
   myPeerMaxConnectionsOut = 5;
+  myPeerConnectionTimedOut = [];
 
   constructor() {
     this.mySocket = io(this.socketUrl, this.socketOptions);
@@ -73,10 +69,13 @@ export class IpTrackerService {
       console.log(`[SOCKET_INFORMATION] My Socket ClientId :: ${this.mySocketInfo.socketClientId}`);
       if (!this.myPeer) {
         const peer = new Peer(this.mySocketInfo.socketClientId, {
-          host: this.peersJsNetwork.host, port: this.peersJsNetwork.port, path: this.peersJsNetwork.path,
+          host: this.peersJsNetwork.host,
+          port: this.peersJsNetwork.port,
+          path: this.peersJsNetwork.path,
           config: {
-            iceServers: this.mySocket.socketIceServer
-          }
+            iceServers: this.mySocketInfo.socketIceServer
+          },
+          debug: this.peersJsNetwork.debug
         });
         this.myPeer = peer;
         this.PeerJsStartedAndReady();
@@ -135,6 +134,11 @@ export class IpTrackerService {
           this.myPeerNodesOut.push(mPrNdsShffl.socketClientId);
           const conn = this.myPeer.connect(mPrNdsShffl.socketClientId);
           this.ConnectionHandler(conn, 'connection-out');
+          this.myPeerConnectionTimedOut[mPrNdsShffl.socketClientId] = setTimeout(() => {
+            this.myPeerNodesOut = this.myPeerNodesOut.filter(prCnn => prCnn !== mPrNdsShffl.socketClientId);
+            delete this.myPeerConnectionTimedOut[mPrNdsShffl.socketClientId];
+            console.log(`[PEER_CONNECTION-FAILURE] Failed To Connect To PeerId :: ${mPrNdsShffl.socketClientId}`);
+          }, 19730);
         }
       }
     }
@@ -142,23 +146,22 @@ export class IpTrackerService {
 
   ConnectionHandler(conn, type) {
     conn.on('open', () => {
+      conn.on('data', data => { this.ConnectionDataHandler(conn, data); });
+      conn.on('close', () => { this.ConnectionCloseHandler(conn); });
       if (type === 'connection-in') {
         this.myPeerNodesIn.push(conn.peer);
       }
+      if (type === 'connection-out') {
+        clearTimeout(this.myPeerConnectionTimedOut[conn.peer]);
+        delete this.myPeerConnectionTimedOut[conn.peer];
+      }
       this.myPeerConnection.push(conn);
       console.log(`[PEER_CONNECTED] Connected To PeerId :: ${conn.peer}`);
-      conn.on('data', data => { this.ConnectionDataHandler(conn, data); });
-      conn.on('error', error => { this.ConnectionErrorHandler(conn, error); });
-      conn.on('close', () => { this.ConnectionCloseHandler(conn); });
     });
   }
 
   ConnectionDataHandler(conn, data) {
     console.log(`[PEER_DATA] ${conn.peer} :: ${data}`);
-  }
-
-  ConnectionErrorHandler(conn, error) {
-    console.log(`[PEER_ERROR] ${conn.peer} :: ${error.message}`);
   }
 
   ConnectionCloseHandler(conn) {

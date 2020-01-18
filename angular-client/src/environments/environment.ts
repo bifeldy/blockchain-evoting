@@ -3,7 +3,11 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  socketIoNetwork: '125.161.199.106:81',
+  peersJsNetwork: {
+    host: '125.161.199.106', port: 82, path: '/peer', debug: 0
+  }
 };
 
 /*
