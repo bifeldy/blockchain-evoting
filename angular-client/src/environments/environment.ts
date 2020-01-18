@@ -4,9 +4,9 @@
 
 export const environment = {
   production: false,
-  socketIoNetwork: '125.161.199.106:81',
+  socketIoNetwork: 'bifeldy.ip-dynamic.net:81',
   peersJsNetwork: {
-    host: '125.161.199.106', port: 82, path: '/peer', debug: 0
+    host: 'bifeldy.ip-dynamic.net', port: 82, path: '/peer', debug: 0
   }
 };
 
