@@ -78,7 +78,7 @@ app.get('*', (request, response) => {
   response.status(404).json({
       info: 'Whoops Terjadi Kesalahan! 😫',
       message: 'Error 404 - API Not Found! 💩',
-      appDocumentation, appRepository, appDiscussion
+      appName, appDescription, appVersion, appDeveloper, appDocumentation, appRepository, appDiscussion
   });
 });
 
