@@ -77,8 +77,7 @@ app.get('*', (request, response) => {
   console.log(`${request.connection.remoteAddress}:${request.connection.remotePort} => /**`);
   response.status(404).json({
       info: 'Whoops Terjadi Kesalahan! 😫',
-      message: 'Error 404 - API Not Found! 💩',
-      appName, appDescription, appVersion, appDeveloper, appDocumentation, appRepository, appDiscussion
+      message: 'Error 404 - API Not Found! 💩'
   });
 });
 
