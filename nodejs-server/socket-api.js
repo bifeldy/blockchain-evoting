@@ -76,8 +76,8 @@ app.get(`${apiVersion}`, (request, response) => {
 app.get('*', (request, response) => {
   console.log(`${request.connection.remoteAddress}:${request.connection.remotePort} => /**`);
   response.status(404).json({
-      info: 'Whoops Terjadi Kesalahan! 😫',
-      message: 'Error 404 - API Not Found! 💩'
+    info: 'Whoops Terjadi Kesalahan! 😫',
+    message: 'Error 404 - API Not Found! 💩'
   });
 });
 
@@ -115,6 +115,7 @@ io.on('connection', socket => {
     socketId: socket.id,
     socketAddress: socket.handshake.headers['x-forwarded-for'] || socket.handshake.address,
     socketClientId: socket.handshake.query.client_id,
+    socketClientName: socket.handshake.query.client_name,
     socketIceServer: IceServer
   };
   socketClient.push(socketInformation);
