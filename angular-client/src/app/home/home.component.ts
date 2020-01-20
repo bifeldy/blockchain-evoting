@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-import { IpTrackerService } from '../_shared/services/ip-tracker.service';
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -9,9 +7,8 @@ import { IpTrackerService } from '../_shared/services/ip-tracker.service';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(
-    private ipTracker: IpTrackerService
-  ) { }
+  constructor() {
+  }
 
   ngOnInit() {
   }

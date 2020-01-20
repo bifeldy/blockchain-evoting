@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { IpTrackerService } from './ip-tracker.service';
+import { SocketIoService } from './socket-io.service';
 
-describe('IpTrackerService', () => {
+describe('SocketIoService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: IpTrackerService = TestBed.get(IpTrackerService);
+    const service: SocketIoService = TestBed.get(SocketIoService);
     expect(service).toBeTruthy();
   });
 });
