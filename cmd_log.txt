@@ -1,0 +1,42 @@
+geth --datadir "node_kpu" account new
+echo '0xD8E114bCBe32790388f7Cd5c7D1F0B3a8Aa19B7f' >> "./node_kpu/pub_key.txt"
+echo '1234567890' >> "./node_kpu/pwd.txt"
+
+geth --datadir "node_miner1" account new
+echo '0x6B9763D8b2297A4334B54F472C561eb850fBeC84' >> "./node_miner1/pub_key.txt"
+echo '1234567890' >> "./node_miner1/pwd.txt"
+
+geth --datadir "node_miner2" account new
+echo '0xdA41F175c06e8fbA96A20FF9e2ed41Aca4535e44' >> "./node_miner2/pub_key.txt"
+echo '1234567890' >> "./node_miner2/pwd.txt"
+
+puppeth
+bifeldy
+2
+1
+2
+15
+d8e114bcbe32790388f7cd5c7d1f0b3a8aa19b7f
+6B9763D8b2297A4334B54F472C561eb850fBeC84
+dA41F175c06e8fbA96A20FF9e2ed41Aca4535e44
+
+d8e114bcbe32790388f7cd5c7d1f0b3a8aa19b7f
+
+yes
+9999
+2
+2
+genesis_block
+
+geth --datadir "node_kpu" init "genesis_block/bifeldy.json"
+geth --datadir "node_miner1" init "genesis_block/bifeldy.json"
+geth --datadir "node_miner2" init "genesis_block/bifeldy.json"
+
+bootnode -genkey boot.key
+bootnode -nodekey "boot_node/boot.key" -verbosity 9 -addr :9000
+
+geth --datadir "node_kpu" --port 9001 --syncmode "full" --networkid 9999 --rpc --rpcport 9002 --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsport 8003 --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --verbosity 5 --nat none --ipcdisable --allow-insecure-unlock --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@127.0.0.1:0?discport=9000"
+
+geth --datadir "node_miner1" --port 9004 --syncmode "full" --networkid 9999 --rpc --rpcport 9005 --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsport 9006 --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --verbosity 5 --nat none --ipcdisable --allow-insecure-unlock --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@127.0.0.1:0?discport=9000"
+
+geth --datadir "node_miner2" --port 9007 --syncmode "full" --networkid 9999 --rpc --rpcport 9008 --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsport 9009 --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --verbosity 5 --nat none --ipcdisable --allow-insecure-unlock --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@127.0.0.1:0?discport=9000"
