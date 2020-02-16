@@ -32,6 +32,8 @@ Final Bachelor's Degree Thesis -- Peer To Peer Decentralized E-Voting Blockchain
 <h6>// TODO: FrontEnd Web-App</h6>
 <h6>// TODO: BackEnd Database and Server Authentication</h6>
 
+<br />
+
 ## Lisensi
 
 > Proyek ini berada di bawah Lisensi GNU General Public License v3.0 <br />
