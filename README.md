@@ -34,4 +34,5 @@ Final Bachelor's Degree Thesis -- Peer To Peer Decentralized E-Voting Blockchain
 
 ## Lisensi
 
-Proyek ini berada di bawah Lisensi MIT - Harap melihat [LICENSE](LICENSE) untuk informasi tingkat lanjut.
+> Proyek ini berada di bawah Lisensi GNU General Public License v3.0 <br />
+> Harap melihat [LICENSE](LICENSE) untuk informasi tingkat lanjut.
