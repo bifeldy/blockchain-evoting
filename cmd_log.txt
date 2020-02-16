@@ -1,5 +1,5 @@
 geth --datadir "node_kpu" account new
-echo '0xD8E114bCBe32790388f7Cd5c7D1F0B3a8Aa19B7f' >> "./node_kpu/pub_key.txt"
+echo '0xFD34E338336fdd5F25E9280C06B5f9DF62aA689D' >> "./node_kpu/pub_key.txt"
 echo '1234567890' >> "./node_kpu/pwd.txt"
 
 geth --datadir "node_miner1" account new
@@ -16,11 +16,11 @@ bifeldy
 1
 2
 15
-d8e114bcbe32790388f7cd5c7d1f0b3a8aa19b7f
+FD34E338336fdd5F25E9280C06B5f9DF62aA689D
 6B9763D8b2297A4334B54F472C561eb850fBeC84
 dA41F175c06e8fbA96A20FF9e2ed41Aca4535e44
 
-d8e114bcbe32790388f7cd5c7d1f0b3a8aa19b7f
+FD34E338336fdd5F25E9280C06B5f9DF62aA689D
 
 yes
 9999
