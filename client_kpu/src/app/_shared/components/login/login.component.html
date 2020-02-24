@@ -1,0 +1,24 @@
+<div class="login">
+  <form [formGroup]="loginForm" class="m-2" (ngSubmit)="onClickedSubmit()">
+    <img src="/favicon.ico" />
+    <div class="text-center mb-4 mt-4">
+      <div class="text-danger" *ngIf="loginInfo != ''">{{ loginInfo }}</div>
+    </div>
+    <div class="form-group">
+      <input type="text" id="nik" class="form-control" placeholder="Nomor Induk Kependudukan" required autofocus size="50%" formControlName="nik" />
+    </div>
+    <div class="form-group">
+      <input type="password" id="password" class="form-control" placeholder="Kata Sandi" required size="50%" formControlName="password" />
+    </div>
+    <div class="form-group">
+      <div class="row">
+        <div class="col-6">
+          <button class="btn btn-success btn-block text-white" type="submit" [disabled]="submitted">Masuk</button>
+        </div>
+        <div class="col-6">
+          <button class="btn btn-secondary btn-block text-white" routerLink="/register" [disabled]="submitted">Pendaftaran</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
