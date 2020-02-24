@@ -33,8 +33,7 @@ const electionRouter = require('./routes/election');
 
 // connecting to node
 const eth = require('./helpers/eth');
-eth.web3InitProvider();
-eth.web3InitMiner();
+eth.gethInitWeb3();
 
 const db = require('./helpers/db');
 db.mySqlQuery(`SELECT * FROM contracts`, null, (error, results) => {
@@ -44,7 +43,7 @@ db.mySqlQuery(`SELECT * FROM contracts`, null, (error, results) => {
     if (idx >= 0) {
       const abi = JSON.parse(results[idx].abi);
       const address = results[idx].address;
-      eth.web3NewContractInstance(abi, address);
+      eth.web3NewContractInstance(abi, address, idx);
     }
     else eth.web3DeployContract();
   }

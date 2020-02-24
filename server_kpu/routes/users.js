@@ -13,7 +13,7 @@ router.get('/', function(req, res, next) {
   if (decoded == null || decoded == undefined) return;
   else if (decoded.user.role == 'admin') {
     db.mySqlQuery(`SELECT * FROM users`, null, (error, results) => {
-      if (error) next(createError(500, error));
+      if (error) next(createError(500));
       else if (results.length <= 0) next(createError(404));
       else {
         for (const r of results) {

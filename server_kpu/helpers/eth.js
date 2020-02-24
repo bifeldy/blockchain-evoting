@@ -1,21 +1,30 @@
 const fs = require("fs");
 const find = require('find');
+const execFile = require('child_process').execFile;
 
 const Web3 = require('web3');
 const Miner = require('web3-eth-miner').Miner;
 
 const db = require('./db');
 
-const defaultHttp = 'http://localhost:9002';
-const defaultWs = 'ws://localhost:9003';
-
-const nodeKpuDir = `${__dirname}/../../node_kpu`;
+const nodeDirectory = `${__dirname}/../../node_kpu`;
 const truffleDir = `${__dirname}/../../contract/build/contracts`;
 
 const truffleCompiled = JSON.parse(fs.readFileSync(`${truffleDir}/Ballot.json`));
-const defaultAccount = fs.readFileSync(`${nodeKpuDir}/pub.key`).toString().toLowerCase();
-const defaultPassword = fs.readFileSync(`${nodeKpuDir}/pass.key`).toString();
+const defaultAccount = fs.readFileSync(`${nodeDirectory}/pub.key`).toString().toLowerCase();
+const defaultPassword = fs.readFileSync(`${nodeDirectory}/pass.key`).toString();
 
+const gethPath = "C:/Program Files (x86)/Geth/geth.exe";
+const gethNetworkPortRpcWs = [9999, 9001, 9002, 9003];
+const gethBootNodeUrl = '127.0.0.1:0?discport=9000';
+
+const defaultHttp = `http://localhost:${gethNetworkPortRpcWs[2]}`;
+const defaultWs = `ws://localhost:${gethNetworkPortRpcWs[3]}`;
+const defaultEnode = `enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730`;
+
+const gethApi = 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3';
+
+var geth = null;
 var web3 = null;
 var miner = null;
 
@@ -27,6 +36,31 @@ const defaultOptions = {};
 const maxGasLimit = 4700000;
 
 /** Procedural */
+
+function gethInitWeb3() {
+  execFile('rmdir', [
+    '/Q', '/S', `${nodeDirectory}/geth`
+  ], (err, stdout, stderr) => {
+    if (err) throw err;
+    if(stdout) console.log('[RMDIR-STDOUT] \x1b[95m%s\x1b[0m', stdout.toString());
+    if(stderr) console.log('[RMDIR-STDERR] \x1b[91m%s\x1b[0m', stderr.toString());
+    geth = execFile(gethPath, [
+      '--datadir', nodeDirectory,
+      '--port', gethNetworkPortRpcWs[1], '--syncmode', "full", '--networkid', gethNetworkPortRpcWs[0],
+      '--rpc', '--rpcport', gethNetworkPortRpcWs[2], '--rpccorsdomain', "*", '--rpcapi', gethApi,
+      '--ws', '--wsport', gethNetworkPortRpcWs[3], '--wsorigins', "*", '--wsapi', gethApi,
+      '--nat', 'none', '--ipcdisable', '--allow-insecure-unlock',
+      '--unlock', defaultAccount, '--password', `${nodeDirectory}/pass.key`,
+      '--bootnodes', `${defaultEnode}@${gethBootNodeUrl}`, '--mine', '--verbosity', 5
+    ], (err, stdout, stderr) => {
+      if (err) throw err;
+      if(stdout) console.log('[GETH-CONSOLE_STDOUT] \x1b[95m%s\x1b[0m', stdout.toString());
+      if(stderr) console.log('[GETH-CONSOLE_STDERR] \x1b[91m%s\x1b[0m', stderr.toString());
+    });
+  });
+  web3InitProvider();
+  web3InitMiner();
+}
 
 function web3InitProvider(rpcHttp = defaultHttp) {
   web3 = new Web3(Web3.givenProvider || rpcHttp, null, defaultOptions);
@@ -48,9 +82,9 @@ function web3ChangeProvider(webSocket = defaultWs) {
   console.log('[ETH-CHANGE_PROVIDER] \x1b[95m%s\x1b[0m', webSocket);
 }
 
-function web3NewContractInstance(abi, contractAddress) {
+function web3NewContractInstance(abi, contractAddress, version = 1) {
   ballotInstance = new web3.eth.Contract(abi, contractAddress);
-  console.log('[ETH-CONTRACT_INSTANCE] \x1b[95m%s\x1b[0m', contractAddress);
+  console.log('[ETH-CONTRACT_INSTANCE] \x1b[95m%s\x1b[0m - v%s', contractAddress, version + 1);
 }
 
 /** Promises */
@@ -67,12 +101,14 @@ function web3UnlockAccount(password, accountAddress = defaultAccount) {
 function web3LockAccount(accountAddress) {
   web3.eth.personal.lockAccount(accountAddress).then(() => {
     console.log('[ETH-LOCK_ACCOUNT] \x1b[95m%s\x1b[0m', accountAddress);
+    web3SetAccount();
   }).catch((error) => {
     console.log('[ETH-LOCK_ACCOUNT] \x1b[91m%s\x1b[0m', JSON.stringify(error));
   });
 }
 
 function web3MiningStart() {
+  web3SetAccount();
   miner.startMining().then((status) => {
     console.log('[ETH-MINER_START] \x1b[95m%s\x1b[0m', status);
   }).catch((error) => {
@@ -81,6 +117,7 @@ function web3MiningStart() {
 }
 
 function web3MiningStop() {
+  web3SetAccount();
   miner.stopMining().then((status) => {
     console.log('[ETH-MINER_STOP] \x1b[95m%s\x1b[0m', status);
     web3LockAccount(defaultAccount);
@@ -125,6 +162,7 @@ function web3GetGasPriceMethodContract(functionName, myContractFunction, callbac
 /** One-Time Run Only */
 
 function web3DeployContract(abi = truffleCompiled.abi, bytecode = truffleCompiled.bytecode, deployer = web3.eth.defaultAccount) {
+  web3SetAccount(deployer);
   web3UnlockAccount(defaultPassword).then(() => {
     web3MiningStart();
     web3GetGasPriceNetwork((networkGas) => {
@@ -180,7 +218,7 @@ function web3ImportAccount(password, utcFileJsonKeystoreArray, callback) {
 }
 
 function web3ExportAccount(pubKey, callback) {
-  find.file(/$/, `${nodeKpuDir}/keystore`, (files) => {
+  find.file(/$/, `${nodeDirectory}/keystore`, (files) => {
     const fIdx = files.findIndex(f => f.toLowerCase().includes(pubKey.toLowerCase()));
     if (fIdx >= 0) {
       console.log('[ETH-EXPORT_ACCOUNT_SUCCESS] \x1b[95m%s\x1b[0m', pubKey);
@@ -196,6 +234,7 @@ function web3ExportAccount(pubKey, callback) {
 /** Smart Contract */
 
 function web3CreateElection(electionId, electionName, contractOwner) {
+  web3SetAccount(contractOwner);
   web3GetGasPriceMethodContract(
     'createElection',
     ballotInstance.methods.createElection(electionId, electionName),
@@ -222,6 +261,7 @@ function web3CreateElection(electionId, electionName, contractOwner) {
 }
 
 function web3AddCandidate(electionId, candidateName, candidateAddress, electionCreator) {
+  web3SetAccount(electionCreator);
   web3GetGasPriceMethodContract(
     'addCandidate',
     ballotInstance.methods.addCandidate(electionId, candidateName, candidateAddress),
@@ -248,6 +288,7 @@ function web3AddCandidate(electionId, candidateName, candidateAddress, electionC
 }
 
 function web3AddParticipant(electionId, voterName, voterAddress, electionCreator) {
+  web3SetAccount(electionCreator);
   web3GetGasPriceMethodContract(
     'addParticipant',
     ballotInstance.methods.addParticipant(electionId, voterName, voterAddress),
@@ -274,6 +315,7 @@ function web3AddParticipant(electionId, voterName, voterAddress, electionCreator
 }
 
 function web3EndElection(electionId, electionCreator) {
+  web3SetAccount(electionCreator);
   web3GetGasPriceMethodContract(
     'endElection',
     ballotInstance.methods.endElection(electionId),
@@ -300,6 +342,7 @@ function web3EndElection(electionId, electionCreator) {
 }
 
 function web3Vote(electionId, candidateAddress, voterAddress) {
+  web3SetAccount(voterAddress);
   web3GetGasPriceMethodContract(
     'vote',
     ballotInstance.methods.vote(electionId, candidateAddress, voterAddress),
@@ -326,6 +369,7 @@ function web3Vote(electionId, candidateAddress, voterAddress) {
 }
 
 function web3ShowMyVote(electionId, voterAddress) {
+  web3SetAccount(voterAddress);
   ballotInstance.methods.showMyVote(electionId, voterAddress).call({
     from: voterAddress,
   })
@@ -335,6 +379,7 @@ function web3ShowMyVote(electionId, voterAddress) {
 }
 
 function web3ShowResultCount(electionId, candidateAddress, voterAddress) {
+  web3SetAccount(voterAddress);
   ballotInstance.methods.showResultCount(electionId, candidateAddress).call({
     from: voterAddress,
   })
@@ -344,7 +389,7 @@ function web3ShowResultCount(electionId, candidateAddress, voterAddress) {
 }
 
 module.exports = {
-  web3InitProvider, web3InitMiner, web3SetAccount, web3ChangeProvider,
+  gethInitWeb3, web3InitProvider, web3InitMiner, web3SetAccount, web3ChangeProvider,
   web3NewContractInstance, web3UnlockAccount, web3LockAccount, web3MiningStart,
   web3MiningStop, web3GetGasPriceNetwork, web3GetGasPriceDeployContract,
   web3GetGasPriceMethodContract, web3DeployContract, web3CreateAccount,
