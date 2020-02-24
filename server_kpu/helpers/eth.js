@@ -38,26 +38,26 @@ const maxGasLimit = 4700000;
 /** Procedural */
 
 function gethInitWeb3() {
-  execFile('rmdir', [
-    '/Q', '/S', `${nodeDirectory}/geth`
-  ], (err, stdout, stderr) => {
-    if (err) throw err;
-    if(stdout) console.log('[RMDIR-STDOUT] \x1b[95m%s\x1b[0m', stdout.toString());
-    if(stderr) console.log('[RMDIR-STDERR] \x1b[91m%s\x1b[0m', stderr.toString());
-    geth = execFile(gethPath, [
-      '--datadir', nodeDirectory,
-      '--port', gethNetworkPortRpcWs[1], '--syncmode', "full", '--networkid', gethNetworkPortRpcWs[0],
-      '--rpc', '--rpcport', gethNetworkPortRpcWs[2], '--rpccorsdomain', "*", '--rpcapi', gethApi,
-      '--ws', '--wsport', gethNetworkPortRpcWs[3], '--wsorigins', "*", '--wsapi', gethApi,
-      '--nat', 'none', '--ipcdisable', '--allow-insecure-unlock',
-      '--unlock', defaultAccount, '--password', `${nodeDirectory}/pass.key`,
-      '--bootnodes', `${defaultEnode}@${gethBootNodeUrl}`, '--mine', '--verbosity', 5
-    ], (err, stdout, stderr) => {
-      if (err) throw err;
-      if(stdout) console.log('[GETH-CONSOLE_STDOUT] \x1b[95m%s\x1b[0m', stdout.toString());
-      if(stderr) console.log('[GETH-CONSOLE_STDERR] \x1b[91m%s\x1b[0m', stderr.toString());
-    });
-  });
+  // execFile('rmdir', [
+  //   '/Q', '/S', `${nodeDirectory}/geth`
+  // ], (err, stdout, stderr) => {
+  //   if (err) throw err;
+  //   if(stdout) console.log('[RMDIR-STDOUT] \x1b[95m%s\x1b[0m', stdout.toString());
+  //   if(stderr) console.log('[RMDIR-STDERR] \x1b[91m%s\x1b[0m', stderr.toString());
+  //   geth = execFile(gethPath, [
+  //     '--datadir', nodeDirectory,
+  //     '--port', gethNetworkPortRpcWs[1], '--syncmode', "full", '--networkid', gethNetworkPortRpcWs[0],
+  //     '--rpc', '--rpcport', gethNetworkPortRpcWs[2], '--rpccorsdomain', "*", '--rpcapi', gethApi,
+  //     '--ws', '--wsport', gethNetworkPortRpcWs[3], '--wsorigins', "*", '--wsapi', gethApi,
+  //     '--nat', 'none', '--ipcdisable', '--allow-insecure-unlock',
+  //     '--unlock', defaultAccount, '--password', `${nodeDirectory}/pass.key`,
+  //     '--bootnodes', `${defaultEnode}@${gethBootNodeUrl}`, '--mine', '--verbosity', 5
+  //   ], (err, stdout, stderr) => {
+  //     if (err) throw err;
+  //     if(stdout) console.log('[GETH-CONSOLE_STDOUT] \x1b[95m%s\x1b[0m', stdout.toString());
+  //     if(stderr) console.log('[GETH-CONSOLE_STDERR] \x1b[91m%s\x1b[0m', stderr.toString());
+  //   });
+  // });
   web3InitProvider();
   web3InitMiner();
 }

@@ -5,12 +5,12 @@ const mySqldPath = "C:/xampp/mysql/bin/mysqld.exe";
 
 var db = null;
 
-const mySqld = execFile(mySqldPath, [
-  // No Arguments
-], (err, stdout, stderr) => {
-  if (err) throw err;
-  if(stdout) console.log('[MYSQLD-STDOUT] \x1b[95m%s\x1b[0m', stdout.toString());
-  if(stderr) console.log('[MYSQLD-STDERR] \x1b[91m%s\x1b[0m', stderr.toString());
+// const mySqld = execFile(mySqldPath, [
+//   // No Arguments
+// ], (err, stdout, stderr) => {
+//   if (err) throw err;
+//   if(stdout) console.log('[MYSQLD-STDOUT] \x1b[95m%s\x1b[0m', stdout.toString());
+//   if(stderr) console.log('[MYSQLD-STDERR] \x1b[91m%s\x1b[0m', stderr.toString());
   db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -24,7 +24,7 @@ const mySqld = execFile(mySqldPath, [
       console.log('[MySQL_CONNECTION-SUCCESS] \x1b[95m%s\x1b[0m - \x1b[35m%s\x1b[0m', cfg.database, `${cfg.user}@${cfg.host}:${cfg.port}`);
     }
   });
-});
+// });
 
 function mySqlQuery(sqlQuery, sqlInsertData, callback) {
   db.query(sqlQuery, sqlInsertData, (error, results, fields) => {

@@ -17,7 +17,7 @@ router.post('/login', function(req, res, next) {
     const rememberMe = ('rememberMe' in req.body && JSON.parse(req.body.rememberMe) == true);
     db.mySqlQuery(`SELECT * FROM users WHERE nik = '${req.body.nik}' AND password = '${req.body.password}'`, null, (error, results) => {
       if (error) next(createError(500));
-      else if (results.length <= 0) next(createError(401));
+      else if (results.length <= 0) next(createError(400));
       else {
         if ('password' in results[0]) delete results[0].password;
         res.status(200).json({
