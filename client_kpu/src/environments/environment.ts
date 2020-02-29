@@ -6,7 +6,8 @@ export const environment = {
   production: false,
   apiUrl: 'http://127.0.0.1:1234/api',
   tokenName: 'bifeldy_token',
-  sessionName: 'bifeldy_session'
+  sessionName: 'bifeldy_session',
+  sniffCors: 'https://cors-anywhere.herokuapp.com/'
 };
 
 /*

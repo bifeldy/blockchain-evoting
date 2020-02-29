@@ -1,0 +1,3 @@
+<div *ngIf="show" class="fade" [@state]="state" (@state.done)="animationDone($event)">
+  <ng-content #fadeableContent></ng-content>
+</div>

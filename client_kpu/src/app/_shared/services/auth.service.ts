@@ -25,7 +25,7 @@ export class AuthService {
     let userSession = null;
     try {
       const token = localStorage.getItem(environment.tokenName);
-      const userEncrypted = localStorage.getItem(environment.sessionName);
+      const userEncrypted = sessionStorage.getItem(environment.sessionName);
       const userDecrypted = CryptoJS.AES.decrypt(userEncrypted, token).toString(CryptoJS.enc.Utf8);
       userSession = JSON.parse(userDecrypted);
     } catch (e) { }
@@ -44,7 +44,7 @@ export class AuthService {
         this.currentUserSubject.next(respVerify.result.user);
         const userSession = JSON.stringify(respVerify.result.user);
         const userEncrypted = CryptoJS.AES.encrypt(userSession, token).toString();
-        localStorage.setItem(environment.sessionName, userEncrypted);
+        sessionStorage.setItem(environment.sessionName, userEncrypted);
         return respVerify.result.user;
       }));
   }
@@ -55,7 +55,7 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem(environment.sessionName);
+    sessionStorage.removeItem(environment.sessionName);
     localStorage.removeItem(environment.tokenName);
     this.currentUserSubject.next(null);
     location.reload();

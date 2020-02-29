@@ -23,6 +23,7 @@
 
 .bifeldy {
   padding-top: 58px;
+  padding-bottom: 18px;
 }
 
 /*******************************************************************************************************/
@@ -333,10 +334,6 @@ body {
   font-family: "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ", "Meiryo", "Osaka", "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
 }
 
-main {
-  margin-bottom: 1.5rem;
-}
-
 .navbar {
   background-image: linear-gradient(90deg, #4b30b8 0, #4b30b8);
   z-index: 3;
@@ -396,7 +393,7 @@ footer {
 .bifeldy-navbar {
   position: fixed;
   left: 0px;
-  transition: 0.25s;
+  transition: height 0.25s;
   background-color: rgb(102, 23, 0);
   background-repeat: no-repeat;
   background-position: bottom right;
@@ -693,6 +690,22 @@ footer {
   text-align: center;
   line-height: 200px;
   color: white;
+}
+
+.center-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center center;
+  background-size: cover;
+}
+
+@media screen and (min-width: 768px) and (min-height: 768px) {
+  .center-screen {
+    height: calc(100vh - 76px);
+  }
 }
 
 /* Hosting Gretongan */

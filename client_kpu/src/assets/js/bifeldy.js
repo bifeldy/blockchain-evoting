@@ -32,10 +32,17 @@ function parseURLParams(url) {
 var desktop = true;
 var overlayExist = true;
 var navbarOpen = false;
-var Delay = 125;
+var delay = 125;
 
 /** Ukuran Window Di Resize */
 function windowResize() {
+
+    // Cek Ukuran Jika Desktop
+    if(window.innerWidth >= 768 || window.OuterWidth >= 768) {
+        desktop = true;
+    } else {
+        desktop = false;
+    }
 
     /** Khusus Desktop */
     if(desktop) {
@@ -45,7 +52,7 @@ function windowResize() {
 
         // Paksa Tutup Menu
         let mobileNav = document.getElementById('nav-open-close').getElementsByTagName('i')[0];
-        mobileNav.className = "fa fa-fw fa-bars";
+        mobileNav.className = "fa fa-fw fa-bars mr-1";
         document.getElementById('navbar').style.height = '';
         let sidebarMenu = document.getElementById('navbar').getElementsByTagName('a');
 
@@ -54,7 +61,7 @@ function windowResize() {
             sidebarMenu[i].getElementsByClassName('visibleMenu')[0].style.display = 'none';
         }
         navbarOpen = false;
-        Delay = 125;
+        delay = 125;
 
         // Overlay
         if(overlayExist){
@@ -63,35 +70,28 @@ function windowResize() {
         }
     }
 
-    // Cek Ukuran Jika Desktop
-    if(window.innerWidth >= 768 || window.OuterWidth >= 768) {
-        desktop = true;
-    }
-
 }
 
 /** Buka Tutup Menu */
 function toggleShowHideNavbar() {
     let sidebarMenu = document.getElementById('navbar').getElementsByTagName('a');
-    if(navbarOpen){
-        // Tutup Menu
+    if(navbarOpen) {
+        navbarOpen = false;
+        delay = 125;
         for(let i=0; i<sidebarMenu.length; i++) {
             sidebarMenu[i].getElementsByClassName('visibleMenu')[0].style.display = 'none';
         }
-        navbarOpen = false;
-        Delay = 125;
         if(overlayExist){
             document.getElementById("overlay").style.visibility = "hidden";
             document.getElementById("overlay").style.opacity = "0";
         }
     }
     else {
-        // Buka Menu
+        navbarOpen = true;
+        delay = 0;
         for(let i=0; i<sidebarMenu.length; i++) {
             sidebarMenu[i].getElementsByClassName('visibleMenu')[0].style.display = 'inline-block';
         }
-        navbarOpen = true;
-        Delay = 0;
         if(overlayExist){
             document.getElementById("overlay").style.visibility = "visible";
             document.getElementById("overlay").style.opacity = "1";
@@ -103,25 +103,27 @@ function toggleShowHideNavbar() {
 function navbarShowHide(){
     // Ukuran Resolusi Layar Desktop Doank
     if(desktop) {
-        setTimeout(toggleShowHideNavbar, Delay);
+        setTimeout(toggleShowHideNavbar, delay);
     }
 }
 
 /** Buka Tutup Mobile Menu */
 function mobileShowHideNavbar() {
-    // Icon Bar Menu Dan Close
-    let mobileNav = document.getElementById('nav-open-close').getElementsByTagName('i')[0];
-    if (mobileNav.className === "fa fa-fw fa-bars") {
-        // Buka Menu
-        document.getElementById('navbar').style.height = '100%';
-        mobileNav.className += "fa fa-fw fa-remove";
+    if (!desktop) {
+        // Icon Bar Menu Dan Close
+        let mobileNav = document.getElementById('nav-open-close').getElementsByTagName('i')[0];
+        if (mobileNav.className == "fa fa-fw fa-bars mr-1") {
+            // Buka Menu
+            document.getElementById('navbar').style.height = '100%';
+            mobileNav.className += "fa fa-fw fa-remove mr-1";
+        }
+        else {
+            // Tutup Menu
+            mobileNav.className = "fa fa-fw fa-bars mr-1";
+            document.getElementById('navbar').style.height = '';
+        }
+        toggleShowHideNavbar();
     }
-    else {
-        // Tutup Menu
-        mobileNav.className = "fa fa-fw fa-bars";
-        document.getElementById('navbar').style.height = '';
-    }
-    toggleShowHideNavbar();
 };
 
 /** Jam */

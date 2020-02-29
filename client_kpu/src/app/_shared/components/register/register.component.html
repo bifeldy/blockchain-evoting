@@ -1,1 +1,154 @@
-<p>register works!</p>
+<div class="center-screen" [ngStyle]="{
+  'background-image': 'url(' + bgRegisterImg + ')'
+}">
+  <div class="container py-3">
+    <div class="row justify-content-center no-gutters">
+      <div class="col-lg-7 col-md-9">
+        <div class="card">
+          <div class="card-body">
+            <form [formGroup]="fg" class="m-2">
+              <div class="text-center mb-4">
+                <img class="mb-4" src="/favicon.ico" alt="" />
+                <h1 class="h3 mb-3 font-weight-normal">Hai, Selamat Datang! >_<"</h1>
+                <p class="text-danger">{{ registerInfo }}</p>
+              </div>
+              <app-fade [show]="registerStep == 1">
+                <div class="form-group row">
+                  <label for="nik" class="col-md-4 col-form-label text-md-right">NIK</label>
+                  <div class="col-md-8">
+                    <input type="text" id="nik" class="form-control {{
+                      !fg.get('nik').valid && fg.get('nik').touched ? 'is-invalid' : ''
+                    }}" placeholder="Nomor Induk Kependudukan" required autofocus formControlName="nik" autocomplete="nik" />
+                    <span class="invalid-feedback" role="alert">
+                      <strong>NIK Tidak Valid!</strong>
+                    </span>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="name" class="col-md-4 col-form-label text-md-right">Nama</label>
+                  <div class="col-md-8">
+                    <input type="text" id="name" class="form-control {{
+                      !fg.get('name').valid && fg.get('name').touched ? 'is-invalid' : ''
+                    }}" placeholder="Nama Lengkap" required autofocus formControlName="name" autocomplete="name" />
+                    <span class="invalid-feedback" role="alert">
+                      <strong>Nama Tidak Boleh Kosong!</strong>
+                    </span>
+                  </div>
+                </div>
+              </app-fade>
+              <app-fade [show]="registerStep == 2">
+                <div class="form-group row">
+                  <label for="email" class="col-md-4 col-form-label text-md-right">E-Mail</label>
+                  <div class="col-md-8">
+                    <input type="email" id="email" class="form-control {{
+                      !fg.get('email').valid && fg.get('email').touched ? 'is-invalid' : ''
+                    }}" placeholder="Alamat Surat Elektronik" required autofocus formControlName="email" autocomplete="email" />
+                    <span class="invalid-feedback" role="alert">
+                      <strong>Format Email Tidak Benar!</strong>
+                    </span>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="phone" class="col-md-4 col-form-label text-md-right">No. HP</label>
+                  <div class="col-md-8">
+                    <input type="text" id="phone" class="form-control {{
+                      !fg.get('phone').valid && fg.get('phone').touched ? 'is-invalid' : ''
+                    }}" placeholder="Nomor Telepon Genggam" required autofocus formControlName="phone" autocomplete="phone" />
+                    <span class="invalid-feedback" role="alert">
+                      <strong>Telepon Tidak Valid!</strong>
+                    </span>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="password" class="col-md-4 col-form-label text-md-right">Kata Sandi</label>
+                  <div class="col-md-8">
+                    <div class="row">
+                      <div class="col pr-0">
+                        <input type="{{ showPassword ? 'text' : 'password' }}" id="password" class="col form-control {{
+                            !fg.get('password').valid && fg.get('password').touched ? 'is-invalid' : ''
+                          }}" placeholder="Kata Sandi" required formControlName="password" autocomplete="current-password" />
+                      </div>
+                      <a class="btn btn-link text-secondary px-2 mr-3" (click)="showHidePassword()">
+                        <i class="fa fa-fw fa-eye" *ngIf="showPassword"></i>
+                        <i class="fa fa-fw fa-eye-slash" *ngIf="!showPassword"></i>
+                      </a>
+                    </div>
+                    <span role="alert" *ngIf="!fg.get('password').valid && fg.get('password').touched" style="font-size: 80%; color: #dc3545;">
+                      <ng-container *ngIf="fg.controls['password'].hasError('noPasswordMin'); else elsePassword">
+                        <strong>Password Minimal 8 Karakter!</strong>
+                      </ng-container>
+                      <ng-template #elsePassword>
+                        <strong>Password Tidak Boleh Kosong!</strong>
+                      </ng-template>
+                    </span>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="retype_password" class="col-md-4 col-form-label text-md-right">Ulangi Kata Sandi</label>
+                  <div class="col-md-8">
+                    <input type="password" id="retype_password" class="form-control {{
+                      !fg.get('retype_password').valid && fg.get('retype_password').touched ? 'is-invalid' : ''
+                    }}" placeholder="Konfirmasi Password" required autofocus formControlName="retype_password" autocomplete="retype_password" />
+                    <span class="invalid-feedback"role="alert">
+                      <ng-container *ngIf="fg.controls['retype_password'].hasError('noPasswordMatch');else elseConfPass"
+                      >
+                        <strong>Password Tidak Sesuai!</strong>
+                      </ng-container>
+                      <ng-template #elseConfPass>
+                        <strong>Password Tidak Boleh Kosong!</strong>
+                      </ng-template>
+                    </span>
+                  </div>
+                </div>
+              </app-fade>
+              <div class="form-group row" *ngIf="!kpuRiUserData">
+                <div class="col-md-8 offset-md-4">
+                  <re-captcha #captchaRef formControlName="googleCaptchaResponse" siteKey="6Ldc14kUAAAAABPg_XKGIQQndzllpW5l6FNFYVC0"
+                    (resolved)="resolved($event, captchaRef)" ></re-captcha>
+                </div>
+              </div>
+              <div class="form-group row mb-0">
+                <div class="col-md-4 text-md-right">
+                  <button class="btn btn-link btn-block" type="button" routerLink="/login" [disabled]="submitted">Sudah Punya Akun ?</button>
+                </div>
+                <div class="col-md-8">
+                  <div class="row">
+                    <div class="col-6 pr-0">
+                      <button class="btn btn-link btn-block" type="button" [disabled]="registerStep <= 1" (click)="onRegisterPrevious()">
+                        <i class="fa fa-fw fa-arrow-left"></i>
+                        Previous
+                      </button>
+                    </div>
+                    <div class="col-6 pl-0">
+                      <button class="btn btn-success btn-block text-white" type="button" (click)="onRegisterNext()"
+                        [disabled]="
+                          registerStep == 1 && !kpuRiUserData ||
+                          registerStep == 2 && !(
+                            fg.get('email').valid && fg.get('email').touched &&
+                            fg.get('phone').valid && fg.get('phone').touched &&
+                            fg.get('password').valid && fg.get('password').touched &&
+                            fg.get('retype_password').valid && fg.get('retype_password').touched
+                          ) ||
+                          registerStep == 3 && !ethereumAccount ||
+                          submitted
+                        ">
+                        {{ !kpuRiUserData ? 'Proses ' + registerStep + '/3' : !ethereumAccount ? 'Proses ' + registerStep + '/3' : 'Daftar ' + registerStep + '/3' }}
+                        <i class="fa fa-fw fa-arrow-right ml-2" *ngIf="!kpuRiUserData || !ethereumAccount"></i>
+                        <i class="fa fa-fw fa-check ml-2" *ngIf="kpuRiUserData && ethereumAccount"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5 col-md-3" [ngStyle]="{
+        'background-position': 'center',
+        'background-size': 'cover',
+        'background-image': 'url(' + registerImg + ')'
+      }"></div>
+    </div>
+  </div>
+</div>

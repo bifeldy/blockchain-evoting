@@ -15,11 +15,14 @@ import { environment } from 'src/environments/environment';
 })
 export class LoginComponent implements OnInit {
 
-  loginForm: FormGroup;
+  fg: FormGroup;
   submitted = false;
+  showPassword = false;
 
   returnUrl = '/';
-  loginInfo = '';
+  loginImg = 'https://via.placeholder.com/462x440.png';
+  bgLoginImg = '/assets/img/bg-login.svg';
+  loginInfo = 'Silahkan login terlebih dahulu~';
 
   constructor(
     public fb: FormBuilder,
@@ -34,41 +37,47 @@ export class LoginComponent implements OnInit {
   }
 
   get loginFormVal() {
-    return this.loginForm.controls;
+    return this.fg.controls;
   }
 
   ngOnInit() {
     this.returnUrl = this.route.snapshot.queryParams.returnUrl || '/home';
-    this.loginForm = this.fb.group({
-      nik: [null, [Validators.required]],
-      password: [null, [Validators.required]]
+    this.fg = this.fb.group({
+      username: [null, [Validators.required]],
+      password: [null, [Validators.required]],
+      remember_me: [false, []]
     });
+  }
+
+  showHidePassword() {
+    this.showPassword = !this.showPassword;
   }
 
   onClickedSubmit() {
     this.submitted = true;
     this.loginInfo = 'Harap Menunggu ...';
-    if (this.loginForm.invalid) {
+    if (this.fg.invalid) {
       this.loginInfo = 'Periksa Dan Isi Kembali Data Anda!';
       this.submitted = false;
       return;
     }
-    this.gs.log('[COMPONENT_LOGIN]', this.loginForm.value);
-    if (this.loginForm.valid) {
+    this.gs.log('[COMPONENT_LOGIN]', this.fg.value);
+    if (this.fg.valid) {
       this.submitted = true;
-      this.loginForm.controls.password.patchValue(
-        CryptoJS.SHA512(this.loginForm.value.password).toString()
-      );
-      this.as.login(this.loginForm.value).subscribe(
+      this.as.login({
+        username: this.fg.value.username,
+        password: CryptoJS.SHA512(this.fg.value.password).toString(),
+        remember_me: this.fg.value.remember_me
+      }).subscribe(
         (res: any) => {
           localStorage.setItem(environment.tokenName, res.result.token);
           this.as.verify(localStorage.getItem(environment.tokenName)).subscribe(
             success => this.router.navigate([this.returnUrl]),
-            error => {}
+            error => this.as.logout()
           );
         },
         err => {
-          this.loginInfo = err.error.info;
+          this.loginInfo = err.error.result.message || err.error.info;
           this.submitted = false;
         }
       );

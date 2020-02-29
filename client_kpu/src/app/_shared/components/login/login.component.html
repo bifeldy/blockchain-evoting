@@ -1,24 +1,78 @@
-<div class="login">
-  <form [formGroup]="loginForm" class="m-2" (ngSubmit)="onClickedSubmit()">
-    <img src="/favicon.ico" />
-    <div class="text-center mb-4 mt-4">
-      <div class="text-danger" *ngIf="loginInfo != ''">{{ loginInfo }}</div>
-    </div>
-    <div class="form-group">
-      <input type="text" id="nik" class="form-control" placeholder="Nomor Induk Kependudukan" required autofocus size="50%" formControlName="nik" />
-    </div>
-    <div class="form-group">
-      <input type="password" id="password" class="form-control" placeholder="Kata Sandi" required size="50%" formControlName="password" />
-    </div>
-    <div class="form-group">
-      <div class="row">
-        <div class="col-6">
-          <button class="btn btn-success btn-block text-white" type="submit" [disabled]="submitted">Masuk</button>
-        </div>
-        <div class="col-6">
-          <button class="btn btn-secondary btn-block text-white" routerLink="/register" [disabled]="submitted">Pendaftaran</button>
+<div class="center-screen" [ngStyle]="{
+  'background-image': 'url(' + bgLoginImg + ')'
+}">
+  <div class="container">
+    <div class="row justify-content-center no-gutters">
+      <div class="col-lg-5 col-md-3" [ngStyle]="{
+        'background-position': 'center',
+        'background-size': 'cover',
+        'background-image': 'url(' + loginImg + ')'
+      }"></div>
+      <div class="col-lg-7 col-md-9">
+        <div class="card">
+          <div class="card-body">
+            <form [formGroup]="fg" class="m-2" (ngSubmit)="onClickedSubmit()">
+              <div class="text-center mb-4">
+                <img class="mb-4" src="/favicon.ico" alt="" />
+                <h1 class="h3 mb-3 font-weight-normal">Hai, Selamat Datang! >_<"</h1>
+                <p class="text-danger">{{ loginInfo }}</p>
+              </div>
+              <div class="form-group row">
+                <label for="username" class="col-md-4 col-form-label text-md-right">Nama Pengguna</label>
+                <div class="col-md-8">
+                  <input type="text" id="username" class="form-control {{
+                      !fg.get('username').valid && fg.get('username').touched ? 'is-invalid' : ''
+                    }}" placeholder="NIK / E-Mail / No. HP" required autofocus formControlName="username" autocomplete="username" />
+                  <span class="invalid-feedback" role="alert">
+                    <strong>NIK Tidak Boleh Kosong!</strong>
+                  </span>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="password" class="col-md-4 col-form-label text-md-right">Kata Sandi</label>
+                <div class="col-md-8">
+                  <div class="row">
+                    <div class="col pr-0">
+                      <input type="{{ showPassword ? 'text' : 'password' }}" id="password" class="col form-control {{
+                          !fg.get('password').valid && fg.get('password').touched ? 'is-invalid' : ''
+                        }}" placeholder="Kata Sandi" required formControlName="password" autocomplete="current-password" />
+                    </div>
+                    <a class="btn btn-link text-secondary px-2 mr-3" (click)="showHidePassword()">
+                      <i class="fa fa-fw fa-eye" *ngIf="showPassword"></i>
+                      <i class="fa fa-fw fa-eye-slash" *ngIf="!showPassword"></i>
+                    </a>
+                  </div>
+                  <span role="alert" *ngIf="!fg.get('password').valid && fg.get('password').touched" style="font-size: 80%; color: #dc3545;">
+                    <strong>Kata Sandi Tidak Boleh Kosong!</strong>
+                  </span>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col offset-md-4">
+                  <div class="form-check">
+                    <input id="remember_me" class="form-check-input" type="checkbox" formControlName="remember_me" />
+                    <label class="form-check-label" for="remember">Biarkan Saya Tetap Login</label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row mb-0">
+                <div class="col-md-8 offset-md-4">
+                  <div class="row">
+                    <div class="col-5 pr-0">
+                      <button class="btn btn-success btn-block text-white" type="submit" [disabled]="submitted">
+                        Masuk <i class="fa fa-fw fa-key ml-2"></i>
+                      </button>
+                    </div>
+                    <div class="col-7 pl-0">
+                      <button class="btn btn-link btn-block" routerLink="/register" [disabled]="submitted">Belum Punya Akun ?</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </form>
+  </div>
 </div>
