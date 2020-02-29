@@ -107,7 +107,7 @@
     </a>
     <a href="https://github.com/bifeldy/blockchain-evoting" target="_blank" rel="noreferrer">
       <i class="fa fa-fw fa-code-fork mr-2"></i>
-      <div class="visibleMenu" *ngIf="githubLastCommit">SHA :: {{ githubLastCommit.sha | slice: 0:10 }}...</div>
+      <div class="visibleMenu">SHA :: {{ githubLastCommit ? githubLastCommit.sha.slice(0, 12) : '' }}...</div>
     </a>
   </div>
 
