@@ -1,7 +1,7 @@
 <div class="center-screen" [ngStyle]="{
   'background-image': 'url(' + bgLoginImg + ')'
 }">
-  <div class="container">
+  <div class="container py-3">
     <div class="row justify-content-center no-gutters">
       <div class="col-lg-5 col-md-3" [ngStyle]="{
         'background-position': 'center',
@@ -35,7 +35,7 @@
                     <div class="col pr-0">
                       <input type="{{ showPassword ? 'text' : 'password' }}" id="password" class="col form-control {{
                           !fg.get('password').valid && fg.get('password').touched ? 'is-invalid' : ''
-                        }}" placeholder="Kata Sandi" required formControlName="password" autocomplete="current-password" />
+                        }}" placeholder="Password" required formControlName="password" autocomplete="current-password" />
                     </div>
                     <a class="btn btn-link text-secondary px-2 mr-3" (click)="showHidePassword()">
                       <i class="fa fa-fw fa-eye" *ngIf="showPassword"></i>
@@ -43,7 +43,7 @@
                     </a>
                   </div>
                   <span role="alert" *ngIf="!fg.get('password').valid && fg.get('password').touched" style="font-size: 80%; color: #dc3545;">
-                    <strong>Kata Sandi Tidak Boleh Kosong!</strong>
+                    <strong>Password Tidak Boleh Kosong!</strong>
                   </span>
                 </div>
               </div>

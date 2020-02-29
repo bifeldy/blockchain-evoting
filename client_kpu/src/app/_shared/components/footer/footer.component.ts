@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { GithubService } from '../../services/github.service';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-footer',
@@ -12,12 +12,15 @@ export class FooterComponent implements OnInit {
   githubLastCommit = null;
 
   constructor(
-    private gh: GithubService
-  ) {
-    this.githubLastCommit = this.gh.githubLastCommit;
-  }
+    private api: ApiService,
+  ) { }
 
   ngOnInit() {
+    this.api.getData('https://api.github.com/repos/Bifeldy/blockchain-evoting/commits').subscribe(
+      res => {
+        this.githubLastCommit = res[0];
+      }
+    );
   }
 
 }

@@ -1,9 +1,9 @@
 <!-- Footer -->
 <footer>
   <div class="gitHub ShadowsIntoLight d-none d-md-block" style="float: right; font-size: 12px;">
-    <a href="https://github.com/bifeldy/blockchain-evoting" title="Github Latest Master Commit">
+    <a href="https://github.com/bifeldy/blockchain-evoting">
       <i class="fa fa-fw fa-code-fork"></i>
-      {{ githubLastCommit.sha | slice: 0:8 }}
+      {{ githubLastCommit ? githubLastCommit.commit.message : '' }}
     </a>
     &nbsp;
   </div>

@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 
-import { GithubService } from '../../services/github.service';
 import { AuthService } from '../../services/auth.service';
-import { GlobalService } from '../../services/global.service';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-header',
@@ -15,15 +13,16 @@ export class HeaderComponent implements OnInit {
   githubLastCommit = null;
 
   constructor(
-    private gh: GithubService,
-    private gs: GlobalService,
+    private api: ApiService,
     public as: AuthService,
-    private router: Router
-  ) {
-    this.githubLastCommit = this.gh.githubLastCommit;
-  }
+  ) { }
 
   ngOnInit() {
+    this.api.getData('https://api.github.com/repos/Bifeldy/blockchain-evoting/commits').subscribe(
+      res => {
+        this.githubLastCommit = res[0];
+      }
+    );
   }
 
 }
