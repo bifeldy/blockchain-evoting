@@ -13,11 +13,14 @@ router.get('/', function(req, res, next) {
 
 // POST `/api/login`
 router.post('/login', function(req, res, next) {
-  if ('nik' in req.body && 'password' in req.body) {
-    const rememberMe = ('rememberMe' in req.body && JSON.parse(req.body.rememberMe) == true);
-    db.mySqlQuery(`SELECT * FROM users WHERE nik = '${req.body.nik}' AND password = '${req.body.password}'`, null, (error, results) => {
-      if (error) next(createError(500));
-      else if (results.length <= 0) next(createError(400));
+  if ('username' in req.body && 'password' in req.body) {
+    const rememberMe = ('remember_me' in req.body && JSON.parse(req.body.remember_me) == true);
+    db.mySqlQuery(`
+      SELECT id, nik, phone, email, role, name, pubKey, createdAt, updatedAt FROM users
+      WHERE (nik = ? OR phone = ? OR email = ?) AND password = ?
+    `, [req.body.username, req.body.username, req.body.username, req.body.password], (error, results) => {
+      if (error) next(createError(500, error));
+      else if (results.length <= 0) next(createError(400, 'Username Atau Password Salah!'));
       else {
         if ('password' in results[0]) delete results[0].password;
         res.status(200).json({
@@ -49,44 +52,50 @@ router.post('/register', function(req, res, next) {
   let newUserData = req.body;
   if (
     'nik' in newUserData &&
-    'telepon' in newUserData &&
-    'email' in newUserData &&
     'name' in newUserData &&
-    'location' in newUserData &&
+    'email' in newUserData &&
+    'phone' in newUserData &&
     'password' in newUserData
   ) {
     newUserData.nik = newUserData.nik.replace(/[^0-9]+/g, '');
-    newUserData.telepon = newUserData.telepon.replace(/[^0-9]+/g, '');
+    newUserData.phone = newUserData.phone.replace(/[^0-9]+/g, '');
     newUserData.email = newUserData.email.replace(/[^0-9a-zA-Z@.]+/g, '');
     newUserData.name = newUserData.name.replace(/[^a-zA-Z\s]+/g, '');
-    newUserData.location = newUserData.location.replace(/[^0-9a-zA-Z.,\s]+/g, '');
     if (
       newUserData.nik != null &&  newUserData.nik != '' &&  newUserData.nik != undefined &&
-      newUserData.telepon != null &&  newUserData.telepon != '' &&  newUserData.telepon != undefined &&
+      newUserData.phone != null &&  newUserData.phone != '' &&  newUserData.phone != undefined &&
       newUserData.email != null &&  newUserData.email != '' &&  newUserData.email != undefined &&
       newUserData.name != null &&  newUserData.name != '' &&  newUserData.name != undefined &&
-      newUserData.location != null &&  newUserData.location != '' &&  newUserData.location != undefined &&
       newUserData.password != null &&  newUserData.password != '' &&  newUserData.password != undefined
     ) {
-      let iNik, iTelepon, iEmail;
-      db.mySqlQuery(`SELECT * FROM users WHERE nik = '${newUserData.nik}'`, null, (error, results) => {
+      let iNik, iPhone, iEmail;
+      db.mySqlQuery(`
+        SELECT * FROM users
+        WHERE nik = ?
+      `, [newUserData.nik], (error, results) => {
         if (error) next(createError(500));
         else iNik = results.length;
       });
-      db.mySqlQuery(`SELECT * FROM users WHERE telepon = '${newUserData.telepon}'`, null, (error, results) => {
+      db.mySqlQuery(`
+        SELECT * FROM users
+        WHERE phone = ?
+      `, [newUserData.phone], (error, results) => {
         if (error) next(createError(500));
-        else iTelepon = results.length;
+        else iPhone = results.length;
       });
-      db.mySqlQuery(`SELECT * FROM users WHERE email = '${newUserData.email}'`, null, (error, results) => {
+      db.mySqlQuery(`
+        SELECT * FROM users
+        WHERE email = ?
+      `, [newUserData.email], (error, results) => {
         if (error) next(createError(500));
         else iEmail = results.length;
       });
-      const index = Math.max(iNik, iTelepon, iEmail);
+      const index = Math.max(iNik, iPhone, iEmail);
       if(index > 0) {
         const result = {};
-        if(iNik > 0) result.nik = 'Nik is already used';
-        if(iTelepon > 0) result.telepon = 'Phone number is already used';
-        if(iEmail > 0) result.email = 'Email is already used';
+        if(iNik > 0) result.nik = 'Nik Sudah Terpakai';
+        if(iPhone > 0) result.phone = 'Nomor Telepon Sudah Terpakai';
+        if(iEmail > 0) result.email = 'Email Sudah Terpakai';
         res.status(400).json({
           info: '🙄 400 - Pendaftaran Gagal! 😪',
           result
@@ -94,7 +103,7 @@ router.post('/register', function(req, res, next) {
       }
       else if(newUserData.password.length >= 128) {
         newUserData.nik = parseInt(newUserData.nik);
-        newUserData.telepon = parseInt(newUserData.telepon);
+        newUserData.phone = parseInt(newUserData.phone);
         newUserData.email = newUserData.email.toLowerCase();
         newUserData.password = newUserData.password.toLowerCase();
         db.mySqlQuery('INSERT INTO users SET ?', newUserData, (error, results) => {

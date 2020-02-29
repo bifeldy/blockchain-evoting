@@ -45,7 +45,7 @@ function gethInitWeb3() {
   //   if(stdout) console.log('[RMDIR-STDOUT] \x1b[95m%s\x1b[0m', stdout.toString());
   //   if(stderr) console.log('[RMDIR-STDERR] \x1b[91m%s\x1b[0m', stderr.toString());
   //   geth = execFile(gethPath, [
-  //     '--datadir', nodeDirectory,
+  //     '--identity', 'node_kpu', '--datadir', nodeDirectory,
   //     '--port', gethNetworkPortRpcWs[1], '--syncmode', "full", '--networkid', gethNetworkPortRpcWs[0],
   //     '--rpc', '--rpcport', gethNetworkPortRpcWs[2], '--rpccorsdomain', "*", '--rpcapi', gethApi,
   //     '--ws', '--wsport', gethNetworkPortRpcWs[3], '--wsorigins', "*", '--wsapi', gethApi,

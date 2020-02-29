@@ -37,7 +37,7 @@ eth.gethInitWeb3();
 
 const db = require('./helpers/db');
 db.mySqlQuery(`SELECT * FROM contracts`, null, (error, results) => {
-  if (error) next(createError(500));
+  if (error) process.exit();
   else if (results.length > 0) {
     const idx = results.findIndex(r => r.active == 1);
     if (idx >= 0) {

@@ -18,7 +18,7 @@ var db = null;
     database: 'blockchain-evoting'
   });
   db.connect(error => {
-    if (error) console.log(`[MySQL_CONNECTION-${error.code}] ${error.sqlMessage}`);
+    if (error) console.log(`[MySQL_CONNECTION-${error.code}]` + ' \x1b[91m%s\x1b[0m', error.sqlMessage);
     else {
       const cfg = db.config;
       console.log('[MySQL_CONNECTION-SUCCESS] \x1b[95m%s\x1b[0m - \x1b[35m%s\x1b[0m', cfg.database, `${cfg.user}@${cfg.host}:${cfg.port}`);
@@ -26,18 +26,21 @@ var db = null;
   });
 // });
 
-function mySqlQuery(sqlQuery, sqlInsertData, callback) {
-  db.query(sqlQuery, sqlInsertData, (error, results, fields) => {
+function escape(data) {
+  return mysql.escape(data);
+}
+
+function mySqlQuery(sqlQuery, sqlQueryData, callback) {
+  db.query(sqlQuery, sqlQueryData, (error, results, fields) => {
     if (error) {
-      console.log(`[MySQL_QUERY-${error.code}] ${error.sqlMessage}`);
+      console.log(`[MySQL_ERROR-${error.code}]` + ' \x1b[91m%s\x1b[0m', error.sqlMessage);
       callback(error);
     }
     else {
-      if (sqlInsertData) console.log('[MySQL_QUERY-INSERT/UPDATE] \x1b[95m%s\x1b[0m - \x1b[35m%s\x1b[0m', sqlQuery, JSON.stringify(sqlInsertData));
-      else console.log('[MySQL_QUERY-SELECT/DELETE] \x1b[95m%s\x1b[0m', sqlQuery);
+      console.log('[MySQL_QUERY] \x1b[95m%s\x1b[0m - \x1b[35m%s\x1b[0m', sqlQuery.replace(/\n/g, " ").replace(/ +(?= )/g,'').trim(), JSON.stringify(sqlQueryData));
       callback(error, results);
     }
   });
 }
 
-module.exports = { mySqlQuery };
+module.exports = { escape, mySqlQuery };
