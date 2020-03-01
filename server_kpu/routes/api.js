@@ -8,7 +8,7 @@ const router = express.Router();
 
 function userLoginModule(req, res, next) {
   return db.mySqlQuery(`
-    SELECT id, nik, phone, email, role, name, pubKey, createdAt, updatedAt
+    SELECT id, nik, phone, email, role, name, pubKey, createdAt
     FROM users
     WHERE (nik = ? OR phone = ? OR email = ?) AND password = ?
   `, [req.body.username, req.body.username, req.body.username, req.body.password], (error, results, fields) => {
@@ -32,7 +32,7 @@ function userCheckAccountModule(newUserData, res, next, registerMode) {
   let iEmail = 0;
   if ('nik' in newUserData) {
     db.mySqlQuery(`
-      SELECT id, nik, phone, email, role, name, pubKey, createdAt, updatedAt
+      SELECT id, nik, phone, email,
       FROM users
       WHERE nik = ?
     `, [newUserData.nik], (error, results, fields) => {
@@ -42,7 +42,7 @@ function userCheckAccountModule(newUserData, res, next, registerMode) {
   }
   if ('phone' in newUserData) {
     db.mySqlQuery(`
-      SELECT id, nik, phone, email, role, name, pubKey, createdAt, updatedAt
+      SELECT id, nik, phone, email,
       FROM users
       WHERE phone = ?
     `, [newUserData.phone], (error, results, fields) => {
@@ -52,7 +52,7 @@ function userCheckAccountModule(newUserData, res, next, registerMode) {
   }
   if ('email' in newUserData) {
     db.mySqlQuery(`
-      SELECT id, nik, phone, email, role, name, pubKey, createdAt, updatedAt
+      SELECT id, nik, phone, email,
       FROM users
       WHERE email = ?
     `, [newUserData.email], (error, results, fields) => {
