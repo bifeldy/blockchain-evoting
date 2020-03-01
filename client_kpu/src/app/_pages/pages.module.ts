@@ -5,6 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuardService } from '../_shared/guard/auth-guard.service';
 
 import { PagesComponent } from './pages.component';
+import { Role } from '../_shared/models/role';
 
 const routes: Routes = [
   {
@@ -23,7 +24,8 @@ const routes: Routes = [
         data: {
           title: 'Bifeldy | Home Page',
           description: 'Halaman Overview',
-          keywords: 'Blockchain E-Voting'
+          keywords: 'Blockchain E-Voting',
+          roles: [Role.Admin, Role.Miner, Role.Voter]
         }
       },
       {

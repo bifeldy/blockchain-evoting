@@ -10,15 +10,17 @@ import { GlobalService } from '../services/global.service';
 @Injectable()
 export class HttpRequestInterceptor implements HttpInterceptor {
 
+  currentUser = null;
+
   constructor(
     private gs: GlobalService,
     private as: AuthService
   ) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const currentUser = this.as.currentUserValue;
+    this.as.currentUser.subscribe(user => this.currentUser = user);
     const userToken = localStorage.getItem(environment.tokenName);
-    if (currentUser && userToken) {
+    if (this.currentUser && userToken && request.url.startsWith(environment.apiUrl)) {
       this.gs.log('[INTERCEPT_REQUEST]', userToken);
       request = request.clone({
         setHeaders: {

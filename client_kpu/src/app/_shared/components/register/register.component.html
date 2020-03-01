@@ -1,6 +1,6 @@
 <div class="center-screen" [ngStyle]="{
   'background-image': 'url(' + bgRegisterImg + ')'
-}">
+}" *ngIf="!this.as.currentUserValue">
   <div class="container py-3">
     <div class="row justify-content-center no-gutters">
       <div class="col-lg-7 col-md-9">
@@ -22,6 +22,9 @@
                     <span class="invalid-feedback" role="alert">
                       <strong>NIK Tidak Valid!</strong>
                     </span>
+                    <span role="alert" *ngIf="registerErrorData && registerErrorData.nik" style="font-size: 80%; color: #dc3545;">
+                      <strong>{{ registerErrorData.nik }}</strong>
+                    </span>
                   </div>
                 </div>
                 <div class="form-group row">
@@ -29,7 +32,7 @@
                   <div class="col-md-8">
                     <input type="text" id="name" class="form-control {{
                       !fg.get('name').valid && fg.get('name').touched ? 'is-invalid' : ''
-                    }}" placeholder="Nama Lengkap" required autofocus formControlName="name" autocomplete="name" />
+                    }}" placeholder="Nama Lengkap" required formControlName="name" autocomplete="name" />
                     <span class="invalid-feedback" role="alert">
                       <strong>Nama Tidak Boleh Kosong!</strong>
                     </span>
@@ -46,6 +49,9 @@
                     <span class="invalid-feedback" role="alert">
                       <strong>Format Email Tidak Benar!</strong>
                     </span>
+                    <span role="alert" *ngIf="registerErrorData && registerErrorData.email" style="font-size: 80%; color: #dc3545;">
+                      <strong>{{ registerErrorData.email }}</strong>
+                    </span>
                   </div>
                 </div>
                 <div class="form-group row">
@@ -53,9 +59,12 @@
                   <div class="col-md-8">
                     <input type="text" id="phone" class="form-control {{
                       !fg.get('phone').valid && fg.get('phone').touched ? 'is-invalid' : ''
-                    }}" placeholder="Nomor Telepon Genggam" required autofocus formControlName="phone" autocomplete="phone" />
+                    }}" placeholder="Nomor Telepon Genggam" required formControlName="phone" autocomplete="phone" />
                     <span class="invalid-feedback" role="alert">
                       <strong>Telepon Tidak Valid!</strong>
+                    </span>
+                    <span role="alert" *ngIf="registerErrorData && registerErrorData.phone" style="font-size: 80%; color: #dc3545;">
+                      <strong>{{ registerErrorData.phone }}</strong>
                     </span>
                   </div>
                 </div>
@@ -88,7 +97,7 @@
                   <div class="col-md-8">
                     <input type="password" id="retype_password" class="form-control {{
                       !fg.get('retype_password').valid && fg.get('retype_password').touched ? 'is-invalid' : ''
-                    }}" placeholder="Konfirmasi Password" required autofocus formControlName="retype_password" autocomplete="retype_password" />
+                    }}" placeholder="Konfirmasi Password" required formControlName="retype_password" autocomplete="retype_password" />
                     <span class="invalid-feedback"role="alert">
                       <ng-container *ngIf="fg.controls['retype_password'].hasError('noPasswordMatch');else elseConfPass"
                       >
@@ -101,7 +110,40 @@
                   </div>
                 </div>
               </app-fade>
-              <div class="form-group row" *ngIf="!kpuRiUserData">
+              <app-fade [show]="registerStep == 3">
+                <div class="form-group row">
+                  <label for="eth_account" class="col-md-4 col-form-label text-md-right">Punya Ethereum?</label>
+                  <div class="col-md-8">
+                    <select id="eth_account" class="form-control {{
+                        !fg.get('eth_account').valid && fg.get('eth_account').touched ? 'is-invalid' : ''
+                      }}" name="eth_account" required formControlName="eth_account">
+                      <option value="" disabled>Pilih Salah Satu!</option>
+                      <option value="tidak">Tidak, Buat Akun Baru Sekarang</option>
+                      <option value="ya">Ya, Gunakan Akun Lama Saya</option>
+                    </select>
+                    <span class="invalid-feedback" role="alert">
+                      <strong>Pilih Salah Satu!</strong>
+                    </span>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="eth_account_import" class="col-md-4 col-form-label text-md-right">Private Key</label>
+                  <div class="col-md-8">
+                    <div class="custom-file">
+                      <input type="file" class="custom-file-input" id="eth_account_file"
+                        (change)="onFileSelected($event)" [disabled]="registerFormVal.eth_account != 'ya'" />
+                      <label class="custom-file-label text-truncate" for="eth_account_file" style="z-index: 0;">{{ utcFileName }}</label>
+                    </div>
+                    <textarea id="result" id="eth_account_import" rows="5" [attr.disabled]="registerFormVal.eth_account != 'ya' ? '' : null"
+                      class="form-control" placeholder="Or Copy Paste Ethereum UTC Text File Content Here .." required formControlName="eth_account_import">
+                    </textarea>
+                    <span role="alert" *ngIf="registerErrorData && registerErrorData.eth_account_import" style="font-size: 80%; color: #dc3545;">
+                      <strong>{{ registerErrorData.eth_account_import }}</strong>
+                    </span>
+                  </div>
+                </div>
+              </app-fade>
+              <div class="form-group row" *ngIf="registerStep == 1">
                 <div class="col-md-8 offset-md-4">
                   <re-captcha #captchaRef formControlName="googleCaptchaResponse" siteKey="6Ldc14kUAAAAABPg_XKGIQQndzllpW5l6FNFYVC0"
                     (resolved)="resolved($event, captchaRef)" ></re-captcha>
@@ -109,12 +151,12 @@
               </div>
               <div class="form-group row mb-0">
                 <div class="col-md-4 text-md-right">
-                  <button class="btn btn-link btn-block" type="button" routerLink="/login" [disabled]="submitted">Sudah Punya Akun ?</button>
+                  <button class="btn btn-link btn-block text-decoration-none" type="button" routerLink="/login" [disabled]="submitted">Sudah Punya Akun ?</button>
                 </div>
                 <div class="col-md-8">
                   <div class="row">
                     <div class="col-6 pr-0">
-                      <button class="btn btn-link btn-block" type="button" [disabled]="registerStep <= 1" (click)="onRegisterPrevious()">
+                      <button class="btn btn-link btn-block" type="button" [disabled]="registerStep <= 1 || registerStep >= 3" (click)="onRegisterPrevious()">
                         <i class="fa fa-fw fa-arrow-left"></i>
                         Previous
                       </button>
@@ -129,12 +171,20 @@
                             fg.get('password').valid && fg.get('password').touched &&
                             fg.get('retype_password').valid && fg.get('retype_password').touched
                           ) ||
-                          registerStep == 3 && !ethereumAccount ||
+                          registerStep == 3 && (
+                            registerFormVal.eth_account == 'ya' && (
+                              registerFormVal.eth_account_import == null ||
+                              registerFormVal.eth_account_import == undefined ||
+                              registerFormVal.eth_account_import == ''
+                            ) || (
+                              registerFormVal.eth_account == ''
+                            )
+                          ) ||
                           submitted
                         ">
-                        {{ !kpuRiUserData ? 'Proses ' + registerStep + '/3' : !ethereumAccount ? 'Proses ' + registerStep + '/3' : 'Daftar ' + registerStep + '/3' }}
-                        <i class="fa fa-fw fa-arrow-right ml-2" *ngIf="!kpuRiUserData || !ethereumAccount"></i>
-                        <i class="fa fa-fw fa-check ml-2" *ngIf="kpuRiUserData && ethereumAccount"></i>
+                        {{ registerStep < 3 ? 'Selanjutnya' : 'Selesai' }}
+                        <i class="fa fa-fw fa-arrow-right ml-2" *ngIf="registerStep < 3"></i>
+                        <i class="fa fa-fw fa-check ml-2" *ngIf="registerStep >= 3"></i>
                       </button>
                     </div>
                   </div>
@@ -152,3 +202,4 @@
     </div>
   </div>
 </div>
+

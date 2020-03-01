@@ -25,10 +25,10 @@ export class LoginComponent implements OnInit {
   loginInfo = 'Silahkan login terlebih dahulu~';
 
   constructor(
-    public fb: FormBuilder,
-    public gs: GlobalService,
+    private fb: FormBuilder,
+    private gs: GlobalService,
     private route: ActivatedRoute,
-    public router: Router,
+    private router: Router,
     public as: AuthService
   ) {
     if (this.as.currentUserValue) {

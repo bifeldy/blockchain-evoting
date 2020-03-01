@@ -21,12 +21,15 @@ export class RegisterComponent implements OnInit {
 
   registerImg = 'https://via.placeholder.com/462x532.png';
   bgRegisterImg = '/assets/img/bg-login.svg';
+
   registerInfo = 'Ayo bergabung dengan komunitas kami~';
+  registerErrorData = null;
 
   kpuRiUserData = null;
   showPassword = false;
   googleCaptcha = null;
-  ethereumAccount = null;
+
+  utcFileName = 'Upload ETH UTC File ..';
 
   registerStep = 0;
 
@@ -34,7 +37,7 @@ export class RegisterComponent implements OnInit {
     private fb: FormBuilder,
     private gs: GlobalService,
     private router: Router,
-    private as: AuthService,
+    public as: AuthService,
     private api: ApiService
   ) {
     if (this.as.currentUserValue) {
@@ -83,7 +86,9 @@ export class RegisterComponent implements OnInit {
         ])
       ],
       retype_password: [data ? data.retype_password : null, Validators.compose([Validators.required])],
-      googleCaptchaResponse: [data ? data.googleCaptchaResponse : null, Validators.compose([Validators.required])]
+      googleCaptchaResponse: [data ? data.googleCaptchaResponse : null, Validators.compose([Validators.required])],
+      eth_account: [data ? data.eth_account : '', Validators.compose([Validators.required])],
+      eth_account_import: [data ? data.eth_account_import : null]
     },
     {
       validator: this.customValidator
@@ -103,6 +108,7 @@ export class RegisterComponent implements OnInit {
 
   resolved(captchaResponse, captchaRef) {
     this.gs.log(`[GOOGLE_CAPTCHA] ${captchaResponse}`);
+    this.registerErrorData = null;
     this.googleCaptcha = captchaRef;
     this.fg.value.googleCaptchaResponse = captchaResponse;
     if (captchaResponse) {
@@ -132,6 +138,10 @@ export class RegisterComponent implements OnInit {
             this.fg.controls.name.disable();
             this.initializeForm({ ...this.kpuRiUserData, ...this.fg.value });
           }
+        },
+        err => {
+          this.registerInfo = err.error.result.message || err.error.info;
+          this.googleCaptcha.reset();
         }
       );
     }
@@ -146,33 +156,47 @@ export class RegisterComponent implements OnInit {
   }
 
   onRegisterNext() {
-    if (this.registerStep === 2) {
-      this.registerWebAccount();
+    this.registerErrorData = null;
+    if (this.registerStep === 1) {
+      this.checkWebAccount({
+        nik: this.kpuRiUserData.nik
+      });
+    } else if (this.registerStep === 2) {
+      this.checkWebAccount({
+        phone: this.fg.value.phone,
+        email: this.fg.value.email
+      });
     } else if (this.registerStep === 3) {
       this.settingUpEthereumAccount();
-    } else {
-      this.registerStep += 1;
     }
   }
 
-  registerWebAccount() {
+  checkWebAccount(formData) {
+    this.registerInfo = 'Mengecek Data Akun ...';
+    this.api.postData('/check-account', formData, null).subscribe(
+      (res: any) => {
+        this.registerInfo = res.result.message;
+        this.registerStep += 1;
+      },
+      err => {
+        this.registerInfo = err.error.result.message || err.error.info;
+        this.registerErrorData = err.error.result || err.error.info;
+        if ('nik' in formData) {
+          this.kpuRiUserData = null;
+          this.fg.controls.nik.enable();
+          this.fg.controls.name.enable();
+          this.googleCaptcha.reset();
+        }
+      }
+    );
+  }
+
+  registerWebAccount(userData, ethData = null) {
+    this.gs.log('[REGISTER_WEB_ACCOUNT]', userData);
     this.submitted = true;
     this.registerInfo = 'Harap Menunggu ...';
-    if (this.fg.invalid) {
-      this.registerInfo = 'Periksa Dan Isi Kembali Data Anda!';
-      this.submitted = false;
-      return;
-    }
-    if (this.fg.valid && this.kpuRiUserData) {
-      console.log(this.fg.value);
-      console.log(this.kpuRiUserData);
-      this.api.postData('/register', {
-        nik: this.kpuRiUserData.nik,
-        name: this.kpuRiUserData.nama,
-        phone: this.fg.value.phone,
-        email: this.fg.value.email,
-        password: CryptoJS.SHA512(this.fg.value.password).toString()
-      }, null).subscribe(
+    if (this.kpuRiUserData) {
+      this.api.postData('/register', userData, null).subscribe(
         (res: any) => {
           localStorage.setItem(environment.tokenName, res.result.token);
           this.as.verify(localStorage.getItem(environment.tokenName)).subscribe(
@@ -182,14 +206,32 @@ export class RegisterComponent implements OnInit {
         },
         err => {
           this.registerInfo = err.error.result.message || err.error.info;
+          this.registerErrorData = err.error.result;
           this.submitted = false;
         }
       );
     }
   }
 
-  settingUpEthereumAccount() {
-    // TODO:
+  onFileSelected($event) {
+    const selectedFile = $event.target.files[0];
+    const reader = new FileReader();
+    reader.readAsText(selectedFile);
+    reader.onload = (e) => {
+      this.utcFileName = selectedFile.name;
+      this.fg.controls.eth_account_import.patchValue(e.target.result);
+    };
   }
 
+  settingUpEthereumAccount() {
+    this.gs.log('[REGISTER_ETH_ACCOUNT]');
+    //
+    this.registerWebAccount({
+      nik: this.kpuRiUserData.nik,
+      name: this.kpuRiUserData.nama,
+      phone: this.fg.value.phone,
+      email: this.fg.value.email,
+      password: CryptoJS.SHA512(this.fg.value.password).toString()
+    });
+  }
 }

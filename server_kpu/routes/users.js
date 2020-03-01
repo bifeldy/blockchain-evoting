@@ -12,7 +12,10 @@ router.get('/', function(req, res, next) {
   const decoded = jwt.JwtDecode(req, res, next);
   if (decoded == null || decoded == undefined) return;
   else if (decoded.user.role == 'admin') {
-    db.mySqlQuery(`SELECT * FROM users`, null, (error, results, fields) => {
+    db.mySqlQuery(`
+      SELECT id, nik, phone, email, role, name, pubKey, createdAt, updatedAt
+      FROM users
+    `, null, (error, results, fields) => {
       if (error) next(createError(500));
       else if (results.length <= 0) next(createError(404));
       else {
@@ -34,7 +37,11 @@ router.post('/profile', function(req, res, next) {
   const decoded = jwt.JwtDecode(req, res, next);
   if (decoded == null || decoded == undefined) return;
   else {
-    db.mySqlQuery(`SELECT * FROM users WHERE nik = '${decoded.user.nik}'`, null, (error, results, fields) => {
+    db.mySqlQuery(`
+      SELECT id, nik, phone, email, role, name, pubKey, createdAt
+      FROM users
+      WHERE nik = ?
+    `, [req.params.nik], (error, results, fields) => {
       if (error) next(createError(500));
       else if (results.length <= 0) next(createError(404));
       else {
@@ -70,19 +77,24 @@ router.post('/import', function(req, res, next) {
   }
 });
 
-// GET `/api/user/:nik`
+// GET `/api/user/:id`
 router.get('/:id', function(req, res, next) {
   let decoded = req.headers['authorization'] || req.headers['x-access-token'] || req.body.token || '';
   if (decoded) {
     decoded = jwt.JwtDecode(req, res, next);
   }
   if (decoded != null) {
-    db.mySqlQuery(`SELECT * FROM users WHERE id = '${req.params.id}'`, null, (error, results, fields) => {
+    db.mySqlQuery(`
+      SELECT id, role, name, pubKey, createdAt
+      FROM users
+      WHERE id = ?
+    `, [req.params.id], (error, results, fields) => {
       if (error) next(createError(500));
       else if (results.length <= 0) next(createError(404));
       else {
         if (!decoded || (decoded.user.id != req.params.id && decoded.user.role != 'admin')) {
           if ('nik' in results[0]) delete results[0].nik;
+          if ('email' in results[0]) delete results[0].email;
           if ('telepon' in results[0]) delete results[0].telepon;
         }
         if ('password' in results[0]) delete results[0].password;

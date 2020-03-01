@@ -46,12 +46,12 @@
       </form>
     </div>
     <hr class="style1 d-md-none" />
-    <a *ngIf="this.as.currentUserValue != null && this.as.currentUserValue != undefined; then sudahLogin; else belumLogin;"></a>
+    <a *ngIf="currentUser; then sudahLogin; else belumLogin;"></a>
     <ng-template #sudahLogin>
       <a routerLink="/home" routerLinkActive="bifeldy-active">
         <i class="fa fa-fw fa-user mr-2"></i>
         <div class="visibleMenu">
-          {{ this.as.currentUserValue.name }}
+          {{ currentUser.name.slice(0, 20) }}{{ currentUser.name.length > 20 ? '...' : '' }}
         </div>
       </a>
       <a routerLink="/logout" routerLinkActive="bifeldy-active" (click)="this.as.logout();">
@@ -79,8 +79,8 @@
       <div class="visibleMenu">Network Status</div>
     </a>
     <hr class="style1" />
-    <a *ngIf="this.as.currentUserValue != null && this.as.currentUserValue != undefined && this.as.currentUserValue.role == 'admin' then isAdmin;"></a>
-    <ng-template #isAdmin>
+    <a *ngIf="isAdmin; then loggedInAsAdmin;"></a>
+    <ng-template #loggedInAsAdmin>
       <a routerLink="/new" routerLinkActive="bifeldy-active">
         <i class="fa fa-fw fa-plus mr-2"></i>
         <div class="visibleMenu">Buat Voting Baru</div>
@@ -107,7 +107,7 @@
     </a>
     <a href="https://github.com/bifeldy/blockchain-evoting" target="_blank" rel="noreferrer">
       <i class="fa fa-fw fa-code-fork mr-2"></i>
-      <div class="visibleMenu">SHA :: {{ githubLastCommit ? githubLastCommit.sha.slice(0, 12) : '' }}...</div>
+      <div class="visibleMenu">GitHub :: {{ githubLastCommit ? githubLastCommit.sha.slice(0, 8) : '' }}...</div>
     </a>
   </div>
 

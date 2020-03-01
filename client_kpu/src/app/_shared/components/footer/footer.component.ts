@@ -16,11 +16,7 @@ export class FooterComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.api.getData('https://api.github.com/repos/Bifeldy/blockchain-evoting/commits').subscribe(
-      res => {
-        this.githubLastCommit = res[0];
-      }
-    );
+    this.api.getData('https://api.github.com/repos/Bifeldy/blockchain-evoting/commits').subscribe(res => this.githubLastCommit = res[0]);
   }
 
 }

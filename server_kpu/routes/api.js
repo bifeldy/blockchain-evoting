@@ -32,7 +32,7 @@ function userCheckAccountModule(newUserData, res, next, registerMode) {
   let iEmail = 0;
   if ('nik' in newUserData) {
     db.mySqlQuery(`
-      SELECT id, nik, phone, email,
+      SELECT id, nik, phone, email
       FROM users
       WHERE nik = ?
     `, [newUserData.nik], (error, results, fields) => {
@@ -42,7 +42,7 @@ function userCheckAccountModule(newUserData, res, next, registerMode) {
   }
   if ('phone' in newUserData) {
     db.mySqlQuery(`
-      SELECT id, nik, phone, email,
+      SELECT id, nik, phone, email
       FROM users
       WHERE phone = ?
     `, [newUserData.phone], (error, results, fields) => {
@@ -52,7 +52,7 @@ function userCheckAccountModule(newUserData, res, next, registerMode) {
   }
   if ('email' in newUserData) {
     db.mySqlQuery(`
-      SELECT id, nik, phone, email,
+      SELECT id, nik, phone, email
       FROM users
       WHERE email = ?
     `, [newUserData.email], (error, results, fields) => {
@@ -61,21 +61,29 @@ function userCheckAccountModule(newUserData, res, next, registerMode) {
     });
   }
   return setTimeout(() => {
-    const result = {};
-    if(iNik > 0) result.nik = 'Nik Sudah Terpakai';
-    if(iPhone > 0) result.phone = 'Nomor Telepon Sudah Terpakai';
-    if(iEmail > 0) result.email = 'Email Sudah Terpakai';
+    const reg = {};
+    if(iNik > 0) reg.nik = 'Nik Sudah Terpakai';
+    if(iPhone > 0) reg.phone = 'Nomor Telepon Sudah Terpakai';
+    if(iEmail > 0) reg.email = 'Email Sudah Terpakai';
     const index = Math.max(iNik, iPhone, iEmail);
     if(index > 0) {
       return res.status(400).json({
         info: '🙄 400 - Pendaftaran Gagal! 😪',
-        result
+        result: {
+          message: 'Data Akun Sudah Digunakan!',
+          nik: reg.nik,
+          phone: reg.phone,
+          email: reg.email
+        }
       });
     }
     else {
       if (registerMode) return registerMode();
       return res.status(200).json({
         info: '😉 200 - Pendaftaran Dapat Dilakukan! 🤔',
+        result: {
+          message: 'Pendaftaran Dapat Dilanjutkan!'
+        }
       });
     }
   }, 500);

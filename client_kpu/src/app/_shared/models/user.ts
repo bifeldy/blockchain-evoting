@@ -1,17 +1,14 @@
+import { Role } from './role';
+
 interface User {
   id: number;
-  userName: string;
-  telepon: string;
+  nik: number;
+  phone: string;
   email: string;
-  namaLengkap: string;
-  alamat: string;
-  tanggalLahir: Date;
-  foto: string;
+  role: Role;
+  name: string;
+  pubKey?: string;
   createdAt: number;
-  updatedAt: number;
-  password?: string;
-  pubicKey?: string;
-  privateKey?: string;
 }
 
 export default User;

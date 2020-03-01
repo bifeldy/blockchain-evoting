@@ -1,6 +1,6 @@
 <div class="center-screen" [ngStyle]="{
   'background-image': 'url(' + bgLoginImg + ')'
-}">
+}" *ngIf="!this.as.currentUserValue">
   <div class="container py-3">
     <div class="row justify-content-center no-gutters">
       <div class="col-lg-5 col-md-3" [ngStyle]="{
@@ -64,7 +64,7 @@
                       </button>
                     </div>
                     <div class="col-7 pl-0">
-                      <button class="btn btn-link btn-block" routerLink="/register" [disabled]="submitted">Belum Punya Akun ?</button>
+                      <button class="btn btn-link btn-block text-decoration-none" type="button" routerLink="/register" [disabled]="submitted">Belum Punya Akun ?</button>
                     </div>
                   </div>
                 </div>
