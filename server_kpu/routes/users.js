@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
   const decoded = jwt.JwtDecode(req, res, next);
   if (decoded == null || decoded == undefined) return;
   else if (decoded.user.role == 'admin') {
-    db.mySqlQuery(`SELECT * FROM users`, null, (error, results) => {
+    db.mySqlQuery(`SELECT * FROM users`, null, (error, results, fields) => {
       if (error) next(createError(500));
       else if (results.length <= 0) next(createError(404));
       else {
@@ -34,7 +34,7 @@ router.post('/profile', function(req, res, next) {
   const decoded = jwt.JwtDecode(req, res, next);
   if (decoded == null || decoded == undefined) return;
   else {
-    db.mySqlQuery(`SELECT * FROM users WHERE nik = '${decoded.user.nik}'`, null, (error, results) => {
+    db.mySqlQuery(`SELECT * FROM users WHERE nik = '${decoded.user.nik}'`, null, (error, results, fields) => {
       if (error) next(createError(500));
       else if (results.length <= 0) next(createError(404));
       else {
@@ -77,7 +77,7 @@ router.get('/:id', function(req, res, next) {
     decoded = jwt.JwtDecode(req, res, next);
   }
   if (decoded != null) {
-    db.mySqlQuery(`SELECT * FROM users WHERE id = '${req.params.id}'`, null, (error, results) => {
+    db.mySqlQuery(`SELECT * FROM users WHERE id = '${req.params.id}'`, null, (error, results, fields) => {
       if (error) next(createError(500));
       else if (results.length <= 0) next(createError(404));
       else {

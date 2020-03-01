@@ -24,6 +24,9 @@ var db = null;
       console.log('[MySQL_CONNECTION-SUCCESS] \x1b[95m%s\x1b[0m - \x1b[35m%s\x1b[0m', cfg.database, `${cfg.user}@${cfg.host}:${cfg.port}`);
     }
   });
+  db.on('error', (error) => {
+    console.log(`[MySQL_ERROR-${error.code}]` + ' \x1b[91m%s\x1b[0m', error.sqlMessage);
+  });
 // });
 
 function escape(data) {
@@ -38,7 +41,7 @@ function mySqlQuery(sqlQuery, sqlQueryData, callback) {
     }
     else {
       console.log('[MySQL_QUERY] \x1b[95m%s\x1b[0m - \x1b[35m%s\x1b[0m', sqlQuery.replace(/\n/g, " ").replace(/ +(?= )/g,'').trim(), JSON.stringify(sqlQueryData));
-      callback(error, results);
+      callback(error, results, fields);
     }
   });
 }

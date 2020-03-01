@@ -84,7 +84,7 @@ function web3ChangeProvider(webSocket = defaultWs) {
 
 function web3NewContractInstance(abi, contractAddress, version = 1) {
   ballotInstance = new web3.eth.Contract(abi, contractAddress);
-  console.log('[ETH-CONTRACT_INSTANCE] \x1b[95m%s\x1b[0m - v%s', contractAddress, version + 1);
+  console.log('[ETH-CONTRACT_INSTANCE] \x1b[95m%s\x1b[0m - v%s', contractAddress, version);
 }
 
 /** Promises */

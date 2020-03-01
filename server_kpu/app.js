@@ -36,14 +36,18 @@ const eth = require('./helpers/eth');
 eth.gethInitWeb3();
 
 const db = require('./helpers/db');
-db.mySqlQuery(`SELECT * FROM contracts`, null, (error, results) => {
+db.mySqlQuery(`
+    SELECT id, active, address, abi, bytecode, createdAt, updatedAt
+    FROM contracts
+    WHERE active = 1
+  `, null, (error, results, fields) => {
   if (error) process.exit();
   else if (results.length > 0) {
     const idx = results.findIndex(r => r.active == 1);
     if (idx >= 0) {
       const abi = JSON.parse(results[idx].abi);
       const address = results[idx].address;
-      eth.web3NewContractInstance(abi, address, idx);
+      eth.web3NewContractInstance(abi, address, results[idx].id);
     }
     else eth.web3DeployContract();
   }
