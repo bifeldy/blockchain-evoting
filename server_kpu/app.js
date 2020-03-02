@@ -28,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // router controller
 const indexRouter = require('./routes/index');
 const apiRouter = require('./routes/api');
+const kpuRouter = require('./routes/kpu');
 const usersRouter = require('./routes/users');
 const electionRouter = require('./routes/election');
 
@@ -57,6 +58,7 @@ db.mySqlQuery(`
 // routing
 app.use('/', indexRouter);
 app.use('/api', apiRouter);
+app.use('/api/kpu', kpuRouter);
 app.use('/api/user', usersRouter);
 app.use('/api/election', electionRouter);
 
