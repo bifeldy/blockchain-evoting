@@ -22,7 +22,7 @@ export class RegisterComponent implements OnInit {
   registerImg = 'https://via.placeholder.com/462x532.png';
   bgRegisterImg = '/assets/img/bg-login.svg';
 
-  registerInfo = 'Ayo bergabung dengan komunitas kami~';
+  registerInfo = 'Ayo bergabung dengan kami~';
   registerErrorData = null;
 
   kpuRiUserData = null;
@@ -113,6 +113,9 @@ export class RegisterComponent implements OnInit {
     this.fg.value.googleCaptchaResponse = captchaResponse;
     if (captchaResponse) {
       this.registerInfo = 'Sedang Mengambil Data ..';
+      const registerTimedOut = setTimeout(() => {
+        this.registerInfo = 'Server Tidak Merespon, Silahkan Coba Lagi Nanti ..';
+      }, 60 * 1000);
       this.api.postData('/kpu/cek-nik', {
         nik: this.fg.value.nik,
         name: this.fg.value.name,
@@ -139,10 +142,12 @@ export class RegisterComponent implements OnInit {
             this.fg.controls.name.disable();
             this.initializeForm({ ...this.kpuRiUserData, ...this.fg.value });
           }
+          clearTimeout(registerTimedOut);
         },
         err => {
           this.registerInfo = err.error.result.message || err.result.message || err.result.data.pesan;
           this.googleCaptcha.reset();
+          clearTimeout(registerTimedOut);
         }
       );
     }
