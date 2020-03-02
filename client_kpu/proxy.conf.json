@@ -1,7 +1,0 @@
-{  
-  "/index.php/*": {  
-    "target": "https://lindungihakpilihmu.kpu.go.id/",
-    "secure": true,
-    "logLevel": "debug"
-  }
-}
