@@ -1,5 +1,5 @@
 <!-- Header -->
-<header class="CormorantGaramond">
+<header class="CormorantGaramond" (window:resize)="onWindowResize($event)">
 
   <!-- Topnav Menu Atas, Mobile/Tablets -->
   <nav class="navbar fixed-top shadow">
@@ -51,7 +51,7 @@
       <a routerLink="/home" routerLinkActive="bifeldy-active">
         <i class="fa fa-fw fa-user mr-2"></i>
         <div class="visibleMenu">
-          {{ currentUser.name.slice(0, 20) }}{{ currentUser.name.length > 20 ? '...' : '' }}
+          {{ slicedUserName }}
         </div>
       </a>
       <a routerLink="/logout" routerLinkActive="bifeldy-active" (click)="this.as.logout();">
@@ -107,7 +107,9 @@
     </a>
     <a href="https://github.com/bifeldy/blockchain-evoting" target="_blank" rel="noreferrer">
       <i class="fa fa-fw fa-code-fork mr-2"></i>
-      <div class="visibleMenu">GitHub :: {{ githubLastCommit ? githubLastCommit.sha.slice(0, 8) : '' }}...</div>
+      <div class="visibleMenu">
+        GitHub :: {{ slicedGithubSha }}
+      </div>
     </a>
   </div>
 

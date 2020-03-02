@@ -145,13 +145,15 @@
               </app-fade>
               <div class="form-group row" *ngIf="registerStep == 1">
                 <div class="col-md-8 offset-md-4">
-                  <re-captcha #captchaRef formControlName="googleCaptchaResponse" siteKey="6Ldc14kUAAAAABPg_XKGIQQndzllpW5l6FNFYVC0"
-                    (resolved)="resolved($event, captchaRef)" ></re-captcha>
+                  <!-- <re-captcha #captchaRef formControlName="googleCaptchaResponse" siteKey="6Ldc14kUAAAAABPg_XKGIQQndzllpW5l6FNFYVC0"
+                    (resolved)="resolved($event, captchaRef)"></re-captcha> -->
+                  <re-captcha #captchaRef formControlName="googleCaptchaResponse" siteKey="6Ld4Bt4UAAAAAKJQ_jfqtWdsq9BuARLHag2DBvqK"
+                    (resolved)="resolved($event, captchaRef)"></re-captcha>
                 </div>
               </div>
               <div class="form-group row mb-0">
                 <div class="col-md-4 text-md-right">
-                  <button class="btn btn-link btn-block text-decoration-none" type="button" routerLink="/login" [disabled]="submitted">Sudah Punya Akun ?</button>
+                  <button class="btn btn-link btn-block text-decoration-none" type="button" routerLink="/login" [disabled]="submitted">Sudah Punya Akun?</button>
                 </div>
                 <div class="col-md-8">
                   <div class="row">
@@ -182,7 +184,7 @@
                           ) ||
                           submitted
                         ">
-                        {{ registerStep < 3 ? 'Selanjutnya' : 'Selesai' }}
+                        {{ registerStep < 3 ? 'Next' : 'Finish' }}
                         <i class="fa fa-fw fa-arrow-right ml-2" *ngIf="registerStep < 3"></i>
                         <i class="fa fa-fw fa-check ml-2" *ngIf="registerStep >= 3"></i>
                       </button>

@@ -4,10 +4,9 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'localhost',
-  apiUrl: 'http://127.0.0.1:1234/api',
   tokenName: 'bifeldy_token',
   sessionName: 'bifeldy_session',
+  apiUrl: 'http://127.0.0.1:1234/api',
   sniffCors: 'https://cors-anywhere.herokuapp.com/'
 };
 

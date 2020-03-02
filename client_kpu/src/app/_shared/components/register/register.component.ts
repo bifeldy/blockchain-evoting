@@ -113,26 +113,27 @@ export class RegisterComponent implements OnInit {
     this.fg.value.googleCaptchaResponse = captchaResponse;
     if (captchaResponse) {
       this.registerInfo = 'Sedang Mengambil Data ..';
-      this.api.postData('https://lindungihakpilihmu.kpu.go.id/index.php/dpt/proses_ceknik', {
+      this.api.postData('/kpu/cek-nik', {
         nik: this.fg.value.nik,
-        nama: this.fg.value.name,
-        respon: this.fg.value.googleCaptchaResponse
-      }, true).subscribe(
+        name: this.fg.value.name,
+        'g-recaptcha-response': this.fg.value.googleCaptchaResponse
+      }, null).subscribe(
         res => {
           this.gs.log('[KPU_RI-CEK_NIK]', res);
-          if (res.message === 'failed') {
-            this.registerInfo = res.data;
+          if (res.result.message === 'failed') {
+            this.registerInfo = res.result.data.pesan;
             this.fg.value.googleCaptchaResponse = null;
             this.kpuRiUserData = null;
             this.googleCaptcha.reset();
-          } else if (res.message === 'success') {
-            this.kpuRiUserData = res.data;
+          } else if (res.result.message === 'success') {
+            this.kpuRiUserData = { ...res.result.data, nik: this.fg.value.nik};
             Object.keys(this.kpuRiUserData).forEach((key, idx) => {
               this.kpuRiUserData[key] = this.kpuRiUserData[key].toLowerCase().replace(/\b[a-zA-Z]/g, (v) => v.toUpperCase());
             });
             this.registerInfo = `
-              ${res.data.nama} - ${res.data.jenis_kelamin} - ${res.data.tempat_lahir} - ${res.data.nik} -
-              ${res.data.namaKelurahan} - ${res.data.namaKecamatan} - ${res.data.namaKabKota} - ${res.data.namaPropinsi}
+              ${this.kpuRiUserData.nama} - ${this.kpuRiUserData.jenis_kelamin} - ${this.kpuRiUserData.tempat_lahir} -
+              ${this.kpuRiUserData.nik} - ${this.kpuRiUserData.namaKel} - ${this.kpuRiUserData.namaKec} -
+              ${this.kpuRiUserData.namaKabko} - ${this.kpuRiUserData.namaPropinsi}
             `.replace(/\n/g, ' ').replace(/ +(?= )/g, '').trim();
             this.fg.controls.nik.disable();
             this.fg.controls.name.disable();
@@ -140,7 +141,7 @@ export class RegisterComponent implements OnInit {
           }
         },
         err => {
-          this.registerInfo = err.error.result.message || err.error.info;
+          this.registerInfo = err.error.result.message || err.result.message || err.result.data.pesan;
           this.googleCaptcha.reset();
         }
       );
@@ -218,8 +219,9 @@ export class RegisterComponent implements OnInit {
     const reader = new FileReader();
     reader.readAsText(selectedFile);
     reader.onload = (e) => {
+      console.log(e);
       this.utcFileName = selectedFile.name;
-      this.fg.controls.eth_account_import.patchValue(e.target.result);
+      // this.fg.controls.eth_account_import.patchValue(e.target.result);
     };
   }
 
