@@ -161,8 +161,8 @@ function web3GetGasPriceMethodContract(functionName, myContractFunction, callbac
 
 /** One-Time Run Only */
 
-function web3DeployContract(abi = truffleCompiled.abi, bytecode = truffleCompiled.bytecode, deployer = web3.eth.defaultAccount) {
-  web3SetAccount(deployer);
+function web3DeployContract(abi = truffleCompiled.abi, bytecode = truffleCompiled.bytecode) {
+  web3SetAccount(defaultAccount);
   web3UnlockAccount(defaultPassword).then(() => {
     web3MiningStart();
     web3GetGasPriceNetwork((networkGas) => {
@@ -173,7 +173,7 @@ function web3DeployContract(abi = truffleCompiled.abi, bytecode = truffleCompile
           arguments: []
         })
         .send({
-          from: deployer,
+          from: defaultAccount,
           gasPrice: estimatedGas.toString(),
           gas: maxGasLimit
         })
@@ -203,18 +203,36 @@ function web3DeployContract(abi = truffleCompiled.abi, bytecode = truffleCompile
 /** Miscellaneous */
 
 function web3CreateAccount(password, callback) {
-  web3.eth.personal.newAccount(password).then((pubKey) => {
+  console.log(password);
+  return web3.eth.personal.newAccount(password).then((pubKey) => {
     console.log('[ETH-CREATE_ACCOUNT] \x1b[95m%s\x1b[0m', pubKey);
     callback(pubKey);
-  }).catch((error) => {
-    console.log('[ETH-CREATE_ACCOUNT] \x1b[91m%s\x1b[0m', JSON.stringify(error));
   });
 }
 
-function web3ImportAccount(password, utcFileJsonKeystoreArray, callback) {
-  web3.eth.accounts.wallet.decrypt([utcFileJsonKeystoreArray], password);
-  console.log('[ETH-IMPORT_ACCOUNT] \x1b[95m%s\x1b[0m', utcFileJsonKeystore.address);
-  callback(utcFileJsonKeystore.address);
+function web3AddWallet(pubKey, privKey, password, callback) {
+  console.log('[ETH-IMPORT_ACCOUNT_PUB] \x1b[95m%s\x1b[0m', pubKey);
+  console.log('[ETH-IMPORT_ACCOUNT_PRIV] \x1b[95m%s\x1b[0m', privKey);
+  let slicedPrivKey = privKey;
+  if(slicedPrivKey.startsWith('0x')) {
+    slicedPrivKey = slicedPrivKey.slice(2, slicedPrivKey.length);
+  }
+  console.log(slicedPrivKey);
+  web3.eth.personal.importRawKey(slicedPrivKey, password).then((address => {
+    callback(null, address);
+  })).catch(error => {
+    callback(error, null);
+  });
+}
+
+function web3ImportAccountFromUtc(password, utcFileJsonKeystoreObject, callback) {
+  const account = web3.eth.accounts.decrypt(utcFileJsonKeystoreObject, password);
+  web3AddWallet(account.address, account.privateKey, password, callback);
+}
+
+function web3ImportAccountFromPrivKey(password, privateKey, callback) {
+  const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+  web3AddWallet(account.address, account.privateKey, password, callback);
 }
 
 function web3ExportAccount(pubKey, callback) {
@@ -393,6 +411,6 @@ module.exports = {
   web3NewContractInstance, web3UnlockAccount, web3LockAccount, web3MiningStart,
   web3MiningStop, web3GetGasPriceNetwork, web3GetGasPriceDeployContract,
   web3GetGasPriceMethodContract, web3DeployContract, web3CreateAccount,
-  web3ImportAccount, web3ExportAccount, web3CreateElection, web3AddCandidate,
+  web3ImportAccountFromUtc, web3ImportAccountFromPrivKey, web3ExportAccount, web3CreateElection, web3AddCandidate,
   web3AddParticipant, web3EndElection, web3Vote, web3ShowMyVote, web3ShowResultCount
 };

@@ -3,6 +3,7 @@ const createError = require('http-errors');
 
 const jwt = require('../helpers/jwt');
 const db = require('../helpers/db');
+const eth = require('../helpers/eth');
 
 const router = express.Router();
 
@@ -19,7 +20,7 @@ function userLoginModule(req, res, next) {
       return res.status(200).json({
         info: '😚 Berhasil Login. Yeay! 🤩',
         result: {
-          token: jwt.JwtEncode(results[0], ('remember_me' in req.body && JSON.parse(req.body.remember_me) == true))
+          token: jwt.JwtEncode(results[0], ('rememberMe' in req.body && JSON.parse(req.body.rememberMe) == true))
         }
       });
     }
@@ -102,7 +103,7 @@ router.post('/login', function(req, res, next) {
   return res.status(400).json({
     info: '🙄 400 - Pendaftaran Gagal! 😪',
     result: {
-      message: 'Invalid or incomplete data'
+      message: 'Data tidak valid atau tidak lengkap'
     }
   });
 });
@@ -112,7 +113,7 @@ router.post('/verify', function(req, res, next) {
   const decoded = jwt.JwtDecode(req, res, next);
   if (decoded == null || decoded == undefined) return;
   return res.status(200).json({
-    info: '😍 Token Selesai Di Verifikasi! UwUu~ 🥰',
+    info: '😍 200 - Token Selesai Di Verifikasi! UwUu~ 🥰',
     result: decoded
   });
 });
@@ -139,7 +140,7 @@ router.post('/check-account', function(req, res, next) {
   return res.status(400).json({
     info: '🙄 400 - Pendaftaran Gagal! 😪',
     result: {
-      message: 'Invalid or incomplete data'
+      message: 'Data tidak valid atau tidak lengkap'
     }
   });
 });
@@ -152,6 +153,7 @@ router.post('/register', function(req, res, next) {
     'name' in newUserData &&
     'email' in newUserData &&
     'phone' in newUserData &&
+    'pubKey' in newUserData &&
     'password' in newUserData
   ) {
     newUserData.nik = newUserData.nik.replace(/[^0-9]+/g, '');
@@ -163,6 +165,7 @@ router.post('/register', function(req, res, next) {
       newUserData.phone != null &&  newUserData.phone != '' &&  newUserData.phone != undefined &&
       newUserData.email != null &&  newUserData.email != '' &&  newUserData.email != undefined &&
       newUserData.name != null &&  newUserData.name != '' &&  newUserData.name != undefined &&
+      newUserData.pubKey != null &&  newUserData.pubKey != '' &&  newUserData.pubKey != undefined &&
       newUserData.password != null &&  newUserData.password != '' &&  newUserData.password != undefined
     ) {
       return userCheckAccountModule(newUserData, res, next, () => {
@@ -170,8 +173,12 @@ router.post('/register', function(req, res, next) {
           newUserData.nik = parseInt(newUserData.nik);
           newUserData.phone = newUserData.phone.toLowerCase();
           newUserData.email = newUserData.email.toLowerCase();
+          newUserData.pubKey = newUserData.pubKey.toLowerCase();
           newUserData.password = newUserData.password.toLowerCase();
-          return db.mySqlQuery('INSERT INTO users SET ?', newUserData, (error, results, fields) => {
+          return db.mySqlQuery(`
+            INSERT INTO users
+            SET ?`
+          , newUserData, (error, results, fields) => {
             if (error) return next(createError(500));
             else {
               return userLoginModule({
@@ -195,7 +202,85 @@ router.post('/register', function(req, res, next) {
   return res.status(400).json({
     info: '🙄 400 - Pendaftaran Gagal! 😪',
     result: {
-      message: 'Invalid or incomplete data'
+      message: 'Data tidak valid atau tidak lengkap'
+    }
+  });
+});
+
+// POST `/api/new-eth-account`
+router.post('/new-eth-account', function(req, res, next) {
+  const newUserData = req.body;
+  if (
+    'password' in newUserData &&
+    newUserData.password != null && 
+    newUserData.password != '' && 
+    newUserData.password != undefined
+  ) {
+    return eth.web3CreateAccount(newUserData.password, (pubKey) => {
+      res.status(200).json({
+        info: '😍 200 - Berhasil Membuat Akun Ethereum! 🥰',
+        result: {
+          pubKey
+        }
+      });
+    });
+  }
+  return res.status(400).json({
+    info: '🙄 400 - Pendaftaran Gagal! 😪',
+    result: {
+      message: 'Data tidak valid atau tidak lengkap'
+    }
+  });
+});
+
+// POST `/api/import-eth-account`
+router.post('/import-eth-account', function(req, res, next) {
+  const newUserData = req.body;
+  if (
+    (
+      'wallet' in newUserData &&
+      newUserData.wallet != null &&
+      newUserData.wallet != '' &&
+      newUserData.wallet != undefined
+    ) && (
+      'secretKey' in newUserData &&
+      newUserData.secretKey != null &&
+      newUserData.secretKey != '' &&
+      newUserData.secretKey != undefined
+    ) && (
+      'password' in newUserData &&
+      newUserData.password != null &&
+      newUserData.password != '' &&
+      newUserData.password != undefined
+    )
+  ) {
+    const callbackImportEthAccount = (error, pubKey) => {
+      if (error) {
+        return res.status(400).json({
+          info: '🙄 400 - Data File Tidak Valid! 😪',
+          result: {
+            message: error.message
+          }
+        }); 
+      }
+      return res.status(200).json({
+        info: '😍 200 - Berhasil Import Akun Ethereum! 🥰',
+        result: {
+          pubKey
+        }
+      });
+    }
+    if (!newUserData.wallet) {
+      return eth.web3ImportAccountFromPrivKey(newUserData.password, newUserData.secretKey, callbackImportEthAccount);
+    }
+    else {
+      return eth.web3ImportAccountFromUtc(newUserData.password, JSON.parse(newUserData.secretKey), callbackImportEthAccount);
+    }
+  }
+  return res.status(400).json({
+    info: '🙄 400 - Pendaftaran Gagal! 😪',
+    result: {
+      message: 'Data tidak valid atau tidak lengkap'
     }
   });
 });
