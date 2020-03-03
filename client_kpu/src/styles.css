@@ -1,4 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
+html,
+body {
+  font-family: "Open Sans", sans-serif !important;
+  color: #353535;
+  font-size: 87.5%;
+}
 
 /* 
     CSS Untuk Keseluruhan Halaman Website
@@ -22,8 +28,13 @@
 }
 
 .bifeldy {
-  padding-top: 58px;
+  padding-top: 53px;
   padding-bottom: 18px;
+}
+
+.sticky-top {
+  top: 53px;
+  z-index: 1;
 }
 
 /*******************************************************************************************************/
@@ -336,7 +347,7 @@ body {
 
 .navbar {
   background-image: linear-gradient(90deg, #4b30b8 0, #4b30b8);
-  z-index: 3;
+  z-index: 4;
 }
 
 img {
@@ -349,7 +360,7 @@ footer {
   padding: 0px;
   margin: 0px;
   background-color: #2e51a2;
-  z-index: 3;
+  z-index: 4;
   width: 100%;
 }
 
@@ -400,7 +411,7 @@ footer {
   background-size: 50%;
   overflow-x: hidden;
   overflow-y: auto;
-  z-index: 2;
+  z-index: 3;
 }
 
 .bifeldy-navbar::-webkit-scrollbar {
@@ -602,7 +613,7 @@ footer {
   margin: 0;
   transition: opacity .5s, visibility .5s;
   background-color: rgba(0, 0, 0, 0.75);
-  z-index: 1;
+  z-index: 2;
   padding: 1.5rem;
 }
 
@@ -672,6 +683,10 @@ footer {
   font-size: 24px;
 }
 
+.bg-default {
+  background-color: #efefef;
+}
+
 /* Multi Carousel */
 
 .carousel-cell {
@@ -706,6 +721,14 @@ footer {
   .center-screen {
     height: calc(100vh - 76px);
   }
+}
+
+.border-bottom-dotted {
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+  border-style: dotted;
+  border-color: #d2476e;
 }
 
 /* Hosting Gretongan */

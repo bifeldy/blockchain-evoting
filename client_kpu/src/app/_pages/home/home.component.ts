@@ -7,6 +7,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
+  banner = [
+    { banner_image: 'http://via.placeholder.com/1280x256' },
+    { banner_image: 'http://via.placeholder.com/1280x256' }
+  ];
+
   constructor() { }
 
   ngOnInit() {

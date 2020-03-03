@@ -35,7 +35,7 @@
     <div class="clearfix d-none d-md-block"> &nbsp; </div>
     <div class="clearfix d-none d-md-block"> &nbsp; </div>
     <div class="clearfix d-md-none"> &nbsp; </div>
-    <div class="clearfix d-md-none"> &nbsp; </div>
+    <div class="clearfix"> &nbsp; </div>
     <div class="clearfix"> &nbsp; </div>
     <div class="d-md-none">
       <form class="bifeldy-search-container" action="/search">
@@ -48,7 +48,7 @@
     <hr class="style1 d-md-none" />
     <a *ngIf="currentUser; then sudahLogin; else belumLogin;"></a>
     <ng-template #sudahLogin>
-      <a routerLink="/home" routerLinkActive="bifeldy-active">
+      <a routerLink="/profile/{{currentUser.id}}" routerLinkActive="bifeldy-active">
         <i class="fa fa-fw fa-user mr-2"></i>
         <div class="visibleMenu">
           {{ slicedUserName }}
@@ -70,9 +70,9 @@
       </a>
     </ng-template>
     <hr class="style1" />
-    <a routerLink="/all" routerLinkActive="bifeldy-active">
-      <i class="fa fa-fw fa-list mr-2"></i>
-      <div class="visibleMenu">Semua Voting Aktif</div>
+    <a routerLink="/home" routerLinkActive="bifeldy-active">
+      <i class="fa fa-fw fa-home mr-2"></i>
+      <div class="visibleMenu">Home Page</div>
     </a>
     <a routerLink="/status" routerLinkActive="bifeldy-active">
       <i class="fa fa-fw fa-wifi mr-2"></i>
