@@ -57,17 +57,23 @@ export class HeaderComponent implements OnInit {
       if (this.currentUser) {
         this.slicedUserName = this.currentUser.name.slice(0, 30);
       }
+      if (this.githubLastCommit.sha.length > 20) {
+        this.slicedGithubSha = this.slicedGithubSha.trim() + '...';
+      }
+      if (this.currentUser && this.currentUser.name.length > 30) {
+        this.slicedUserName = this.slicedUserName.trim() + '...';
+      }
     } else {
       this.slicedGithubSha = this.githubLastCommit.sha.slice(0, 8);
       if (this.currentUser) {
         this.slicedUserName = this.currentUser.name.slice(0, 15);
       }
-    }
-    if (this.githubLastCommit.sha.length > 22) {
-      this.slicedGithubSha = this.slicedGithubSha.trim() + '...';
-    }
-    if (this.currentUser && this.currentUser.name.length > 22) {
-      this.slicedUserName = this.slicedUserName.trim() + '...';
+      if (this.githubLastCommit.sha.length > 8) {
+        this.slicedGithubSha = this.slicedGithubSha.trim() + '...';
+      }
+      if (this.currentUser && this.currentUser.name.length > 15) {
+        this.slicedUserName = this.slicedUserName.trim() + '...';
+      }
     }
   }
 
