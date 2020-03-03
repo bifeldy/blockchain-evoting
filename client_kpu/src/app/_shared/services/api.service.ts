@@ -25,11 +25,11 @@ export class ApiService {
     );
   }
 
-  postData(path: string, model = {}, multipart = false): Observable<any> {
+  postData(path: string, model = {}, multipart = false, timedOut = 3000): Observable<any> {
     this.gs.log('[API_POST]', path);
     const options = {};
     let body = model;
-    let timer = 3000;
+    let timer = timedOut;
     if (multipart) {
       const headers = new HttpHeaders().append('Content-Type', 'multipart/form-data');
       Object.assign(options, { headers });
