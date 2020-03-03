@@ -29,7 +29,10 @@ export class RegisterComponent implements OnInit {
   showPassword = false;
   googleCaptcha = null;
 
-  utcFileName = 'Upload ETH UTC File ..';
+  secretKeyFileName = 'Upload ETH UTC File ..';
+  secretKeyFileContent = 'Or Paste Ethereum Private Key String Here ..';
+
+  ethereumAddressCreatedImported = null;
 
   registerStep = 0;
 
@@ -197,10 +200,16 @@ export class RegisterComponent implements OnInit {
     );
   }
 
-  registerWebAccount(userData, ethData = null) {
+  registerWebAccount() {
+    const userData = {
+      nik: this.kpuRiUserData.nik,
+      name: this.kpuRiUserData.nama,
+      phone: this.fg.value.phone,
+      email: this.fg.value.email,
+      pubKey: this.ethereumAddressCreatedImported,
+      password: CryptoJS.SHA512(this.fg.value.password).toString()
+    };
     this.gs.log('[REGISTER_WEB_ACCOUNT]', userData);
-    this.submitted = true;
-    this.registerInfo = 'Harap Menunggu ...';
     if (this.kpuRiUserData) {
       this.api.postData('/register', userData, null).subscribe(
         (res: any) => {
@@ -220,25 +229,65 @@ export class RegisterComponent implements OnInit {
   }
 
   onFileSelected($event) {
-    const selectedFile = $event.target.files[0];
-    const reader = new FileReader();
-    reader.readAsText(selectedFile);
-    reader.onload = (e) => {
-      console.log(e);
-      this.utcFileName = selectedFile.name;
-      // this.fg.controls.ethAccountImport.patchValue(e.target.result);
-    };
+    if ($event.target.files.length > 0) {
+      const selectedFile = $event.target.files[0];
+      const reader = new FileReader();
+      reader.readAsText(selectedFile);
+      reader.onload = (e) => {
+        console.log(e);
+        this.secretKeyFileName = selectedFile.name;
+        this.fg.controls.ethAccountImport.patchValue((e as any).target.result);
+      };
+    }
+    this.secretKeyFileName = 'Tidak Ada File Dipilih!';
+    this.fg.controls.ethAccountImport.patchValue(null);
   }
 
   settingUpEthereumAccount() {
-    this.gs.log('[REGISTER_ETH_ACCOUNT]');
-    //
-    this.registerWebAccount({
-      nik: this.kpuRiUserData.nik,
-      name: this.kpuRiUserData.nama,
-      phone: this.fg.value.phone,
-      email: this.fg.value.email,
-      password: CryptoJS.SHA512(this.fg.value.password).toString()
-    });
+    this.submitted = true;
+    this.registerInfo = 'Harap Menunggu ...';
+    if (this.fg.value.ethAccount === 'tidak') {
+      this.api.postData('/new-eth-account', {
+        password: this.fg.value.password
+      }, null, 30000).subscribe(
+        res => {
+          this.registerInfo = res.result.pubKey;
+          this.ethereumAddressCreatedImported = res.result.pubKey;
+          this.registerWebAccount();
+        },
+        err => {
+          this.submitted = false;
+          this.registerInfo = err.error.result.message || err.error.info;
+        }
+      );
+    } else if (this.fg.value.ethAccount === 'ya') {
+      if (
+        this.fg.value.ethAccountImport === null ||
+        this.fg.value.ethAccountImport === undefined ||
+        this.fg.value.ethAccountImport === ''
+      ) {
+        return;
+      }
+      let wallet = false;
+      let secretKey = this.fg.value.ethAccountImport;
+      try {
+        wallet = true;
+        secretKey = JSON.parse(secretKey);
+      } catch (e) {}
+      this.api.postData('/import-eth-account', {
+        password: this.fg.value.password,
+        wallet, secretKey: this.fg.value.ethAccountImport
+      }, null, 30000).subscribe(
+        res => {
+          this.registerInfo = res.result.pubKey;
+          this.ethereumAddressCreatedImported = res.result.pubKey;
+          this.registerWebAccount();
+        },
+        err => {
+          this.submitted = false;
+          this.registerInfo = err.error.result.message || err.error.info;
+        }
+      );
+    }
   }
 }

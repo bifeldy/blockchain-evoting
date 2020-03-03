@@ -132,10 +132,10 @@
                     <div class="custom-file">
                       <input type="file" class="custom-file-input" id="ethAccountFile"
                         (change)="onFileSelected($event)" [disabled]="registerFormVal.ethAccount != 'ya'" />
-                      <label class="custom-file-label text-truncate" for="ethAccountFile" style="z-index: 0;">{{ utcFileName }}</label>
+                      <label class="custom-file-label text-truncate" for="ethAccountFile" style="z-index: 0;">{{ secretKeyFileName }}</label>
                     </div>
                     <textarea id="result" id="ethAccountImport" rows="5" [attr.disabled]="registerFormVal.ethAccount != 'ya' ? '' : null"
-                      class="form-control" placeholder="Or Copy Paste Ethereum UTC Text File Content Here .." required formControlName="ethAccountImport">
+                      class="form-control" placeholder="{{ secretKeyFileContent }}" required formControlName="ethAccountImport">
                     </textarea>
                     <span role="alert" *ngIf="registerErrorData && registerErrorData.ethAccountImport" style="font-size: 80%; color: #dc3545;">
                       <strong>{{ registerErrorData.ethAccountImport }}</strong>
@@ -158,7 +158,7 @@
                 <div class="col-md-8">
                   <div class="row">
                     <div class="col-6 pr-0">
-                      <button class="btn btn-link btn-block" type="button" [disabled]="registerStep <= 1 || registerStep >= 3" (click)="onRegisterPrevious()">
+                      <button class="btn btn-link btn-block" type="button" [disabled]="registerStep > 3" (click)="onRegisterPrevious()">
                         <i class="fa fa-fw fa-arrow-left"></i>
                         Previous
                       </button>
