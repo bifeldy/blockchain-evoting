@@ -7,6 +7,11 @@ const env = require(`${__dirname}/../environments/environment.js`);
 
 const recaptchaApiUrl = 'https://www.google.com/recaptcha/api/siteverify';
 
+// GET `/api/kpu`
+router.get('/', function(req, res, next) {
+  return next(createError(404));
+});
+
 // GET `/api/kpu/cek-nik`
 router.post('/cek-nik', function(req, res, next) {
   let newUserData = req.body;
@@ -61,7 +66,7 @@ router.post('/cek-nik', function(req, res, next) {
   return res.status(400).json({
     info: '🙄 400 - Pendaftaran Gagal! 😪',
     result: {
-      message: 'Invalid or incomplete data'
+      message: 'Data tidak valid atau tidak lengkap'
     }
   });
 });
