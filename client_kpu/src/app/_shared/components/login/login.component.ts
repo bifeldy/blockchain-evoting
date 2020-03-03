@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit {
     this.fg = this.fb.group({
       username: [null, [Validators.required]],
       password: [null, [Validators.required]],
-      remember_me: [false, []]
+      rememberMe: [false, []]
     });
   }
 
@@ -67,7 +67,7 @@ export class LoginComponent implements OnInit {
       this.as.login({
         username: this.fg.value.username,
         password: CryptoJS.SHA512(this.fg.value.password).toString(),
-        remember_me: this.fg.value.remember_me
+        rememberMe: this.fg.value.rememberMe
       }).subscribe(
         (res: any) => {
           localStorage.setItem(environment.tokenName, res.result.token);

@@ -85,10 +85,10 @@ export class RegisterComponent implements OnInit {
           Validators.minLength(8)
         ])
       ],
-      retype_password: [data ? data.retype_password : null, Validators.compose([Validators.required])],
+      reTypePassword: [data ? data.reTypePassword : null, Validators.compose([Validators.required])],
       googleCaptchaResponse: [data ? data.googleCaptchaResponse : null, Validators.compose([Validators.required])],
-      eth_account: [data ? data.eth_account : '', Validators.compose([Validators.required])],
-      eth_account_import: [data ? data.eth_account_import : null]
+      ethAccount: [data ? data.ethAccount : '', Validators.compose([Validators.required])],
+      ethAccountImport: [data ? data.ethAccountImport : null]
     },
     {
       validator: this.customValidator
@@ -97,12 +97,12 @@ export class RegisterComponent implements OnInit {
 
   customValidator(control: AbstractControl) {
     const password: string = control.get('password').value;
-    const confirmPassword: string = control.get('retype_password').value;
+    const confirmPassword: string = control.get('reTypePassword').value;
     if (password != null && password !== undefined && password !== '' && password.length < 8) {
       control.get('password').setErrors({ noPasswordMin: true });
     }
     if (confirmPassword != null && confirmPassword !== undefined && confirmPassword !== '' && password !== confirmPassword) {
-      control.get('retype_password').setErrors({ noPasswordMatch: true });
+      control.get('reTypePassword').setErrors({ noPasswordMatch: true });
     }
   }
 
@@ -226,7 +226,7 @@ export class RegisterComponent implements OnInit {
     reader.onload = (e) => {
       console.log(e);
       this.utcFileName = selectedFile.name;
-      // this.fg.controls.eth_account_import.patchValue(e.target.result);
+      // this.fg.controls.ethAccountImport.patchValue(e.target.result);
     };
   }
 

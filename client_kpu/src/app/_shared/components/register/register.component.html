@@ -93,13 +93,13 @@
                   </div>
                 </div>
                 <div class="form-group row">
-                  <label for="retype_password" class="col-md-4 col-form-label text-md-right">Ulangi Kata Sandi</label>
+                  <label for="reTypePassword" class="col-md-4 col-form-label text-md-right">Ulangi Kata Sandi</label>
                   <div class="col-md-8">
-                    <input type="password" id="retype_password" class="form-control {{
-                      !fg.get('retype_password').valid && fg.get('retype_password').touched ? 'is-invalid' : ''
-                    }}" placeholder="Konfirmasi Password" required formControlName="retype_password" autocomplete="retype_password" />
+                    <input type="password" id="reTypePassword" class="form-control {{
+                      !fg.get('reTypePassword').valid && fg.get('reTypePassword').touched ? 'is-invalid' : ''
+                    }}" placeholder="Konfirmasi Password" required formControlName="reTypePassword" autocomplete="reTypePassword" />
                     <span class="invalid-feedback"role="alert">
-                      <ng-container *ngIf="fg.controls['retype_password'].hasError('noPasswordMatch');else elseConfPass"
+                      <ng-container *ngIf="fg.controls['reTypePassword'].hasError('noPasswordMatch');else elseConfPass"
                       >
                         <strong>Password Tidak Sesuai!</strong>
                       </ng-container>
@@ -112,11 +112,11 @@
               </app-fade>
               <app-fade [show]="registerStep == 3">
                 <div class="form-group row">
-                  <label for="eth_account" class="col-md-4 col-form-label text-md-right">Punya Ethereum?</label>
+                  <label for="ethAccount" class="col-md-4 col-form-label text-md-right">Punya Ethereum?</label>
                   <div class="col-md-8">
-                    <select id="eth_account" class="form-control {{
-                        !fg.get('eth_account').valid && fg.get('eth_account').touched ? 'is-invalid' : ''
-                      }}" name="eth_account" required formControlName="eth_account">
+                    <select id="ethAccount" class="form-control {{
+                        !fg.get('ethAccount').valid && fg.get('ethAccount').touched ? 'is-invalid' : ''
+                      }}" name="ethAccount" required formControlName="ethAccount">
                       <option value="" disabled>Pilih Salah Satu!</option>
                       <option value="tidak">Tidak, Buat Akun Baru Sekarang</option>
                       <option value="ya">Ya, Gunakan Akun Lama Saya</option>
@@ -127,18 +127,18 @@
                   </div>
                 </div>
                 <div class="form-group row">
-                  <label for="eth_account_import" class="col-md-4 col-form-label text-md-right">Private Key</label>
+                  <label for="ethAccountImport" class="col-md-4 col-form-label text-md-right">Private Key</label>
                   <div class="col-md-8">
                     <div class="custom-file">
-                      <input type="file" class="custom-file-input" id="eth_account_file"
-                        (change)="onFileSelected($event)" [disabled]="registerFormVal.eth_account != 'ya'" />
-                      <label class="custom-file-label text-truncate" for="eth_account_file" style="z-index: 0;">{{ utcFileName }}</label>
+                      <input type="file" class="custom-file-input" id="ethAccountFile"
+                        (change)="onFileSelected($event)" [disabled]="registerFormVal.ethAccount != 'ya'" />
+                      <label class="custom-file-label text-truncate" for="ethAccountFile" style="z-index: 0;">{{ utcFileName }}</label>
                     </div>
-                    <textarea id="result" id="eth_account_import" rows="5" [attr.disabled]="registerFormVal.eth_account != 'ya' ? '' : null"
-                      class="form-control" placeholder="Or Copy Paste Ethereum UTC Text File Content Here .." required formControlName="eth_account_import">
+                    <textarea id="result" id="ethAccountImport" rows="5" [attr.disabled]="registerFormVal.ethAccount != 'ya' ? '' : null"
+                      class="form-control" placeholder="Or Copy Paste Ethereum UTC Text File Content Here .." required formControlName="ethAccountImport">
                     </textarea>
-                    <span role="alert" *ngIf="registerErrorData && registerErrorData.eth_account_import" style="font-size: 80%; color: #dc3545;">
-                      <strong>{{ registerErrorData.eth_account_import }}</strong>
+                    <span role="alert" *ngIf="registerErrorData && registerErrorData.ethAccountImport" style="font-size: 80%; color: #dc3545;">
+                      <strong>{{ registerErrorData.ethAccountImport }}</strong>
                     </span>
                   </div>
                 </div>
@@ -171,15 +171,15 @@
                             fg.get('email').valid && fg.get('email').touched &&
                             fg.get('phone').valid && fg.get('phone').touched &&
                             fg.get('password').valid && fg.get('password').touched &&
-                            fg.get('retype_password').valid && fg.get('retype_password').touched
+                            fg.get('reTypePassword').valid && fg.get('reTypePassword').touched
                           ) ||
                           registerStep == 3 && (
-                            registerFormVal.eth_account == 'ya' && (
-                              registerFormVal.eth_account_import == null ||
-                              registerFormVal.eth_account_import == undefined ||
-                              registerFormVal.eth_account_import == ''
+                            registerFormVal.ethAccount == 'ya' && (
+                              registerFormVal.ethAccountImport == null ||
+                              registerFormVal.ethAccountImport == undefined ||
+                              registerFormVal.ethAccountImport == ''
                             ) || (
-                              registerFormVal.eth_account == ''
+                              registerFormVal.ethAccount == ''
                             )
                           ) ||
                           submitted

@@ -2,7 +2,7 @@
   <div id="carouselBanner" class="carousel slide" data-ride="carousel" data-interval="2345">
     <div class="carousel-inner">
       <div class="carousel-item" [ngClass]="{ active: idx == 0 }" *ngFor="let i of banner; index as idx">
-        <img class="d-block img-fluid w-100" [src]="i.banner_image" style="height: 256px; object-fit: cover;" />
+        <img class="d-block img-fluid w-100" [src]="i.bannerImage" style="height: 256px; object-fit: cover;" />
       </div>
     </div>
     <a class="carousel-control-prev" href="#carouselBanner" role="button" data-slide="prev">
