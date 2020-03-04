@@ -18,7 +18,7 @@ function normalizePort(val) {
 }
 
 // Get port from environment and store in Express.
-const port = normalizePort(process.env.PORT || '1234');
+const port = normalizePort(process.env.PORT || '82');
 app.set('port', port);
 
 // Event listener for HTTP server "error" event.
