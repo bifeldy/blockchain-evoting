@@ -41,6 +41,7 @@ db.mySqlQuery(`
     SELECT id, active, address, abi, bytecode, createdAt, updatedAt
     FROM contracts
     WHERE active = 1
+    ORDER BY active DESC
   `, null, (error, results, fields) => {
   if (error) process.exit();
   else if (results.length > 0) {
