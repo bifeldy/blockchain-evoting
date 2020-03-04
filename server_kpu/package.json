@@ -6,9 +6,12 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "atob": "^2.1.2",
     "body-parser": "^1.19.0",
+    "btoa": "^1.2.1",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
+    "crypto-js": "^4.0.0",
     "debug": "~2.6.9",
     "ejs": "~2.6.1",
     "express": "~4.16.1",
