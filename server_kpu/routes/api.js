@@ -5,6 +5,8 @@ const jwt = require('../helpers/jwt');
 const db = require('../helpers/db');
 const eth = require('../helpers/eth');
 
+const atob = require('atob');
+
 const router = express.Router();
 
 function userLoginModule(req, res, next) {
@@ -212,18 +214,22 @@ router.post('/new-eth-account', function(req, res, next) {
   const newUserData = req.body;
   if (
     'password' in newUserData &&
-    newUserData.password != null && 
-    newUserData.password != '' && 
+    newUserData.password != null &&
+    newUserData.password != '' &&
     newUserData.password != undefined
   ) {
-    return eth.web3CreateAccount(newUserData.password, (pubKey) => {
-      res.status(200).json({
-        info: '😍 200 - Berhasil Membuat Akun Ethereum! 🥰',
-        result: {
-          pubKey
-        }
-      });
-    });
+    return eth.web3CreateAccount(
+      atob(newUserData.password),
+      (error, pubKey) => {
+        if (error) return next(createError(400));
+        return res.status(200).json({
+          info: '😍 200 - Berhasil Membuat Akun Ethereum! 🥰',
+          result: {
+            pubKey
+          }
+        });
+      }
+    );
   }
   return res.status(400).json({
     info: '🙄 400 - Pendaftaran Gagal! 😪',
@@ -271,10 +277,18 @@ router.post('/import-eth-account', function(req, res, next) {
       });
     }
     if (!newUserData.wallet) {
-      return eth.web3ImportAccountFromPrivKey(newUserData.password, newUserData.secretKey, callbackImportEthAccount);
+      return eth.web3ImportAccountFromPrivKey(
+        atob(newUserData.password),
+        newUserData.secretKey,
+        callbackImportEthAccount
+      );
     }
     else {
-      return eth.web3ImportAccountFromUtc(newUserData.password, JSON.parse(newUserData.secretKey), callbackImportEthAccount);
+      return eth.web3ImportAccountFromUtc(
+        atob(newUserData.password),
+        JSON.parse(newUserData.secretKey),
+        callbackImportEthAccount
+      );
     }
   }
   return res.status(400).json({
