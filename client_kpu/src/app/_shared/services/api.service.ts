@@ -17,11 +17,11 @@ export class ApiService {
     private gs: GlobalService,
   ) {}
 
-  getData(path: string): Observable<any> {
+  getData(path: string, timedOut = 3000): Observable<any> {
     this.gs.log('[API_GET]', path);
     return this.http.get(path.startsWith('http') ? environment.sniffCors + path : environment.apiUrl + path).pipe(
       catchError(err => throwError(err)),
-      map(res => res), timeout(3000), retry(3)
+      map(res => res), timeout(timedOut), retry(3)
     );
   }
 
@@ -42,7 +42,7 @@ export class ApiService {
     );
   }
 
-  putData(path: string, model = {}, multipart = false): Observable<any> {
+  putData(path: string, model = {}, multipart = false, timedOut = 3000): Observable<any> {
     this.gs.log('[API_PUT]', path);
     const options = {};
     let body = model;
@@ -53,15 +53,15 @@ export class ApiService {
     }
     return this.http.put(path.startsWith('http') ? environment.sniffCors + path : environment.apiUrl + path, body, options).pipe(
       catchError(err => throwError(err)),
-      map(res => res), timeout(3000)
+      map(res => res), timeout(timedOut)
     );
   }
 
-  deleteData(path: string): Observable<any> {
+  deleteData(path: string, timedOut = 3000): Observable<any> {
     this.gs.log('[API_DEL]', path);
     return this.http.delete(path.startsWith('http') ? environment.sniffCors + path : environment.apiUrl + path).pipe(
       catchError(err => throwError(err)),
-      map(res => res), timeout(3000)
+      map(res => res), timeout(timedOut)
     );
   }
 
