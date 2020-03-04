@@ -29,20 +29,34 @@ yes
 genesis_block
 
 geth --datadir "node_kpu" init "genesis_block/bifeldy.json"
-geth --datadir "node_miner1" init "genesis_block/bifeldy.json"
-geth --datadir "node_miner2" init "genesis_block/bifeldy.json"
 
 bootnode -genkey boot.key
-bootnode -nodekey "boot_node/boot.key" -verbosity 9 -addr :9000
 
-geth --identity "node_kpu" --datadir "node_kpu" --port 9001 --syncmode "full" --networkid 9999 --rpc --rpcport 9002 --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsport 9003 --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --verbosity 5 --nat none --ipcdisable --allow-insecure-unlock --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@127.0.0.1:0?discport=9000" --unlock "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d" --password "node_kpu/pass.key" --mine
+/**********/
 
-geth attach http://localhost:9002/
+bootnode -nodekey "boot_node/boot.key" --addr 192.168.1.2:9000 --nat extip:110.137.152.70 -verbosity 9
 
-geth --identity "node_miner1" --datadir "node_miner1" --port 9004 --syncmode "full" --networkid 9999 --rpc --rpcport 9005 --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsport 9006 --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --verbosity 5 --nat none --ipcdisable --allow-insecure-unlock --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@127.0.0.1:0?discport=9000" --unlock "0x6b9763d8b2297a4334b54f472c561eb850fbec84" --password "node_miner1/pass.key" --mine
+geth --identity "node_kpu" --datadir "node_kpu" --syncmode "full" --networkid 9999 --rpc --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d" --password "node_kpu/pass.key" --mine --ipcdisable --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@192.168.1.2:9000" --port 9001 --rpcport 9002 --wsport 9003
 
-geth attach ws://localhost:9006/
+geth attach http://localhost:9002
 
-geth --identity "node_miner2" --datadir "node_miner2" --port 9007 --syncmode "full" --networkid 9999 --rpc --rpcport 9008 --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsport 9009 --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --verbosity 5 --nat none --ipcdisable --allow-insecure-unlock --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@127.0.0.1:0?discport=9000" --unlock "0xdA41F175c06e8fbA96A20FF9e2ed41Aca4535e44" --password "node_miner1/pass.key" --mine
+geth --identity "node_miner1" --datadir "node_miner1" --syncmode "full" --networkid 9999 --rpc --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0x6b9763d8b2297a4334b54f472c561eb850fbec84" --password "node_miner1/pass.key" --mine --ipcdisable --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@192.168.1.2:9000" --port 9004 --rpcport 9005 --wsport 9006
 
-geth attach ws://localhost:9009/
+geth attach http://localhost:9005
+
+geth --identity "node_miner2" --datadir "node_miner2" --syncmode "full" --networkid 9999 --rpc --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0xdA41F175c06e8fbA96A20FF9e2ed41Aca4535e44" --password "node_miner2/pass.key" --mine --ipcdisable --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@192.168.1.2:9000" --port 9007 --rpcport 9008 --wsport 9009
+
+geth attach http://localhost:9008
+
+
+/**********/
+
+bootnode -nodekey "boot_node/boot.key" --nat extip:3.83.8.140 -verbosity 9
+
+geth --identity "node_kpu" --datadir "node_kpu" --syncmode "full" --networkid 9999 --rpc --rpcport 9001 --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsport 9002 --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d" --password "node_kpu/pass.key" --mine --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@3.83.8.140:30301" --nat extip:110.137.152.70 --ipcdisable
+
+geth --identity "node_miner1" --datadir "node_miner1" --syncmode "full" --networkid 9999 --rpc --rpcport 9001 --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsport 9002 --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0x6b9763d8b2297a4334b54f472c561eb850fbec84" --password "node_miner1/pass.key" --mine --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@3.83.8.140:30301" --nat extip:3.83.8.140 --ipcdisable
+
+geth --identity "node_miner2" --datadir "node_miner2" --syncmode "full" --networkid 9999 --rpc --rpcport 9001 --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsport 9002 --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0xdA41F175c06e8fbA96A20FF9e2ed41Aca4535e44" --password "node_miner2/pass.key" --mine --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@3.83.8.140:30301" --nat extip:3.94.117.175 --ipcdisable
+
+geth attach http://localhost:9001
