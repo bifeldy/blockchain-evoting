@@ -1,5 +1,6 @@
 pragma solidity >=0.4.21 <0.7.0;
 
+/// @author Basilius Bias Astho Christyono
 contract Ballot {
 
   struct Voter {
@@ -32,9 +33,43 @@ contract Ballot {
     contractOwner = msg.sender;
   }
 
+  /* Getter */
+
+  /// View Contract Owner
+  function viewContractOwner() public view returns (address) {
+    return contractOwner;
+  }
+
+  /// Registered User Show Their Voted Candidate Secretly
+  function showMyVote(string memory _electionId, address _voterAddress) public view returns (
+    string memory voterName, address voterAddress, uint voterWeight, bool voterVoted, address voterSelectedCandidate
+  ) {
+    require(elections[_electionId].electionParticipants[_voterAddress].voterAddress == msg.sender, "This Is Not Your Ballot!");
+    return (
+      elections[_electionId].electionParticipants[_voterAddress].voterName,
+      elections[_electionId].electionParticipants[_voterAddress].voterAddress,
+      elections[_electionId].electionParticipants[_voterAddress].voterWeight,
+      elections[_electionId].electionParticipants[_voterAddress].voterVoted,
+      elections[_electionId].electionParticipants[_voterAddress].voterSelectedCandidate
+    );
+  }
+
+  /// View Current Candidate Voted Count
+  function showResultCount(string memory _electionId, address _candidateAddress) public view returns (
+    string memory candidateName, address candidateAddress, uint candidateVoteCount
+  ) {
+    return (
+      elections[_electionId].electionCandidates[_candidateAddress].candidateName,
+      elections[_electionId].electionCandidates[_candidateAddress].candidateAddress,
+      elections[_electionId].electionCandidates[_candidateAddress].candidateVoteCount
+    );
+  }
+
+  /* Setter */
+
   /// Admin Create New Election
   function createElection(string memory _electionId, string memory _electionName) public {
-    require(contractOwner == msg.sender, "Only Contract Owner Can Create Election!");
+    // require(contractOwner == msg.sender, "Only Contract Owner Can Create Election!");
     elections[_electionId].electionId = _electionId;
     elections[_electionId].electionName = _electionName;
     elections[_electionId].electionCreator = msg.sender;
@@ -74,31 +109,6 @@ contract Ballot {
     elections[_electionId].electionParticipants[_voterAddress].voterVoted = true;
     elections[_electionId].electionParticipants[_voterAddress].voterSelectedCandidate = _candidateAddress;
     elections[_electionId].electionCandidates[_candidateAddress].candidateVoteCount += elections[_electionId].electionParticipants[_voterAddress].voterWeight;
-  }
-
-  /// Registered User Show Their Voted Candidate Secretly
-  function showMyVote(string memory _electionId, address _voterAddress) public view returns (
-    string memory voterName, address voterAddress, uint voterWeight, bool voterVoted, address voterSelectedCandidate
-  ) {
-    require(elections[_electionId].electionParticipants[_voterAddress].voterAddress == msg.sender, "This Is Not Your Ballot!");
-    return (
-      elections[_electionId].electionParticipants[_voterAddress].voterName,
-      elections[_electionId].electionParticipants[_voterAddress].voterAddress,
-      elections[_electionId].electionParticipants[_voterAddress].voterWeight,
-      elections[_electionId].electionParticipants[_voterAddress].voterVoted,
-      elections[_electionId].electionParticipants[_voterAddress].voterSelectedCandidate
-    );
-  }
-
-  /// View Current Candidate Voted Count
-  function showResultCount(string memory _electionId, address _candidateAddress) public view returns (
-    string memory candidateName, address candidateAddress, uint candidateVoteCount
-  ) {
-    return (
-      elections[_electionId].electionCandidates[_candidateAddress].candidateName,
-      elections[_electionId].electionCandidates[_candidateAddress].candidateAddress,
-      elections[_electionId].electionCandidates[_candidateAddress].candidateVoteCount
-    );
   }
 
 }
