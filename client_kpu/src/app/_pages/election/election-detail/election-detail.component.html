@@ -1,0 +1,150 @@
+<div class="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img class="d-block img-fluid w-100" src="{{ electionData.electionImage }}"
+        style="height: 118px; object-fit: cover;" *ngIf="electionData" />
+    </div>
+  </div>
+</div>
+<div class="container py-3 bg-default">
+  <div class="row">
+    <div class="col-md-8 bg-default">
+      <div class="row mt-3 mb-3" *ngIf="electionData">
+        <div class="col-12 pb-3 sticky-top bg-default">
+          <h3 class="pt-3 pb-2 border-bottom-dotted">
+            <b class="text-secondary">{{ electionData.electionName }}</b>
+          </h3>
+        </div>
+        <div class="col-12 bg-default">
+          <p>{{ electionData.electionDescription }}</p>
+        </div>
+      </div>
+      <div class="row mt-3 mb-3">
+        <div class="col-12 pb-3 sticky-top bg-default">
+          <h5 class="pt-3 pb-2 border-bottom-dotted">
+            <b class="text-secondary">Informasi Calon Kandidat</b>
+          </h5>
+        </div>
+        <div class="col-12 bg-default">
+          // TODO :: Slider ?
+        </div>
+      </div>
+      <div class="row mt-3 mb-3">
+        <div class="col-12 pb-3 sticky-top bg-default">
+          <h5 class="pt-3 pb-2 border-bottom-dotted">
+            <b class="text-secondary">Grafik dan Statistik</b>
+          </h5>
+        </div>
+        <div class="col-12 bg-default">
+          // TODO :: Chart
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 bg-default">
+      <div class="row mt-3 mb-3" *ngIf="electionData">
+        <div class="col-12 pb-3 sticky-top bg-default">
+          <h5 class="pt-3 pb-2 border-bottom-dotted">
+            <b class="text-secondary">Ringkasan Informasi</b>
+          </h5>
+        </div>
+        <div class="col-12 bg-default">
+          <p class="text-truncate">ID :: {{ electionData.electionId }}</p>
+          <p>Dibuat :: {{ electionData.createdAt | date:'EEEE, d MMMM yyyy @ HH:mm:ss a zzzz' }}</p>
+          <p>Status :: {{ electionData.electionIsActive == 1 ? 'Aktif' : 'Non-Aktif' }}</p>
+          <p *ngIf="creator">
+            Pemilik ::
+            <a href="/user/{{ creator.pubKey }}" class="text-success text-decoration-none text-truncate">
+              {{ creator.name }}
+            </a>
+          </p>
+          <p>Partisipan :: {{ voterParticipants.length }} Orang</p>
+          <p *ngIf="currentUser && electionData && electionData.electionCreator == currentUser.pubKey && electionData.electionIsActive == 1">
+            <button type="button" class="btn btn-sm btn-outline-info btn-block mr-1">
+              <i class="fas fa-trash mr-1"></i>
+              Nonaktifkan Pemilihan Ini
+            </button>
+          </p>
+        </div>
+      </div>
+      <div class="row mt-3 mb-3">
+        <div class="col-12 pb-3 sticky-top bg-default">
+          <h5 class="pt-3 pb-2 border-bottom-dotted">
+            <b class="text-secondary">Riwayat Pemilihan Saya</b>
+          </h5>
+        </div>
+        <div class="col-12 bg-default">
+          <p class="text-center" *ngIf="!currentUser" (click)="loginFromElection()">
+            <button type="button" class="btn btn-sm btn-outline-danger btn-block mr-1">
+              Harap Masuk Untuk Melihat
+            </button>
+          </p>
+          <p class="text-center"
+            *ngIf="currentUser && electionData && (electionData.electionCreator == currentUser.pubKey || !isVoter)">
+            Kamu Tidak Dapat Ikut Sebagai Partisipan
+          </p>
+          <p class="text-center"
+            *ngIf="currentUser && currentUser.role == 'voter' && !participant && electionData && electionData.electionCreator != currentUser.pubKey">
+            Kamu Tidak Terdaftar Sebagai Partisipan
+          </p>
+          <p class="text-center" (click)="joinFromElection()"
+          *ngIf="currentUser && currentUser.role == 'voter' && !participant && electionData && electionData.electionCreator != currentUser.pubKey && electionData.electionIsActive == 1">
+            <button type="button" class="btn btn-sm btn-outline-info btn-block mr-1">
+              Ikut Serta Sekarang!
+            </button>
+          </p>
+          <p class="text-center" *ngIf="currentUser && currentUser.role == 'voter' && !voted && electionData && electionData.electionCreator != currentUser.pubKey">
+            Kamu Belum Melakukan Pemilihan
+          </p>
+          <p class="text-center" (click)="voteFromElection()"
+            *ngIf="currentUser && currentUser.role == 'voter' && !voted && electionData && electionData.electionCreator != currentUser.pubKey && electionData.electionIsActive == 1">
+            <button type="button" class="btn btn-sm btn-outline-primary btn-block mr-1">
+              Gunakan Hak Pilih Saya Sekarang
+            </button>
+          </p>
+          <p class="text-truncate"
+            *ngIf="currentUser && currentUser.role == 'voter' && participant && voted && electionData && electionData.electionCreator != currentUser.pubKey">
+            blockNumber ::
+            <a href="#" class="text-success text-decoration-none">
+              341
+            </a>
+          </p>
+          <p class="text-truncate"
+            *ngIf="currentUser && currentUser.role == 'voter' && participant && voted && electionData && electionData.electionCreator != currentUser.pubKey">
+            blockHash ::
+            <a href="#" class="text-success text-decoration-none">
+              0xabc1740795b5a786ea4c80b3be2b09219f08fa23179f24fce975645bf7ac4014
+            </a>
+          </p>
+          <p class="text-truncate"
+            *ngIf="currentUser && currentUser.role == 'voter' && participant && voted && electionData && electionData.electionCreator != currentUser.pubKey">
+            transactionHash ::
+            <a href="#" class="text-success text-decoration-none">
+              0x666020fabc33aa2b01cb0bd4d225761ffac0569cc8a8809a9e50d126146eae02
+            </a>
+          </p>
+          <p *ngIf="currentUser && currentUser.role == 'voter' && participant && voted && electionData && electionData.electionCreator != currentUser.pubKey">
+            <button type="button" class="btn btn-sm btn-outline-info btn-block mr-1">
+              Lihat Detail Transaksi
+            </button>
+          </p>
+        </div>
+      </div>
+      <div class="row mt-3 mb-3" *ngIf="currentUser && electionData && electionData.electionCreator == currentUser.pubKey">
+        <div class="col-12 pb-3 sticky-top bg-default">
+          <h5 class="pt-3 pb-2 border-bottom-dotted">
+            <b class="text-secondary">Voter Participants</b>
+          </h5>
+        </div>
+        <div class="col-12 bg-default">
+          <div class="row text-center px-3 text-lg-left">
+            <a href="/user/{{ i }}" class="h-100 col-1 p-0" *ngFor="let i of voterParticipants | slice:0:60">
+              <img class="img-fluid" src="http://via.placeholder.com/32x32/{{ i }}" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-modal-election-detail></app-modal-election-detail>
