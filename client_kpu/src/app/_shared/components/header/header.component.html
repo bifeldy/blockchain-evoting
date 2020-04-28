@@ -80,11 +80,11 @@
     <hr class="style1" />
     <a *ngIf="currentUser; then loggedIn"></a>
     <ng-template #loggedIn>
-      <a *ngIf="isAdmin || isMiner || isVoter" routerLink="/my-election" routerLinkActive="bifeldy-active">
+      <a *ngIf="isAdmin || isMiner || isVoter" routerLink="/library" routerLinkActive="bifeldy-active" [routerLinkActiveOptions]="{ exact: true }">
         <i class="fa fa-fw fa-vote-yea mr-2"></i>
         <div class="visibleMenu">My Election</div>
       </a>
-      <a *ngIf="isAdmin || isMiner || isVoter" routerLink="/create" routerLinkActive="bifeldy-active">
+      <a *ngIf="isAdmin || isMiner || isVoter" routerLink="/library/create" routerLinkActive="bifeldy-active">
         <i class="fa fa-fw fa-plus mr-2"></i>
         <div class="visibleMenu">Create New Election</div>
       </a>

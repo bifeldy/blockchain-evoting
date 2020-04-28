@@ -52,7 +52,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'my-election',
+        path: 'library',
         loadChildren: () => import('./my-election/my-election.module').then(m => m.MyElectionModule),
         canActivate: [AuthGuardService],
         data: {
