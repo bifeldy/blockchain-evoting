@@ -1,0 +1,53 @@
+<div class="container py-3 bg-default">
+  <div class="row">
+    <div class="col-md-12 bg-default">
+      <div class="row mt-3 mb-3">
+        <div class="col-12 pb-3 sticky-top bg-default">
+          <h3 class="pt-3 pb-2 border-bottom-dotted">
+            <a class="btn btn-outline-warning float-right btn-sm mt-1 text-success" (click)="refreshData();">
+              <i class="fas fa-sync mr-1"></i>
+              Refresh
+            </a>
+            <b class="text-secondary">My Election Library</b>
+          </h3>
+        </div>
+        <div class="col-12 bg-default pt-1">
+          <ul class="nav nav-tabs border-warning" id="myTab" role="tablist">
+            <li class="nav-item ml-3">
+              <a class="nav-link active" id="joinedElection-tab" data-toggle="tab" href="#joinedElection" role="tab" aria-controls="joinedElection" aria-selected="false">Saya Ikuti</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="createdElection-tab" data-toggle="tab" href="#createdElection" role="tab" aria-controls="createdElection" aria-selected="true">Buatan Saya</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="myElectionTable">
+            <div class="tab-pane fade show active p-3" id="joinedElection" role="tabpanel" aria-labelledby="joinedElection-tab">
+              <table id="joinedElectionTable" class="pt-1 table table-bordered table-hover table-sm w-100">
+                <thead>
+                  <tr>
+                    <th style="width: 112px;">Image</th>
+                    <th style="width: 192px;">Name</th>
+                    <th style="width: 320px;">Description</th>
+                    <th style="width: 256px;">CreatedAt</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+            <div class="tab-pane fade active p-3" id="createdElection" role="tabpanel" aria-labelledby="createdElection-tab">
+              <table id="createdElectionTable" class="pt-1 table table-bordered table-hover table-sm w-100">
+                <thead>
+                  <tr>
+                    <th style="width: 112px;">Image</th>
+                    <th style="width: 192px;">Name</th>
+                    <th style="width: 320px;">Description</th>
+                    <th style="width: 256px;">CreatedAt</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
