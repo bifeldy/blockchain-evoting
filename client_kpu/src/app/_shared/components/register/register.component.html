@@ -16,9 +16,9 @@
                 <div class="form-group row">
                   <label for="nik" class="col-md-4 col-form-label text-md-right">NIK</label>
                   <div class="col-md-8">
-                    <input type="text" id="nik" class="form-control {{
+                    <input type="text" id="nik" [attr.disabled]="registerStep != 1 ? '' : null" class="form-control {{
                       !fg.get('nik').valid && fg.get('nik').touched ? 'is-invalid' : ''
-                    }}" placeholder="Nomor Induk Kependudukan" required autofocus formControlName="nik" autocomplete="nik" />
+                    }}" placeholder="Nomor Induk Kependudukan" required autofocus formControlName="nik" autocomplete="off" />
                     <span class="invalid-feedback" role="alert">
                       <strong>NIK Tidak Valid!</strong>
                     </span>
@@ -30,9 +30,9 @@
                 <div class="form-group row">
                   <label for="name" class="col-md-4 col-form-label text-md-right">Nama</label>
                   <div class="col-md-8">
-                    <input type="text" id="name" class="form-control {{
+                    <input type="text" id="name" [attr.disabled]="registerStep != 1 ? '' : null" class="form-control {{
                       !fg.get('name').valid && fg.get('name').touched ? 'is-invalid' : ''
-                    }}" placeholder="Nama Lengkap" required formControlName="name" autocomplete="name" />
+                    }}" placeholder="Nama Lengkap" required formControlName="name" autocomplete="off" />
                     <span class="invalid-feedback" role="alert">
                       <strong>Nama Tidak Boleh Kosong!</strong>
                     </span>
@@ -43,9 +43,9 @@
                 <div class="form-group row">
                   <label for="email" class="col-md-4 col-form-label text-md-right">E-Mail</label>
                   <div class="col-md-8">
-                    <input type="email" id="email" class="form-control {{
+                    <input type="email" id="email" [attr.disabled]="registerStep != 2 ? '' : null" class="form-control {{
                       !fg.get('email').valid && fg.get('email').touched ? 'is-invalid' : ''
-                    }}" placeholder="Alamat Surat Elektronik" required autofocus formControlName="email" autocomplete="email" />
+                    }}" placeholder="Alamat Surat Elektronik" required autofocus formControlName="email" autocomplete="off" />
                     <span class="invalid-feedback" role="alert">
                       <strong>Format Email Tidak Benar!</strong>
                     </span>
@@ -57,9 +57,9 @@
                 <div class="form-group row">
                   <label for="phone" class="col-md-4 col-form-label text-md-right">No. HP</label>
                   <div class="col-md-8">
-                    <input type="text" id="phone" class="form-control {{
+                    <input type="text" id="phone" [attr.disabled]="registerStep != 2 ? '' : null" class="form-control {{
                       !fg.get('phone').valid && fg.get('phone').touched ? 'is-invalid' : ''
-                    }}" placeholder="Nomor Telepon Genggam" required formControlName="phone" autocomplete="phone" />
+                    }}" placeholder="Nomor Telepon Genggam" required formControlName="phone" autocomplete="off" />
                     <span class="invalid-feedback" role="alert">
                       <strong>Telepon Tidak Valid!</strong>
                     </span>
@@ -73,9 +73,9 @@
                   <div class="col-md-8">
                     <div class="row">
                       <div class="col pr-0">
-                        <input type="{{ showPassword ? 'text' : 'password' }}" id="password" class="col form-control {{
+                        <input type="{{ showPassword ? 'text' : 'password' }}" id="password" [attr.disabled]="registerStep != 2 ? '' : null" class="col form-control {{
                             !fg.get('password').valid && fg.get('password').touched ? 'is-invalid' : ''
-                          }}" placeholder="Kata Sandi" required formControlName="password" autocomplete="current-password" />
+                          }}" placeholder="Kata Sandi" required formControlName="password" autocomplete="off" />
                       </div>
                       <a class="btn btn-link text-secondary px-2 mr-3" (click)="showHidePassword()">
                         <i class="fa fa-fw fa-eye" *ngIf="showPassword"></i>
@@ -95,9 +95,9 @@
                 <div class="form-group row">
                   <label for="reTypePassword" class="col-md-4 col-form-label text-md-right">Ulangi Kata Sandi</label>
                   <div class="col-md-8">
-                    <input type="password" id="reTypePassword" class="form-control {{
+                    <input type="password" id="reTypePassword" [attr.disabled]="registerStep != 2 ? '' : null" class="form-control {{
                       !fg.get('reTypePassword').valid && fg.get('reTypePassword').touched ? 'is-invalid' : ''
-                    }}" placeholder="Konfirmasi Password" required formControlName="reTypePassword" autocomplete="reTypePassword" />
+                    }}" placeholder="Konfirmasi Password" required formControlName="reTypePassword" autocomplete="off" />
                     <span class="invalid-feedback"role="alert">
                       <ng-container *ngIf="fg.controls['reTypePassword'].hasError('noPasswordMatch');else elseConfPass"
                       >
@@ -135,18 +135,26 @@
                       <label class="custom-file-label text-truncate" for="ethAccountFile" style="z-index: 0;">{{ secretKeyFileName }}</label>
                     </div>
                     <textarea id="result" id="ethAccountImport" rows="5" [attr.disabled]="registerFormVal.ethAccount != 'ya' ? '' : null"
-                      class="form-control" placeholder="{{ secretKeyFileContent }}" required formControlName="ethAccountImport">
+                      class="form-control" placeholder="{{ secretKeyFileContent }}" formControlName="ethAccountImport">
                     </textarea>
                     <span role="alert" *ngIf="registerErrorData && registerErrorData.ethAccountImport" style="font-size: 80%; color: #dc3545;">
                       <strong>{{ registerErrorData.ethAccountImport }}</strong>
                     </span>
                   </div>
                 </div>
+                <div class="form-group row">
+                  <label for="walletPassword" class="col-md-4 col-form-label text-md-right">Wallet Password</label>
+                  <div class="col-md-8">
+                    <input type="text" id="walletPassword" class="form-control" [attr.disabled]="registerFormVal.ethAccount != 'ya' ? '' : null"
+                      placeholder="Wallet Passphrase / Password" formControlName="walletPassword" autocomplete="off" />
+                    <span class="invalid-feedback" role="alert">
+                      <strong>Wallet Tidak Boleh Kosong!</strong>
+                    </span>
+                  </div>
+                </div>
               </app-fade>
               <div class="form-group row" *ngIf="registerStep == 1">
                 <div class="col-md-8 offset-md-4">
-                  <!-- <re-captcha #captchaRef formControlName="googleCaptchaResponse" siteKey="6Ldc14kUAAAAABPg_XKGIQQndzllpW5l6FNFYVC0"
-                    (resolved)="resolved($event, captchaRef)"></re-captcha> -->
                   <re-captcha #captchaRef formControlName="googleCaptchaResponse" siteKey="6Ld4Bt4UAAAAAKJQ_jfqtWdsq9BuARLHag2DBvqK"
                     (resolved)="resolved($event, captchaRef)"></re-captcha>
                 </div>

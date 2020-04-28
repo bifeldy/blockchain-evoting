@@ -15,7 +15,7 @@
           </button>
         </form>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" *ngIf="currentUser">
         <a id="notif-open-close" class="btn-link text-light pt-2" onclick="" title="Pemberitahuan">
           <i class="fa fa-bell mr-1" style="font-size: 28px; padding-top: 3px; cursor: pointer;"></i>
         </a>
@@ -33,7 +33,6 @@
   <!-- Navbar Menu -->
   <div id="navbar" class="bifeldy-navbar" onmouseover="navbarShowHide();" onmouseout="navbarShowHide();" onclick="mobileShowHideNavbar();">
     <div class="clearfix d-none d-md-block"> &nbsp; </div>
-    <div class="clearfix d-none d-md-block"> &nbsp; </div>
     <div class="clearfix d-md-none"> &nbsp; </div>
     <div class="clearfix"> &nbsp; </div>
     <div class="clearfix"> &nbsp; </div>
@@ -48,20 +47,20 @@
     <hr class="style1 d-md-none" />
     <a *ngIf="currentUser; then sudahLogin; else belumLogin;"></a>
     <ng-template #sudahLogin>
-      <a routerLink="/profile/{{currentUser.id}}" routerLinkActive="bifeldy-active">
+      <a routerLink="/user/{{ currentUser.pubKey }}" routerLinkActive="bifeldy-active">
         <i class="fa fa-fw fa-user mr-2"></i>
         <div class="visibleMenu">
           {{ slicedUserName }}
         </div>
       </a>
-      <a routerLink="/logout" routerLinkActive="bifeldy-active" (click)="this.as.logout();">
-        <i class="fa fa-fw fa-sign-out mr-2"></i>
+      <a routerLink="/logout" routerLinkActive="bifeldy-active" (click)="logout();">
+        <i class="fa fa-fw fa-sign-out-alt mr-2"></i>
         <div class="visibleMenu">Keluar</div>
       </a>
     </ng-template>
     <ng-template #belumLogin>
       <a routerLink="/login" routerLinkActive="bifeldy-active">
-        <i class="fa fa-fw fa-sign-in mr-2"></i>
+        <i class="fa fa-fw fa-sign-in-alt mr-2"></i>
         <div class="visibleMenu">Masuk</div>
       </a>
       <a routerLink="/register" routerLinkActive="bifeldy-active">
@@ -79,13 +78,17 @@
       <div class="visibleMenu">Network Status</div>
     </a>
     <hr class="style1" />
-    <a *ngIf="isAdmin; then loggedInAsAdmin;"></a>
-    <ng-template #loggedInAsAdmin>
-      <a routerLink="/new" routerLinkActive="bifeldy-active">
-        <i class="fa fa-fw fa-plus mr-2"></i>
-        <div class="visibleMenu">Buat Voting Baru</div>
+    <a *ngIf="currentUser; then loggedIn"></a>
+    <ng-template #loggedIn>
+      <a *ngIf="isAdmin || isMiner || isVoter" routerLink="/my-election" routerLinkActive="bifeldy-active">
+        <i class="fa fa-fw fa-vote-yea mr-2"></i>
+        <div class="visibleMenu">My Election</div>
       </a>
-      <a routerLink="/admin" routerLinkActive="bifeldy-active">
+      <a *ngIf="isAdmin || isMiner || isVoter" routerLink="/create" routerLinkActive="bifeldy-active">
+        <i class="fa fa-fw fa-plus mr-2"></i>
+        <div class="visibleMenu">Create New Election</div>
+      </a>
+      <a *ngIf="isAdmin" routerLink="/admin" routerLinkActive="bifeldy-active">
         <i class="fa fa-fw fa-cogs mr-2"></i>
         <div class="visibleMenu">Admin Panel</div>
       </a>
@@ -99,14 +102,22 @@
       <i class="fa mr-2">
         <svg viewBox="-357 161 245 240" style="margin-left: 3px; margin-right: 2px; height: 20px;">
           <path fill="#fff"
-            d="M-145.3 217.1c-29.2-21.9-57-21.3-57-21.3l-2.8 3.2c34.5 10.5 50.5 25.8 50.5 25.8-21.1-11.6-41.8-17.2-61-19.5-14.6-1.6-28.6-1.2-41 .4-1.2 0-2.2.2-3.4.4-7.1.6-24.3 3.2-46 12.8-7.5 3.4-12 5.9-12 5.9s16.8-16 53.3-26.6l-2-2.4s-27.8-.6-57 21.3c0 0-29.2 52.9-29.2 118.2 0 0 17 29.4 61.8 30.8 0 0 7.5-9.1 13.6-16.8-25.8-7.7-35.5-23.9-35.5-23.9s2 1.4 5.7 3.4c.2.2.4.4.8.6.6.4 1.2.6 1.8 1 5.1 2.8 10.1 5.1 14.8 6.9 8.3 3.2 18.2 6.5 29.8 8.7 15.2 2.8 33.1 3.9 52.5.2 9.5-1.6 19.3-4.5 29.4-8.7 7.1-2.6 15-6.5 23.3-12 0 0-10.1 16.6-36.7 24.1 6.1 7.7 13.4 16.4 13.4 16.4 44.8-1.4 62-30.8 62-30.8.1-65.1-29.1-118.1-29.1-118.1zm-127.1 99.4c-11.4 0-20.7-10.1-20.7-22.5s9.1-22.5 20.7-22.5 20.9 10.1 20.7 22.5c0 12.3-9.2 22.5-20.7 22.5zm74 0c-11.4 0-20.7-10.1-20.7-22.5s9.1-22.5 20.7-22.5 20.7 10.1 20.7 22.5c0 12.3-9.2 22.5-20.7 22.5z">
+            d="M-145.3 217.1c-29.2-21.9-57-21.3-57-21.3l-2.8 3.2c34.5 10.5 50.5 25.8 50.5
+              25.8-21.1-11.6-41.8-17.2-61-19.5-14.6-1.6-28.6-1.2-41 .4-1.2 0-2.2.2-3.4.4-7.1.6-24.3 3.2-46
+              12.8-7.5 3.4-12 5.9-12 5.9s16.8-16 53.3-26.6l-2-2.4s-27.8-.6-57 21.3c0 0-29.2 52.9-29.2 118.2
+              0 0 17 29.4 61.8 30.8 0 0 7.5-9.1 13.6-16.8-25.8-7.7-35.5-23.9-35.5-23.9s2 1.4 5.7
+              3.4c.2.2.4.4.8.6.6.4 1.2.6 1.8 1 5.1 2.8 10.1 5.1 14.8 6.9 8.3 3.2 18.2 6.5 29.8 8.7 15.2
+              2.8 33.1 3.9 52.5.2 9.5-1.6 19.3-4.5 29.4-8.7 7.1-2.6 15-6.5 23.3-12 0 0-10.1 16.6-36.7
+              24.1 6.1 7.7 13.4 16.4 13.4 16.4 44.8-1.4 62-30.8 62-30.8.1-65.1-29.1-118.1-29.1-118.1zm-127.1
+              99.4c-11.4 0-20.7-10.1-20.7-22.5s9.1-22.5 20.7-22.5 20.9 10.1 20.7 22.5c0 12.3-9.2 22.5-20.7
+              22.5zm74 0c-11.4 0-20.7-10.1-20.7-22.5s9.1-22.5 20.7-22.5 20.7 10.1 20.7 22.5c0 12.3-9.2 22.5-20.7 22.5z">
           </path>
         </svg>
       </i>
       <div class="visibleMenu">Discord</div>
     </a>
     <a href="https://github.com/bifeldy/blockchain-evoting" target="_blank" rel="noreferrer">
-      <i class="fa fa-fw fa-code-fork mr-2"></i>
+      <i class="fab fa-fw fa-github mr-2"></i>
       <div class="visibleMenu">
         GitHub :: {{ slicedGithubSha }}
       </div>

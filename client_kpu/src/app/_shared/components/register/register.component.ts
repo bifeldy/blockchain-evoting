@@ -19,7 +19,7 @@ export class RegisterComponent implements OnInit {
   fg: FormGroup;
   submitted = false;
 
-  registerImg = 'https://via.placeholder.com/462x532.png';
+  registerImg = null;
   bgRegisterImg = '/assets/img/bg-login.svg';
 
   registerInfo = 'Ayo bergabung dengan kami~';
@@ -46,6 +46,7 @@ export class RegisterComponent implements OnInit {
     if (this.as.currentUserValue) {
       this.router.navigate(['/home']);
     }
+    this.registerImg = 'https://via.placeholder.com/462x532/' + this.gs.randomColor;
   }
 
   get registerFormVal() {
@@ -91,7 +92,8 @@ export class RegisterComponent implements OnInit {
       reTypePassword: [data ? data.reTypePassword : null, Validators.compose([Validators.required])],
       googleCaptchaResponse: [data ? data.googleCaptchaResponse : null, Validators.compose([Validators.required])],
       ethAccount: [data ? data.ethAccount : '', Validators.compose([Validators.required])],
-      ethAccountImport: [data ? data.ethAccountImport : null]
+      ethAccountImport: [data ? data.ethAccountImport : null],
+      walletPassword: [data ? data.walletPassword : null]
     },
     {
       validator: this.customValidator
@@ -248,7 +250,7 @@ export class RegisterComponent implements OnInit {
     this.registerInfo = 'Harap Menunggu ...';
     if (this.fg.value.ethAccount === 'tidak') {
       this.api.postData('/new-eth-account', {
-        password: this.fg.value.password
+        password: window.btoa(this.fg.value.password)
       }, null, 30000).subscribe(
         res => {
           this.registerInfo = res.result.pubKey;
@@ -270,12 +272,16 @@ export class RegisterComponent implements OnInit {
       }
       let wallet = false;
       let secretKey = this.fg.value.ethAccountImport;
+      let walletPassword = window.btoa(this.fg.value.password);
       try {
-        wallet = true;
         secretKey = JSON.parse(secretKey);
-      } catch (e) {}
+        wallet = true;
+        walletPassword = window.btoa(this.fg.value.walletPassword);
+      } catch (e) {
+        this.fg.controls.walletPassword.patchValue(null);
+      }
       this.api.postData('/import-eth-account', {
-        password: this.fg.value.password,
+        password: walletPassword,
         wallet, secretKey: this.fg.value.ethAccountImport
       }, null, 30000).subscribe(
         res => {

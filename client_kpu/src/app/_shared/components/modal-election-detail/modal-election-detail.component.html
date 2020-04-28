@@ -1,0 +1,59 @@
+<div *ngIf="isModalOpen" [config]="{ show: true }" bsModal #modalElectionDetail="bs-modal" (onHidden)="onHidden()"
+  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-auto-name">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header modal-header" [ngStyle]="{
+        'background-image': 'url(' + election.electionImage + ')',
+        'background-size': 'cover',
+        'background-position': 'center center'
+      }">
+        <h1> &nbsp; <br /> &nbsp; </h1>
+        <button type="button" class="close pull-right" aria-label="close" (click)="hideModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row mb-3">
+            <h3 class="w-100 text-center">
+              {{ election.electionName }}
+            </h3>
+            <h5 class="text-muted w-100 text-center">
+              {{ election.electionDescription }}
+            </h5>
+          </div>
+          <div class="row mb-3">
+            <div class="col my-auto p-0">
+              <div class="mb-3 col-12 text-center">
+                <div>// TODO :: Syarat Ketentuan Dan Data Informasi Calon Kandidat</div>
+              </div>
+              <div class="mb-3 col-12 text-center" *ngIf="!this.as.currentUserValue">
+                <button type="button" class="btn btn-sm btn-outline-danger" routerLink="/login">
+                  Harap Masuk / Daftar Untuk Ikut Serta
+                </button>
+              </div>
+              <div class="mb-3 col-12 text-center" *ngIf="this.as.currentUserValue">
+                <button type="button" *ngIf="this.as.currentUserValue.role == 'voter' && election.electionCreator != this.as.currentUserValue.pubKey"
+                  class="btn btn-sm btn-outline-primary" (click)="joinElection(election.electionId)">
+                    Daftar Sebagai Partisipan Pemilih
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="row">
+            <small class="col-6 text-left text-muted mt-auto">{{ election.electionId }}</small>
+            <small class="col-6 text-right text-muted" *ngIf="this.as.currentUserValue">
+              <a routerLink="/my-election" class="text-danger"
+                *ngIf="election.electionCreator == this.as.currentUserValue.pubKey && !router.url.includes('/election/')">
+                  You're The Owner, Manage This Election
+                  <i class="fa fa-fw fa-arrow-right"></i>
+              </a>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -17,8 +17,8 @@ export class HeaderComponent implements OnInit {
   windowWidth = null;
   windowHeight = null;
 
-  slicedGithubSha = '';
-  slicedUserName = '';
+  slicedGithubSha = null;
+  slicedUserName = null;
 
   constructor(
     private api: ApiService,
@@ -26,15 +26,21 @@ export class HeaderComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.windowWidth = window.innerWidth || window.outerWidth;
+    this.windowHeight = window.innerHeight || window.outerHeight;
     this.as.currentUser.subscribe(user => {
       this.currentUser = user;
-      this.api.getData('https://api.github.com/repos/Bifeldy/blockchain-evoting/commits').subscribe(res => {
-        this.githubLastCommit = res[0];
-        this.resizeText(
-          window.innerWidth || window.outerWidth,
-          window.innerHeight || window.outerHeight
-        );
-      });
+      if (this.currentUser) {
+        this.slicedUserName = this.currentUser.name;
+        this.sliceName();
+      }
+    });
+    this.api.getData('https://api.github.com/repos/Bifeldy/blockchain-evoting/commits').subscribe(res => {
+      this.githubLastCommit = res[0];
+      if (this.githubLastCommit) {
+        this.slicedGithubSha = this.githubLastCommit.sha;
+        this.sliceGit();
+      }
     });
   }
 
@@ -42,39 +48,60 @@ export class HeaderComponent implements OnInit {
     return this.currentUser && this.currentUser.role === Role.Admin;
   }
 
-  onWindowResize($event) {
-    this.resizeText(
-      $event.target.innerWidth || $event.target.outerWidth,
-      $event.target.innerHeight || $event.target.outerHeight
-    );
+  get isMiner() {
+    return this.currentUser && this.currentUser.role === Role.Miner;
   }
 
-  resizeText(width, height) {
-    this.windowWidth = width;
-    this.windowHeight = height;
-    if (this.windowWidth < 768) {
-      this.slicedGithubSha = this.githubLastCommit.sha.slice(0, 20);
-      if (this.currentUser) {
+  get isVoter() {
+    return this.currentUser && this.currentUser.role === Role.Voter;
+  }
+
+  onWindowResize($event) {
+    this.windowWidth = $event.target.innerWidth || $event.target.outerWidth;
+    this.windowHeight = $event.target.innerHeight || $event.target.outerHeight;
+    if (this.currentUser) {
+      this.sliceName();
+    }
+    if (this.githubLastCommit) {
+      this.sliceGit();
+    }
+  }
+
+  private sliceName() {
+    if (this.currentUser) {
+      if (this.windowWidth < 768) {
         this.slicedUserName = this.currentUser.name.slice(0, 30);
-      }
-      if (this.githubLastCommit.sha.length > 20) {
-        this.slicedGithubSha = this.slicedGithubSha.trim() + '...';
-      }
-      if (this.currentUser && this.currentUser.name.length > 30) {
-        this.slicedUserName = this.slicedUserName.trim() + '...';
-      }
-    } else {
-      this.slicedGithubSha = this.githubLastCommit.sha.slice(0, 8);
-      if (this.currentUser) {
+        if (this.currentUser && this.currentUser.name.length > 30) {
+          this.slicedUserName = this.slicedUserName.trim() + '...';
+        }
+      } else {
         this.slicedUserName = this.currentUser.name.slice(0, 15);
-      }
-      if (this.githubLastCommit.sha.length > 8) {
-        this.slicedGithubSha = this.slicedGithubSha.trim() + '...';
-      }
-      if (this.currentUser && this.currentUser.name.length > 15) {
-        this.slicedUserName = this.slicedUserName.trim() + '...';
+        if (this.currentUser && this.currentUser.name.length > 15) {
+          this.slicedUserName = this.slicedUserName.trim() + '...';
+        }
       }
     }
+  }
+
+  private sliceGit() {
+    if (this.githubLastCommit) {
+      if (this.windowWidth < 768) {
+        this.slicedGithubSha = this.githubLastCommit.sha.slice(0, 20);
+        if (this.githubLastCommit.sha.length > 20) {
+          this.slicedGithubSha = this.slicedGithubSha.trim() + '...';
+        }
+      } else {
+        this.slicedGithubSha = this.githubLastCommit.sha.slice(0, 8);
+        if (this.githubLastCommit.sha.length > 8) {
+          this.slicedGithubSha = this.slicedGithubSha.trim() + '...';
+        }
+      }
+    }
+  }
+
+  logout() {
+    this.as.logout();
+    location.reload();
   }
 
 }

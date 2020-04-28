@@ -21,7 +21,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
     this.as.currentUser.subscribe(user => this.currentUser = user);
     const userToken = localStorage.getItem(environment.tokenName);
     if (this.currentUser && userToken && request.url.startsWith(environment.apiUrl)) {
-      this.gs.log('[INTERCEPT_REQUEST]', userToken);
+      this.gs.log('[INTERCEPT_REQUEST]', userToken.slice(0, 5) + '*****' + userToken.slice(userToken.length - 5, userToken.length));
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${userToken}`

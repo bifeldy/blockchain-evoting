@@ -7,7 +7,7 @@ interface User {
   email: string;
   role: Role;
   name: string;
-  pubKey?: string;
+  pubKey: string;
   createdAt: number;
 }
 

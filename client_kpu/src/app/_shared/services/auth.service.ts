@@ -10,23 +10,21 @@ import { environment } from 'src/environments/environment';
 
 import { GlobalService } from './global.service';
 
-import * as CryptoJS from 'crypto-js';
-
 import User from '../models/user';
+import { CryptoService } from './crypto.service';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-
-  keySize = 256;
-  ivSize = 128;
-  iterations = 100;
 
   private currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
 
   constructor(
     private http: HttpClient,
+    private router: Router,
     private gs: GlobalService,
+    private crypt: CryptoService,
     private cs: CookieService
   ) {
     let token = null;
@@ -34,7 +32,7 @@ export class AuthService {
     try {
       token = localStorage.getItem(environment.tokenName);
       const userEncrypted = localStorage.getItem(environment.sessionName);
-      const userDecrypted = this.decrypt(userEncrypted, token);
+      const userDecrypted = this.crypt.decrypt(userEncrypted, token);
       userSession = JSON.parse(userDecrypted);
     } catch (e) {
       localStorage.removeItem(environment.sessionName);
@@ -53,7 +51,7 @@ export class AuthService {
       .pipe(map(respVerify => {
         this.currentUserSubject.next(respVerify.result.user);
         const userSession = JSON.stringify(respVerify.result.user);
-        const userEncrypted = this.encrypt(userSession, token);
+        const userEncrypted = this.crypt.encrypt(userSession, token);
         localStorage.setItem(environment.sessionName, userEncrypted);
         return respVerify.result.user;
       }));
@@ -65,10 +63,10 @@ export class AuthService {
   }
 
   logout() {
+    this.currentUserSubject.next(null);
     localStorage.removeItem(environment.sessionName);
     localStorage.removeItem(environment.tokenName);
-    this.currentUserSubject.next(null);
-    location.reload();
+    this.router.navigate(['/login']);
   }
 
   register(registerData: any) {
@@ -77,38 +75,6 @@ export class AuthService {
       .pipe(map(respRegister => {
         localStorage.setItem(environment.tokenName, respRegister.result.token);
       }));
-  }
-
-  encrypt(msg, pass) {
-    const salt = CryptoJS.lib.WordArray.random(128 / 8);
-    const key = CryptoJS.PBKDF2(pass, salt, {
-      keySize: this.keySize / 32,
-      iterations: this.iterations
-    });
-    const iv = CryptoJS.lib.WordArray.random(128 / 8);
-    const encrypted = CryptoJS.AES.encrypt(msg, key, {
-      iv,
-      padding: CryptoJS.pad.Pkcs7,
-      mode: CryptoJS.mode.CBC
-    });
-    const transitmessage = salt.toString() + iv.toString() + encrypted.toString();
-    return transitmessage;
-  }
-
-  decrypt(transitmessage, pass) {
-    const salt = CryptoJS.enc.Hex.parse(transitmessage.substr(0, 32));
-    const iv = CryptoJS.enc.Hex.parse(transitmessage.substr(32, 32));
-    const encrypted = transitmessage.substring(64);
-    const key = CryptoJS.PBKDF2(pass, salt, {
-      keySize: this.keySize / 32,
-      iterations: this.iterations
-    });
-    const decrypted = CryptoJS.AES.decrypt(encrypted, key, {
-      iv,
-      padding: CryptoJS.pad.Pkcs7,
-      mode: CryptoJS.mode.CBC
-    }).toString(CryptoJS.enc.Utf8);
-    return decrypted;
   }
 
 }

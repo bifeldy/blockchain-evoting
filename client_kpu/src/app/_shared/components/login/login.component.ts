@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
   showPassword = false;
 
   returnUrl = '/';
-  loginImg = 'https://via.placeholder.com/462x440.png';
+  loginImg = null;
   bgLoginImg = '/assets/img/bg-login.svg';
   loginInfo = 'Silahkan login terlebih dahulu~';
 
@@ -34,6 +34,7 @@ export class LoginComponent implements OnInit {
     if (this.as.currentUserValue) {
       this.router.navigate(['/home']);
     }
+    this.loginImg = 'https://via.placeholder.com/462x440/' + this.gs.randomColor;
   }
 
   get loginFormVal() {
