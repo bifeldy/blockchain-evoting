@@ -1,95 +1,89 @@
-<div class="m-0">
-  <div id="carouselBanner" class="carousel slide" data-ride="carousel" data-interval="2345">
-    <div class="carousel-inner">
-      <div class="carousel-item" [ngClass]="{ active: idx == 0 }" *ngFor="let i of banner; index as idx">
-        <img class="d-block img-fluid w-100" [src]="i.bannerImage" style="height: 256px; object-fit: cover;" />
-      </div>
-    </div>
-    <a class="carousel-control-prev" href="#carouselBanner" role="button" data-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="sr-only">Previous</span>
-    </a>
-    <a class="carousel-control-next" href="#carouselBanner" role="button" data-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="sr-only">Next</span>
-    </a>
-  </div>
-  <div class="container py-3">
-    <div class="row px-3">
-      <div class="col-md-9 bg-default">
-        <div class="row mt-3 mb-3">
-          <div class="col-12 pb-3 sticky-top bg-default">
-            <h3 class="pt-3 pb-2 border-bottom-dotted">
-              <small>
-                <a class="float-right text-sm text-success mt-2 text-decoration-none" routerLink="/more">
-                  <small>Lihat Semua</small>
-                </a>
-              </small>
-              <b class="text-secondary">Section 1</b>
-            </h3>
-          </div>
-          <div class="col-12 bg-default">
-            <ul class="list-unstyled">
-              <div class="media border-bottom mb-1 pb-1" *ngFor="let i of [1,2,3,4,5] | slice: 0:5">
-                <img class="align-self-center mr-3" src="http://via.placeholder.com/80x80" />
-                <div class="media-body pr-3">
-                  <h5 class="m-0 pt-2 pb-1">
-                    <b>Media List Title {{ i }}</b>
-                  </h5>
-                  <p class="m-0 pb-2 text-muted">Media List Description {{ i }}</p>
+<div class="container py-3 bg-default">
+  <div class="row">
+    <div class="col-md-8 bg-default">
+      <div class="row mt-3 mb-3">
+        <div class="col-12 pb-3 sticky-top bg-default">
+          <h3 class="pt-3 pb-2 border-bottom-dotted">
+            <small>
+              <a class="float-right text-sm text-success mt-2 text-decoration-none" routerLink="/election">
+                <small>Lihat Semua</small>
+              </a>
+            </small>
+            <b class="text-secondary">Active Election</b>
+          </h3>
+        </div>
+        <div class="col-12 bg-default">
+          <ul class="list-unstyled">
+            <li class="media border-bottom mb-1 p-1 list-group-item-action" *ngFor="let i of es.electionList | slice: 0:5">
+              <img class="align-self-center mr-3" src="{{ i.electionImage }}" (click)="openElectionModal(i)" style="cursor: pointer;" />
+              <div class="media-body text-truncate">
+                <h5 class="m-0 pt-2">
+                  <a (click)="openElection(i)" style="cursor: pointer;">{{ i.electionName }}</a>
+                </h5>
+                <p class="m-0 text-muted">{{ i.electionCreator }}</p>
+                <div class="pb-2">
+                  {{ i.electionDescription }}
                 </div>
               </div>
-            </ul>
-          </div>
+            </li>
+          </ul>
         </div>
-        <div class="row mt-3 mb-3">
-          <div class="col-12 pb-3 sticky-top bg-default">
-            <h3 class="pt-3 pb-2 border-bottom-dotted">
-              <b class="text-secondary">Section 2</b>
-            </h3>
-          </div>
-          <div class="col-12 bg-default">
-            <img class="img-fluid w-100" src="http://via.placeholder.com/768x128" />
+      </div>
+      <div class="row mt-3 mb-3">
+        <div class="col-12 pb-3 sticky-top bg-default">
+          <h3 class="pt-3 pb-2 border-bottom-dotted">
+            <b class="text-secondary">Section 1</b>
+          </h3>
+        </div>
+        <div class="col-12 bg-default">
+          <div class="row text-center px-3 text-lg-left">
+            <div class="col-md-4 col-6 p-2" *ngFor="let i of randomColor | slice: 0:6">
+              <a href="#" class="d-block h-100">
+                <img class="img-fluid" src="http://via.placeholder.com/256x192/{{ i }}" />
+              </a>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-md-3 bg-default">
-        <div class="row mt-3 mb-3">
-          <div class="col-12 pb-3 sticky-top bg-default">
-            <h3 class="pt-3 pb-2 border-bottom-dotted">
-              <b class="text-secondary">Section 3</b>
-            </h3>
-          </div>
-          <div class="col-12 bg-default">
-            <img class="img-fluid w-100" src="http://via.placeholder.com/256x256" />
-          </div>
+    </div>
+    <div class="col-md-4 bg-default">
+      <div class="row mt-3 mb-3">
+        <div class="col-12 pb-3 sticky-top bg-default">
+          <h3 class="pt-3 pb-2 border-bottom-dotted">
+            <b class="text-secondary">Section 2</b>
+          </h3>
         </div>
-        <div class="row mt-3 mb-3">
-          <div class="col-12 pb-3 sticky-top bg-default">
-            <h3 class="pt-3 pb-2 border-bottom-dotted">
-              <small>
-                <a class="float-right text-sm text-success mt-2 text-decoration-none" routerLink="/more">
-                  <small>Lihat Semua</small>
-                </a>
-              </small>
-              <b class="text-secondary">Section 4</b>
-            </h3>
-          </div>
-          <div class="col-12 bg-default">
-            <ul class="list-unstyled">
-              <div class="media border-bottom mb-1 pb-1" *ngFor="let i of [1,2,3] | slice: 0:3">
-                <img class="align-self-center mr-3" src="http://via.placeholder.com/80x80" />
-                <div class="media-body pr-3">
-                  <h5 class="m-0 pt-2 pb-1">
-                    <b>Title {{ i }}</b>
-                  </h5>
-                  <p class="m-0 pb-2 text-muted">Description {{ i }}</p>
-                </div>
+        <div class="col-12 bg-default">
+          <img class="img-fluid" src="http://via.placeholder.com/768x256/{{ randomColor[0] }}" />
+        </div>
+      </div>
+      <div class="row mt-3 mb-3">
+        <div class="col-12 pb-3 sticky-top bg-default">
+          <h3 class="pt-3 pb-2 border-bottom-dotted">
+            <small>
+              <a class="float-right text-sm text-success mt-2 text-decoration-none" routerLink="/more">
+                <small>Lihat Semua</small>
+              </a>
+            </small>
+            <b class="text-secondary">Section 3</b>
+          </h3>
+        </div>
+        <div class="col-12 bg-default">
+          <ul class="list-unstyled">
+            <div class="media border-bottom mb-1 p-1 list-group-item-action" *ngFor="let i of randomColor | slice: 0:5">
+              <img class="align-self-center mr-3" src="http://via.placeholder.com/80x80/{{ i }}" />
+              <div class="media-body text-truncate">
+                <h5 class="m-0 pt-2 pb-1">
+                  <b>Title {{ i }}</b>
+                </h5>
+                <p class="m-0 pb-2 text-muted">Description {{ i }}</p>
               </div>
-            </ul>
-          </div>
+            </div>
+          </ul>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<app-modal-election-detail></app-modal-election-detail>

@@ -4,6 +4,8 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { HomeComponent } from './home.component';
 
+import { ModalElectionDetailModule } from 'src/app/_shared/components/modal-election-detail/modal-election-detail.module';
+
 const routes: Routes = [
   {
     path: '',
@@ -15,7 +17,8 @@ const routes: Routes = [
   declarations: [HomeComponent],
   imports: [
     CommonModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    ModalElectionDetailModule
   ]
 })
 export class HomeModule { }
