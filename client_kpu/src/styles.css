@@ -3,7 +3,6 @@ html,
 body {
   font-family: "Open Sans", sans-serif !important;
   color: #353535;
-  font-size: 87.5%;
 }
 
 /* 
@@ -61,7 +60,7 @@ body {
     display: block;
   }
   .bifeldy-search-container input[type=text] {
-    width: calc(100% - 30.58px);
+    width: calc(100% - 32px);
   }
   /* Navbar */
   .bifeldy-navbar {
@@ -140,11 +139,11 @@ body {
     display: none;
   }
   .bifeldy-search-container input[type=text] {
-    width: 200px;
+    width: 250px;
     transition: .5s;
   }
   .bifeldy-search-container input[type=text]:focus {
-    width: 300px;
+    width: 500px;
     transition: .5s;
   }
   /* Sticky Top On Scroll */
@@ -729,6 +728,83 @@ footer {
   border-right: 0;
   border-style: dotted;
   border-color: #d2476e;
+}
+
+.img-thumbnail:hover {
+  border: 1px solid red;
+}
+
+/* Data Table */
+
+@media screen and (max-width: 766px) {
+  div.dataTables_filter,
+  div.dataTables_length {
+    display: inline-block;
+  }
+}
+
+.table td, .table th {
+  vertical-align: middle;
+}
+
+.page-item.active .page-link {
+  z-index: 0 !important;
+}
+
+tbody tr {
+  cursor: pointer;
+}
+
+/* Swiper */
+
+.s-wrapper.swiper.swiper-container.swiper-container-initialized.swiper-container-horizontal.swiper-container-free-mode {
+  padding-bottom: 1rem;
+}
+
+.swiper-button-prev,
+.carousel-control-prev-icon {
+  background-image: url("/assets/img/chevron-left.svg") !important;
+  background-color: rgba(0, 0, 0, 0.25) !important;
+  left: 0 !important;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  top: auto !important;
+  bottom: 0 !important;
+  height: 100% !important;
+  background-color: rgba(0, 0, 0, 0.25) !important;
+  border-radius: 3px;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  padding-bottom: 1rem;
+  background-clip: content-box;
+}
+
+.swiper-button-next,
+.carousel-control-next-icon {
+  background-image: url("/assets/img/chevron-right.svg") !important;
+  right: 0 !important;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: rgba(0, 0, 0, 0.25) !important;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+}
+
+.nav-tabs .nav-link.active {
+  color: #495057 !important;
+  background-color: #fff !important;
+  border-color: #ffc107 #ffc107 #fff !important;
+}
+
+.nav-link:hover {
+  border-color: #6c757d #6c757d #ffc107 !important;
 }
 
 /* Hosting Gretongan */

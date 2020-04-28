@@ -1,1 +1,22 @@
-<router-outlet></router-outlet>
+<div class="m-0">
+  <div id="carouselBanner" class="carousel slide" data-ride="carousel" data-interval="2345" *ngIf="!router.url.includes('/status') && !router.url.includes('/election/')">
+    <div class="carousel-inner">
+      <div class="carousel-item" [ngClass]="{ active: idx == 0 }" *ngFor="let i of banner; index as idx">
+        <img class="d-block img-fluid w-100" [src]="i.bannerImage" [ngStyle]="{
+          height: ((router.url === '/home') ? '256px' : (router.url.includes('/status')) ? '0px' : '118px'),
+          transition: '.25s ease-in-out',
+          objectFit: 'cover'
+        }" />
+      </div>
+    </div>
+    <a class="carousel-control-prev" href="#carouselBanner" role="button" data-slide="prev" *ngIf="router.url === '/home'">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselBanner" role="button" data-slide="next" *ngIf="router.url === '/home'">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+  <router-outlet></router-outlet>
+</div>

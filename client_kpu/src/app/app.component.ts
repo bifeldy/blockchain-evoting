@@ -40,7 +40,7 @@ export class AppComponent implements OnInit {
 
   updateSitePage(newTitle: string, newDescription: string, newKeywords: string) {
     this.title = newTitle;
-    this.titleService.setTitle(newTitle);
+    this.titleService.setTitle(`Bifeldy | ${newTitle}`);
     this.meta.updateTag({ name: 'og:title', content: newTitle });
     this.description = newDescription;
     this.meta.updateTag({ name: 'description', content: newDescription });

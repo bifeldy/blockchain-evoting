@@ -7,7 +7,7 @@ export const environment = {
   tokenName: 'bifeldy_token',
   sessionName: 'bifeldy_session',
   apiUrl: 'http://127.0.0.1:82/api',
-  sniffCors: 'https://cors-anywhere.herokuapp.com/'
+  sniffCors: 'https://bifeldy-cors.herokuapp.com/'
 };
 
 /*
