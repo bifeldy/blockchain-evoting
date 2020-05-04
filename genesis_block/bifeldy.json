@@ -11,8 +11,8 @@
     "petersburgBlock": 0,
     "istanbulBlock": 0,
     "clique": {
-      "period": 15,
-      "epoch": 30000
+      "period": 3,
+      "epoch": 6000
     }
   },
   "nonce": "0x0",
