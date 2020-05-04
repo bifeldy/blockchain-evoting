@@ -29,34 +29,108 @@ yes
 genesis_block
 
 geth --datadir "node_kpu" init "genesis_block/bifeldy.json"
+geth --datadir "node_miner1" init "genesis_block/bifeldy.json"
+geth --datadir "node_miner2" init "genesis_block/bifeldy.json"
 
 bootnode -genkey boot.key
 
 /**********/
 
-bootnode -nodekey "boot_node/boot.key" --addr 192.168.1.2:9000 --nat extip:110.137.152.70 -verbosity 9
+bootnode -nodekey "boot_node/boot.key" -addr 192.168.1.2:9000 -nat extip:36.70.77.37 -verbosity 9
 
-geth --identity "node_kpu" --datadir "node_kpu" --syncmode "full" --networkid 9999 --rpc --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d" --password "node_kpu/pass.key" --mine --ipcdisable --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@192.168.1.2:9000" --port 9001 --rpcport 9002 --wsport 9003
+geth --identity "node_kpu" --datadir "node_kpu" --syncmode "full" --networkid 9999 --rpc --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d" --password "node_kpu/pass.key" --mine --ipcdisable --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@192.168.1.2:9000" --port 9001 --rpcport 9002 --wsport 9003 --ethstats node_kpu:mysecret@localhost:9999
 
 geth attach http://localhost:9002
 
-geth --identity "node_miner1" --datadir "node_miner1" --syncmode "full" --networkid 9999 --rpc --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0x6b9763d8b2297a4334b54f472c561eb850fbec84" --password "node_miner1/pass.key" --mine --ipcdisable --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@192.168.1.2:9000" --port 9004 --rpcport 9005 --wsport 9006
+geth --identity "node_miner1" --datadir "node_miner1" --syncmode "full" --networkid 9999 --rpc --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0x6b9763d8b2297a4334b54f472c561eb850fbec84" --password "node_miner1/pass.key" --mine --ipcdisable --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@192.168.1.2:9000" --port 9004 --rpcport 9005 --wsport 9006 --ethstats node_miner1:mysecret@localhost:9999
 
 geth attach http://localhost:9005
 
-geth --identity "node_miner2" --datadir "node_miner2" --syncmode "full" --networkid 9999 --rpc --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0xdA41F175c06e8fbA96A20FF9e2ed41Aca4535e44" --password "node_miner2/pass.key" --mine --ipcdisable --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@192.168.1.2:9000" --port 9007 --rpcport 9008 --wsport 9009
+geth --identity "node_miner2" --datadir "node_miner2" --syncmode "full" --networkid 9999 --rpc --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0xdA41F175c06e8fbA96A20FF9e2ed41Aca4535e44" --password "node_miner2/pass.key" --mine --ipcdisable --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@192.168.1.2:9000" --port 9007 --rpcport 9008 --wsport 9009 --ethstats node_miner2:mysecret@localhost:9999
 
 geth attach http://localhost:9008
 
 
 /**********/
 
-bootnode -nodekey "boot_node/boot.key" --nat extip:3.83.8.140 -verbosity 9
+bootnode -nodekey "boot_node/boot.key" -nat extip:3.83.8.140 -verbosity 9
 
-geth --identity "node_kpu" --datadir "node_kpu" --syncmode "full" --networkid 9999 --rpc --rpcport 9001 --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsport 9002 --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d" --password "node_kpu/pass.key" --mine --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@3.83.8.140:30301" --nat extip:110.137.152.70 --ipcdisable
+geth --identity "node_kpu" --datadir "node_kpu" --syncmode "full" --networkid 9999 --rpc --rpcport 9001 --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsport 9002 --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d" --password "node_kpu/pass.key" --mine --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@3.83.8.140:30301" --nat extip:36.70.77.37 --ipcdisable
 
 geth --identity "node_miner1" --datadir "node_miner1" --syncmode "full" --networkid 9999 --rpc --rpcport 9001 --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsport 9002 --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0x6b9763d8b2297a4334b54f472c561eb850fbec84" --password "node_miner1/pass.key" --mine --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@3.83.8.140:30301" --nat extip:3.83.8.140 --ipcdisable
 
 geth --identity "node_miner2" --datadir "node_miner2" --syncmode "full" --networkid 9999 --rpc --rpcport 9001 --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsport 9002 --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0xdA41F175c06e8fbA96A20FF9e2ed41Aca4535e44" --password "node_miner2/pass.key" --mine --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@3.83.8.140:30301" --nat extip:3.94.117.175 --ipcdisable
 
 geth attach http://localhost:9001
+
+
+/**********/
+
+{
+  "receipt": {
+    "blockHash": "0xabc1740795b5a786ea4c80b3be2b09219f08fa23179f24fce975645bf7ac4014",
+    "blockNumber": 341,
+    "contractAddress": null,
+    "cumulativeGasUsed": 89300,
+    "from": "0x9bc244dd5aab19a92c2e94462f57bace1a0c2c4e",
+    "gasUsed": 89300,
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "status": true,
+    "to": "0xae7d5ca7fe7e5a967b75a1d0883252d66424ed8c",
+    "transactionHash": "0x666020fabc33aa2b01cb0bd4d225761ffac0569cc8a8809a9e50d126146eae02",
+    "transactionIndex": 0,
+    "events": {}
+  }
+}
+
+{
+  "info":"😲 200 - Berhasil Membuat Election Baru! 😝",
+  "result": {
+    "trxCreateElection": {
+      "blockHash": "0x72a7593e07a38df4be52d610cb3909ba11dfe4e793932777e03e6e7ba4690ebb",
+      "blockNumber": 26,
+      "contractAddress": null,
+      "cumulativeGasUsed": 66803,
+      "from": "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d",
+      "gasUsed": 66803,
+      "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "status": true,
+      "to": "0xae7d5ca7fe7e5a967b75a1d0883252d66424ed8c",
+      "transactionHash": "0xf76d30520aaefedee50c516af0531d1e89471512a3267eee438d7a2d27c9edfe",
+      "transactionIndex": 0,
+      "events": {}
+    },
+    "trxAddCandidate": {
+      "blockHash": "0x57adab9098e35da67c355acc6cef852c1d9bf062e30cb405f2e232c990e76276",
+      "blockNumber": 29,
+      "contractAddress": null,
+      "cumulativeGasUsed": 47068,
+      "from": "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d",
+      "gasUsed":47068,
+      "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "status": true,
+      "to": "0xae7d5ca7fe7e5a967b75a1d0883252d66424ed8c",
+      "transactionHash": "0x6fa98e3e10e851a815fc92b40ccf34186344b8ac5d9842c41d687b1145d9054e",
+      "transactionIndex": 0,
+      "events":{}
+    }
+  }
+}
+
+{
+  "0": "0x0000000000000000000000000000000000000000",
+  "1": "0",
+  "2": false,
+  "3": "0x0000000000000000000000000000000000000000",
+  "voterAddress": "0x0000000000000000000000000000000000000000",
+  "voterWeight": "0",
+  "voterVoted": false,
+  "voterSelectedCandidate": "0x0000000000000000000000000000000000000000"
+}
+
+{
+  "0": "0x0000000000000000000000000000000000000000",
+  "1": "0",
+  "candidateAddress": "0x0000000000000000000000000000000000000000",
+  "candidateVoteCount": "0"
+}
