@@ -1,3 +1,4 @@
+// @ts-nocheck
 const express = require('express');
 const createError = require('http-errors');
 
@@ -95,6 +96,137 @@ function userCheckAccountModule(newUserData, res, next, registerMode) {
 // GET `/api`
 router.get('/', function(req, res, next) {
   return next(createError(404));
+});
+
+// GET `/api/coinbase`
+router.get('/coinbase', function(req, res, next) {
+  if (
+    'accountAddress' in req.query && req.query.accountAddress != null && req.query.accountAddress != '' && req.query.accountAddress != undefined
+  ) {
+    return eth.web3GetAccountBalance(
+      req.query.accountAddress,
+      (errTrx, trxResultCoinbaseInWei) => {
+        if (errTrx) return next(createError(500, errTrx));
+        else {
+          return res.status(200).json({
+            info: '😍 200 - Check Koin Ethereum! 🥰',
+            result: {
+              wei: trxResultCoinbaseInWei,
+              gwei: eth.fromWei(trxResultCoinbaseInWei, 'gwei'),
+              ether: eth.fromWei(trxResultCoinbaseInWei, 'ether'),
+              tether: eth.fromWei(trxResultCoinbaseInWei, 'tether')
+            }
+          });
+        }
+    })
+  }
+  return res.status(400).json({
+    info: '🙄 400 - Check Koin Ethereum! 😪',
+    result: {
+      message: 'Data tidak valid atau tidak lengkap'
+    }
+  });
+});
+
+// POST `/api/fund`
+router.post('/fund', function(req, res, next) {
+  const decoded = jwt.JwtDecode(req, res, next);
+  if (decoded == null || decoded == undefined) return;
+  if (
+    'amount' in req.body && req.body.amount != null && req.body.amount != '' && req.body.amount != undefined
+  ) {
+    const reqFund = {
+      amount: req.body.amount,
+      accountAddress: decoded.user.pubKey
+    };
+    return db.mySqlQuery(`
+      INSERT INTO fund
+      SET ?
+    `, reqFund, (error, results, fields) => {
+      if (error) return next(createError(500));
+      else {
+        return res.status(200).json({
+          info: '😍 200 - Request Koin Ethereum! 🥰',
+          result: {
+            message: 'Permintaan Terlah Dikirim, Silahkan Tunggu 1x24 Jam'
+          }
+        });
+      }
+    });
+  }
+  return res.status(400).json({
+    info: '🙄 400 - Request Koin Ethereum! 😪',
+    result: {
+      message: 'Data tidak valid atau tidak lengkap'
+    }
+  });
+});
+
+// GET `/api/fund`
+router.get('/fund', function(req, res, next) {
+  const decoded = jwt.JwtDecode(req, res, next);
+  if (decoded == null || decoded == undefined) return;
+  else if (decoded.user.role == 'admin') {
+    return db.mySqlQuery(`
+      SELECT id, funded, amount, accountAddress, createdAt
+      FROM fund
+      WHERE funded = 0
+    `, null, (error, results, fields) => {
+      if (error) return next(createError(500));
+      return res.status(200).json({
+        info: `😍 200 - Daftar Request Koin Ethereum! 🥰`,
+        results: results
+      });
+    });
+  }
+  else next(createError(403));
+});
+
+// POST `/api//fund/:id`
+router.post('/fund/:id', function(req, res, next) {
+  const decoded = jwt.JwtDecode(req, res, next);
+  if (decoded == null || decoded == undefined) return;
+  else if (decoded.user.role == 'admin') {
+    return db.mySqlQuery(`
+      SELECT id, funded, amount, accountAddress
+      FROM fund
+      WHERE funded = 0 AND id = ?
+    `, [req.params.id], (errorSql1, resultsSql1, fieldsSql1) => {
+      if (errorSql1) return next(createError(400));
+      else {
+        if (resultsSql1.length <= 0) return next(createError(404));
+        else {
+          const requestedFundAccount = resultsSql1[0];
+          return eth.web3TransferCoin(
+            requestedFundAccount.accountAddress,
+            requestedFundAccount.amount,
+            'ether',
+            (errTrx, trxFunded) => {
+              if (errTrx) return next(createError(500, errTrx));
+              else {
+                return db.mySqlQuery(`
+                  UPDATE fund
+                  SET funded = 1
+                  WHERE id = ?
+                `, [requestedFundAccount.id], (errorSql2, resultsSql2, fieldsSql2) => {
+                  if (errorSql2) return next(createError(500));
+                  else {
+                    return res.status(200).json({
+                      info: `😍 200 - Berhasil Menyetujui Request Koin Ethereum! 🥰`,
+                      result: {
+                        trxFunded
+                      }
+                    });
+                  }
+                });
+              }
+            }
+          );
+        }
+      }
+    });
+  }
+  else next(createError(403));
 });
 
 // POST `/api/login`
@@ -220,12 +352,12 @@ router.post('/new-eth-account', function(req, res, next) {
   ) {
     return eth.web3CreateAccount(
       atob(newUserData.password),
-      (error, pubKey) => {
+      (error, account) => {
         if (error) return next(createError(400));
         return res.status(200).json({
           info: '😍 200 - Berhasil Membuat Akun Ethereum! 🥰',
           result: {
-            pubKey
+            account
           }
         });
       }
@@ -260,7 +392,7 @@ router.post('/import-eth-account', function(req, res, next) {
       newUserData.password != undefined
     )
   ) {
-    const callbackImportEthAccount = (error, pubKey) => {
+    const callbackImportEthAccount = (error, result) => {
       if (error) {
         return res.status(400).json({
           info: '🙄 400 - Data File Tidak Valid! 😪',
@@ -271,9 +403,7 @@ router.post('/import-eth-account', function(req, res, next) {
       }
       return res.status(200).json({
         info: '😍 200 - Berhasil Import Akun Ethereum! 🥰',
-        result: {
-          pubKey
-        }
+        result
       });
     }
     if (!newUserData.wallet) {

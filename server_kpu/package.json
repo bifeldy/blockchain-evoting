@@ -22,7 +22,7 @@
     "mysql": "^2.18.1",
     "request": "^2.88.2",
     "serve-favicon": "^2.5.0",
-    "web3": "^1.2.6",
+    "web3": "^1.2.7",
     "web3-eth-miner": "^2.0.0-alpha.1"
   },
   "devDependencies": {}

@@ -1,3 +1,4 @@
+// @ts-nocheck
 const fs = require("fs");
 const find = require('find');
 const execFile = require('child_process').execFile;
@@ -33,6 +34,32 @@ var ballotContractAddress = null;
 var ballotInstance = null;
 
 const defaultOptions = {};
+
+/** Utilities */
+
+function toHex(number) {
+  return web3.utils.toHex(number);
+}
+
+function fromWei(number, unit = 'ether') {
+  return web3.utils.fromWei(number, unit);
+}
+
+async function makeBatchRequest(calls, callParameter) {
+  let batch = new web3.BatchRequest();
+  let promises = calls.map(call => {
+    return new Promise((res, rej) => {
+      let req = call.request(callParameter, (err, data) => {
+        if(err) rej(err);
+        else res(data);
+      });
+      console.log(req);
+      batch.add(req);
+    });
+  });
+  batch.execute();
+  return await Promise.all(promises);
+}
 
 /** Procedural */
 
@@ -89,13 +116,19 @@ function web3NewContractInstance(abi, contractAddress, version = 1) {
 /** Promises */
 
 function web3UnlockAccount(password, accountAddress = defaultAccount, callback) {
-  return web3.eth.personal.unlockAccount(accountAddress, password, 9223372036).then(() => {
+  return web3.eth.personal.unlockAccount(
+    accountAddress,
+    password,
+    9223372036 // Unlock Time Forever
+  ).then(() => {
     console.log('[ETH-UNLOCK_ACCOUNT] \x1b[95m%s\x1b[0m', accountAddress);
     web3SetAccount(accountAddress);
     callback(null);
   }).catch((error) => {
     console.log('[ETH-UNLOCK_ACCOUNT] \x1b[91m%s\x1b[0m', JSON.stringify(error));
-    callback(error);
+    callback({
+      message: 'Wrong Passphrase For Unlocking Account'
+    });
   });
 }
 
@@ -129,6 +162,15 @@ function web3MiningStop() {
 
 /** Utilities */
 
+function web3GetEstimatedGasPriceTransaction(transactionObject, callback) {
+  web3.eth.estimateGas(transactionObject).then((estimatedGas) => {
+    console.log('[ETH-GAS_PRICE_TRANSACTION] \x1b[95m%s\x1b[0m', estimatedGas);
+    callback(estimatedGas);
+  }).catch((error) => {
+    console.log('[ETH-GAS_PRICE_TRANSACTION] \x1b[91m%s\x1b[0m', JSON.stringify(error));
+  });
+}
+
 function web3GetGasPriceNetwork(callback) {
   web3.eth.getGasPrice().then((networkGas) => {
     console.log('[ETH-GAS_PRICE_NETWORK] \x1b[95m%s\x1b[0m', networkGas);
@@ -138,7 +180,7 @@ function web3GetGasPriceNetwork(callback) {
   });
 }
 
-function web3GetGasPriceDeployContract(abi, bytecode, callback) {
+function web3GetEstimatedGasPriceDeployContract(abi, bytecode, callback) {
   const myContract = new web3.eth.Contract(abi);
   myContract.deploy({
     data: bytecode,
@@ -151,7 +193,7 @@ function web3GetGasPriceDeployContract(abi, bytecode, callback) {
   });
 }
 
-function web3GetGasPriceMethodContract(functionName, myContractFunction, accountExecutor, callback) {
+function web3GetEstimatedGasPriceMethodContract(functionName, myContractFunction, accountExecutor, callback) {
   myContractFunction.estimateGas({
     from: accountExecutor
   }).then((estimatedGas) => {
@@ -165,20 +207,20 @@ function web3GetGasPriceMethodContract(functionName, myContractFunction, account
 
 /** One-Time Run Only */
 
-function web3DeployContract(abi = truffleCompiled.abi, bytecode = truffleCompiled.bytecode) {
-  web3SetAccount(defaultAccount);
-  web3UnlockAccount(defaultPassword, defaultAccount, (err) => {
+function web3DeployContract(abi = truffleCompiled.abi, bytecode = truffleCompiled.bytecode, contractOwnerAddress = defaultAccount, contractOwnerPassword = defaultPassword) {
+  web3SetAccount(contractOwnerAddress);
+  web3UnlockAccount(contractOwnerPassword, contractOwnerAddress, (err) => {
     if(err) return;
     web3MiningStart();
     web3GetGasPriceNetwork((networkGas) => {
-      web3GetGasPriceDeployContract(abi, bytecode, (estimatedGas) => {
+      web3GetEstimatedGasPriceDeployContract(abi, bytecode, (estimatedGas) => {
         ballotContract = new web3.eth.Contract(abi);
         return ballotContract.deploy({
           data: bytecode,
           arguments: []
         })
         .send({
-          from: defaultAccount,
+          from: contractOwnerAddress,
           gasPrice: estimatedGas.toString()
         })
         .then((contractInstance) => {
@@ -206,20 +248,28 @@ function web3DeployContract(abi = truffleCompiled.abi, bytecode = truffleCompile
 
 /** Miscellaneous */
 
-function web3TransferEther(toPubKey, etherAmount = '1', fromPubKey = defaultAccount, callback) {
-  web3SetAccount(defaultAccount);
-  web3UnlockAccount(defaultPassword, defaultAccount, (err) => {
-    web3.eth.sendTransaction({
-      from: fromPubKey,
-      to: toPubKey,
-      value: web3.utils.toWei(etherAmount.toString(), "ether")
-    }).then((receipt) => {
-      console.log('[ETH-TRANSFER_ETHER] \x1b[95m%s\x1b[0m - \x1b[35m%s\x1b[0m :: \x1b[91m%s\x1b[0m', fromPubKey, toPubKey, etherAmount);
-      console.log(receipt);
-      callback(null, toPubKey);
-    }).catch((error) => {
-      console.log('web3TransferEther');
-      callback(error, null);
+function web3TransferCoin(toPubKey, amount = '1', coinType= 'ether', callback, fromPubKey = defaultAccount, fromPassword = defaultPassword) {
+  web3SetAccount(fromPubKey);
+  const trxObj = {
+    from: fromPubKey,
+    to: toPubKey,
+    value: web3.utils.toWei(amount.toString(), coinType)
+  };
+  return web3GetEstimatedGasPriceTransaction(trxObj, (estimatedGas) => {
+    return web3UnlockAccount(fromPassword, fromPubKey, (err) => {
+      return web3.eth.sendTransaction({
+        ...trxObj,
+        gasPrice: estimatedGas.toString()
+      }).then((receipt) => {
+        console.log('[ETH-TRANSFER_ETHER] \x1b[95m%s\x1b[0m - \x1b[35m%s\x1b[0m :: \x1b[91m%s\x1b[0m', fromPubKey, toPubKey, amount);
+        callback(null, {
+          pubKey: toPubKey,
+          receipt
+        });
+      }).catch((error) => {
+        console.log('ETH-TRANSFER_ETHER] \x1b[91m%s\x1b[0m', error);
+        callback(error, null);
+      });
     });
   });
 }
@@ -228,9 +278,9 @@ function web3CreateAccount(password, callback) {
   console.log(password);
   return web3.eth.personal.newAccount(password).then((pubKey) => {
     console.log('[ETH-CREATE_ACCOUNT] \x1b[95m%s\x1b[0m', pubKey);
-    web3TransferEther(pubKey, '1', defaultAccount, callback);
+    return web3TransferCoin(pubKey, '1', 'ether', callback, defaultAccount, defaultPassword);
   }).catch((error) => {
-    console.log('web3CreateAccount');
+    console.log('ETH-CREATE_ACCOUNT] \x1b[91m%s\x1b[0m', error);
     callback(error, null);
   });
 }
@@ -242,9 +292,10 @@ function web3AddWallet(pubKey, privKey, password, callback) {
   if(slicedPrivKey.startsWith('0x')) {
     slicedPrivKey = slicedPrivKey.slice(2, slicedPrivKey.length);
   }
-  web3.eth.personal.importRawKey(slicedPrivKey, password).then((address => {
-    web3TransferEther(address, '1', defaultAccount, callback);
+  return web3.eth.personal.importRawKey(slicedPrivKey, password).then((address => {
+    return web3TransferCoin(address, '1', 'ether', callback, defaultAccount, defaultPassword);
   })).catch(error => {
+    console.log('ETH-ADD_WALLET] \x1b[91m%s\x1b[0m', error);
     callback(error, null);
   });
 }
@@ -273,23 +324,23 @@ function web3ExportAccount(pubKey, callback) {
   });
 }
 
-/** Smart Contract */
+/** Smart Contract -- Setter */
 
-function web3CreateElection(electionId, electionName, electionOwner, passphrase, callback) {
-  web3SetAccount(electionOwner);
-  web3UnlockAccount(passphrase, electionOwner, (e) => {
+function web3CreateElection(electionId, electionCreator, passphrase, callback) {
+  web3SetAccount(electionCreator);
+  return web3UnlockAccount(passphrase, electionCreator, (e) => {
     if(e) return callback(e, null);
-    web3GetGasPriceMethodContract(
+    return web3GetEstimatedGasPriceMethodContract(
       'createElection',
-      ballotInstance.methods.createElection(electionId, electionName),
-      electionOwner,
+      ballotInstance.methods.createElection(electionId),
+      electionCreator,
       (error, estimatedGas) => {
         if (error) {
           callback(error, null);
         }
         else {
-          return ballotInstance.methods.createElection(electionId, electionName).send({
-            from: electionOwner,
+          return ballotInstance.methods.createElection(electionId).send({
+            from: electionCreator,
             gasPrice: estimatedGas.toString()
           }).then((transactionRecipt) => {
             callback(null, transactionRecipt);
@@ -302,135 +353,175 @@ function web3CreateElection(electionId, electionName, electionOwner, passphrase,
   });
 }
 
-function web3AddCandidate(electionId, candidateName, candidateAddress, electionCreator) {
+function web3AddCandidate(electionId, candidateAddress, electionCreator, passphrase, callback) {
   web3SetAccount(electionCreator);
-  web3GetGasPriceMethodContract(
-    'addCandidate',
-    ballotInstance.methods.addCandidate(electionId, candidateName, candidateAddress),
-    (estimatedGas) => {
-      ballotInstance.methods.addCandidate(electionId, candidateName, candidateAddress).send({
-        from: electionCreator,
-        gasPrice: estimatedGas.toString()
-      })
-      .on('transactionHash', (transactionHash) => {
-        console.log('[CONTRACT-ADD_CANDIDATE_TRANSACTION] \x1b[95m%s\x1b[0m', transactionHash);
-      })
-      .on('confirmation', (confirmationNumber, receipt) => {
-        console.log('[CONTRACT-ADD_CANDIDATE_CONFIRMATION] \x1b[95m%s\x1b[0m', confirmationNumber);
-      })
-      .on('receipt', (receipt) => {
-        console.log('[CONTRACT-ADD_CANDIDATE_RECEIPT] \x1b[95m%s\x1b[0m', JSON.stringify(receipt));
-      })
-      .on('error', (error) => {
-        console.log('[CONTRACT-ADD_CANDIDATE_ERROR] \x1b[91m%s\x1b[0m', JSON.stringify(error));
-      });
-    }
-  );
-}
-
-function web3AddParticipant(electionId, voterName, voterAddress, electionCreator) {
-  web3SetAccount(electionCreator);
-  web3GetGasPriceMethodContract(
-    'addParticipant',
-    ballotInstance.methods.addParticipant(electionId, voterName, voterAddress),
-    (estimatedGas) => {
-      ballotInstance.methods.addParticipant(electionId, voterName, voterAddress).send({
-        from: electionCreator,
-        gasPrice: estimatedGas.toString()
-      })
-      .on('transactionHash', (transactionHash) => {
-        console.log('[CONTRACT-ADD_PARTICIPANT_TRANSACTION] \x1b[95m%s\x1b[0m', transactionHash);
-      })
-      .on('confirmation', (confirmationNumber, receipt) => {
-        console.log('[CONTRACT-ADD_PARTICIPANT_CONFIRMATION] \x1b[95m%s\x1b[0m', confirmationNumber);
-      })
-      .on('receipt', (receipt) => {
-        console.log('[CONTRACT-ADD_PARTICIPANT_RECEIPT] \x1b[95m%s\x1b[0m', JSON.stringify(receipt));
-      })
-      .on('error', (error) => {
-        console.log('[CONTRACT-ADD_PARTICIPANT_ERROR] \x1b[91m%s\x1b[0m', JSON.stringify(error));
-      });
-    }
-  );
-}
-
-function web3EndElection(electionId, electionCreator) {
-  web3SetAccount(electionCreator);
-  web3GetGasPriceMethodContract(
-    'endElection',
-    ballotInstance.methods.endElection(electionId),
-    (estimatedGas) => {
-      ballotInstance.methods.endElection(electionId).send({
-        from: electionCreator,
-        gasPrice: estimatedGas.toString()
-      })
-      .on('transactionHash', (transactionHash) => {
-        console.log('[CONTRACT-END_ELECTION_TRANSACTION] \x1b[95m%s\x1b[0m', transactionHash);
-      })
-      .on('confirmation', (confirmationNumber, receipt) => {
-        console.log('[CONTRACT-END_ELECTION_CONFIRMATION] \x1b[95m%s\x1b[0m', confirmationNumber);
-      })
-      .on('receipt', (receipt) => {
-        console.log('[CONTRACT-END_ELECTION_RECEIPT] \x1b[95m%s\x1b[0m', JSON.stringify(receipt));
-      })
-      .on('error', (error) => {
-        console.log('[CONTRACT-END_ELECTION_ERROR] \x1b[91m%s\x1b[0m', JSON.stringify(error));
-      });
-    }
-  );
-}
-
-function web3Vote(electionId, candidateAddress, voterAddress) {
-  web3SetAccount(voterAddress);
-  web3GetGasPriceMethodContract(
-    'vote',
-    ballotInstance.methods.vote(electionId, candidateAddress, voterAddress),
-    (estimatedGas) => {
-      ballotInstance.methods.vote(electionId, candidateAddress, voterAddress).send({
-        from: voterAddress,
-        gasPrice: estimatedGas.toString()
-      })
-      .on('transactionHash', (transactionHash) => {
-        console.log('[CONTRACT-VOTE_TRANSACTION] \x1b[95m%s\x1b[0m', transactionHash);
-      })
-      .on('confirmation', (confirmationNumber, receipt) => {
-        console.log('[CONTRACT-VOTE_CONFIRMATION] \x1b[95m%s\x1b[0m', confirmationNumber);
-      })
-      .on('receipt', (receipt) => {
-        console.log('[CONTRACT-VOTE_RECEIPT] \x1b[95m%s\x1b[0m', JSON.stringify(receipt));
-      })
-      .on('error', (error) => {
-        console.log('[CONTRACT-VOTE_ERROR] \x1b[91m%s\x1b[0m', JSON.stringify(error));
-      });
-    }
-  );
-}
-
-function web3ShowMyVote(electionId, voterAddress) {
-  web3SetAccount(voterAddress);
-  ballotInstance.methods.showMyVote(electionId, voterAddress).call({
-    from: voterAddress,
-  })
-  .then((result) => {
-    console.log('[CONTRACT-MY_VOTE] \x1b[95m%s\x1b[0m', JSON.stringify(result));
+  return web3UnlockAccount(passphrase, electionCreator, (e) => {
+    if(e) return callback(e, null);
+    return web3GetEstimatedGasPriceMethodContract(
+      'addCandidate',
+      ballotInstance.methods.addCandidate(electionId, candidateAddress),
+      electionCreator,
+      (error, estimatedGas) => {
+        if (error) {
+          callback(error, null);
+        }
+        else {
+          return ballotInstance.methods.addCandidate(electionId, candidateAddress).send({
+            from: electionCreator,
+            gasPrice: estimatedGas.toString()
+          }).then((transactionRecipt) => {
+            callback(null, transactionRecipt);
+          }).catch((error) => {
+            callback(error, null);
+          });
+        }
+      }
+    );
   });
 }
 
-function web3ShowResultCount(electionId, candidateAddress, voterAddress) {
+function web3EndElection(electionId, electionCreator, passphrase, callback) {
+  web3SetAccount(electionCreator);
+  return web3UnlockAccount(passphrase, electionCreator, (e) => {
+    if(e) return callback(e, null);
+    return web3GetEstimatedGasPriceMethodContract(
+      'endElection',
+      ballotInstance.methods.endElection(electionId),
+      electionCreator,
+      (error, estimatedGas) => {
+        if (error) {
+          callback(error, null);
+        }
+        else {
+          return ballotInstance.methods.endElection(electionId).send({
+            from: electionCreator,
+            gasPrice: estimatedGas.toString()
+          }).then((transactionRecipt) => {
+            callback(null, transactionRecipt);
+          }).catch((error) => {
+            callback(error, null);
+          });
+        }
+      }
+    );
+  });
+}
+
+function web3AddParticipant(electionId, voterAddress, electionCreator, passphrase, callback) {
+  web3SetAccount(electionCreator);
+  return web3UnlockAccount(passphrase, electionCreator, (e) => {
+    if(e) return callback(e, null);
+    return web3GetEstimatedGasPriceMethodContract(
+      'addParticipant',
+      ballotInstance.methods.addParticipant(electionId, voterAddress),
+      electionCreator,
+      (error, estimatedGas) => {
+        if (error) {
+          callback(error, null);
+        }
+        else {
+          return ballotInstance.methods.addParticipant(electionId, voterAddress).send({
+            from: electionCreator,
+            gasPrice: estimatedGas.toString()
+          }).then((transactionRecipt) => {
+            callback(null, transactionRecipt);
+          }).catch((error) => {
+            callback(error, null);
+          });
+        }
+      }
+    );
+  });
+}
+
+function web3Vote(electionId, candidateAddress, voterAddress, passphrase, callback) {
   web3SetAccount(voterAddress);
+  return web3UnlockAccount(passphrase, voterAddress, (e) => {
+    if(e) return callback(e, null);
+    return web3GetEstimatedGasPriceMethodContract(
+      'vote',
+      ballotInstance.methods.vote(electionId, candidateAddress, voterAddress),
+      voterAddress,
+      (error, estimatedGas) => {
+        if (error) {
+          callback(error, null);
+        }
+        else {
+          return ballotInstance.methods.vote(electionId, candidateAddress, voterAddress).send({
+            from: voterAddress,
+            gasPrice: estimatedGas.toString()
+          }).then((transactionRecipt) => {
+            callback(null, transactionRecipt);
+          }).catch((error) => {
+            callback({
+              message: 'Whoops, Terjadi Kesalahan! Tidak Dapat Memilih.'
+            }, null);
+          });
+        }
+      }
+    );
+  });
+}
+
+/** Smart Contract -- Getter */
+
+function web3GetAccountBalance(accountAddress, callback) {
+  return web3.eth.getBalance(accountAddress).then((result) => {
+    callback(null, result);
+  }).catch((error) => {
+    callback(error, null);
+  });
+}
+
+function web3ShowMyVote(electionId, voterAddress, passphrase, callback) {
+  web3SetAccount(voterAddress);
+  return web3UnlockAccount(passphrase, voterAddress, (e) => {
+    if(e) return callback(e, null);
+    return ballotInstance.methods.showMyVote(electionId, voterAddress).call({
+      from: voterAddress,
+    })
+    .then((result) => {
+      callback(null, result);
+    }).catch((error) => {
+      callback(error, null);
+    });
+  });
+}
+
+function web3ShowResultCount(electionId, candidatesAddress, callback) {
+  web3SetAccount(defaultAccount);
+  let calls = [];
+  candidatesAddress.forEach(candidateAddress => {
+    calls.push(ballotInstance.methods.showResultCount(electionId, candidateAddress).call);
+  });
+  makeBatchRequest(calls, {
+    from: defaultAccount
+  }).then((results) => {
+    console.log(results);
+    callback(null, results);
+  }).catch((error) => {
+    console.log(error);
+    callback(error, null);
+  });
+}
+
+function web3ShowResultCountByCandidateAddress(electionId, candidateAddress, callback) {
+  web3SetAccount(defaultAccount);
   ballotInstance.methods.showResultCount(electionId, candidateAddress).call({
-    from: voterAddress,
+    from: defaultAccount,
   })
   .then((result) => {
-    console.log('[CONTRACT-ELECTION_VOTE_RESULT] \x1b[95m%s\x1b[0m', JSON.stringify(result));
+    callback(null, result);
+  }).catch((error) => {
+    callback(error, null);
   });
 }
 
 module.exports = {
-  gethInitWeb3, web3InitProvider, web3InitMiner, web3SetAccount, web3ChangeProvider,
-  web3NewContractInstance, web3UnlockAccount, web3LockAccount, web3MiningStart,
-  web3MiningStop, web3GetGasPriceNetwork, web3GetGasPriceDeployContract,
-  web3GetGasPriceMethodContract, web3DeployContract, web3TransferEther, web3CreateAccount,
+  toHex, fromWei, gethInitWeb3, web3InitProvider, web3InitMiner, web3SetAccount, web3ChangeProvider,
+  web3NewContractInstance, web3UnlockAccount, web3LockAccount, web3MiningStart, web3GetAccountBalance,
+  web3MiningStop, web3GetEstimatedGasPriceTransaction, web3GetGasPriceNetwork, web3GetEstimatedGasPriceDeployContract,
+  web3GetEstimatedGasPriceMethodContract, web3DeployContract, web3TransferCoin, web3CreateAccount,
   web3ImportAccountFromUtc, web3ImportAccountFromPrivKey, web3ExportAccount, web3CreateElection, web3AddCandidate,
-  web3AddParticipant, web3EndElection, web3Vote, web3ShowMyVote, web3ShowResultCount
+  web3AddParticipant, web3EndElection, web3Vote, web3ShowMyVote, web3ShowResultCount, web3ShowResultCountByCandidateAddress
 };

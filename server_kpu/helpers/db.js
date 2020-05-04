@@ -5,6 +5,25 @@ const mySqldPath = "C:/xampp/mysql/bin/mysqld.exe";
 
 var db = null;
 
+function escape(data) {
+  return mysql.escape(data);
+}
+
+function openConnection() {
+  db.connect(error => {
+    if (error) {
+      console.log(`[MySQL_CONNECTION-${error.code}]` + ' \x1b[91m%s\x1b[0m', error.sqlMessage);
+      if (error.code == 'ETIMEDOUT') {
+        openConnection();
+      }
+    }
+    else {
+      const cfg = db.config;
+      console.log('[MySQL_CONNECTION-SUCCESS] \x1b[95m%s\x1b[0m - \x1b[35m%s\x1b[0m', cfg.database, `${cfg.user}@${cfg.host}:${cfg.port}`);
+    }
+  });
+}
+
 // const mySqld = execFile(mySqldPath, [
 //   // No Arguments
 // ], (err, stdout, stderr) => {
@@ -17,21 +36,14 @@ var db = null;
     password: '',
     database: 'blockchain-evoting'
   });
-  db.connect(error => {
-    if (error) console.log(`[MySQL_CONNECTION-${error.code}]` + ' \x1b[91m%s\x1b[0m', error.sqlMessage);
-    else {
-      const cfg = db.config;
-      console.log('[MySQL_CONNECTION-SUCCESS] \x1b[95m%s\x1b[0m - \x1b[35m%s\x1b[0m', cfg.database, `${cfg.user}@${cfg.host}:${cfg.port}`);
-    }
-  });
+  openConnection();
   db.on('error', (error) => {
     console.log(`[MySQL_ERROR-${error.code}]` + ' \x1b[91m%s\x1b[0m', error.sqlMessage);
+    if (error.code == 'PROTOCOL_CONNECTION_LOST') {
+      openConnection();
+    }
   });
 // });
-
-function escape(data) {
-  return mysql.escape(data);
-}
 
 function mySqlQuery(sqlQuery, sqlQueryData, callback) {
   db.query(sqlQuery, sqlQueryData, (error, results, fields) => {

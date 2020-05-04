@@ -1,5 +1,6 @@
 const express = require('express');
 const request = require('request');
+const createError = require('http-errors');
 
 const router = express.Router();
 
@@ -49,6 +50,7 @@ router.post('/cek-nik', function(req, res, next) {
             ck_kpu: env.kpuAndroidSecretKey
           })
         }, (e2, r2, b2) => {
+          console.log('[KPU_RI] \x1b[95m%s\x1b[0m', b2);
           return res.json({
             info: '🙄 400 - Data Kartu Tanda Penduduk! 😪',
             result: JSON.parse(b2)
