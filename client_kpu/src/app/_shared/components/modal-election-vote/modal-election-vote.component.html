@@ -1,0 +1,64 @@
+<div *ngIf="isModalOpen" [config]="{ show: true }" bsModal #modalElectionVote="bs-modal" (onHidden)="onHidden()"
+  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-auto-name">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header modal-header">
+        <h4>Voting '{{ electionInfo.electionName }}'</h4>
+        <button type="button" class="close pull-right" aria-label="close" (click)="hideModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12 p-3">
+              <ul class="list-unstyled row text-center" style="max-height: 50vh; overflow-y: auto;">
+                <li class="media border p-0 list-group-item-action col-md-6 col-lg-4" *ngFor="let data of candidateListInfo">
+                  <input type="radio" id="candidate_{{ data.pubKey }}" style="position: fixed;"
+                    value="{{ data.pubKey }}" [(ngModel)]="selectedCandidate" />
+                  <label for="candidate_{{ data.pubKey }}" class="w-100 text-truncate m-0 p-1">
+                    <img class="align-self-center" src="{{ data.image }}" height="64px" />
+                    <div class="media-body text-truncate">
+                      <div class="m-0 pt-2">
+                        <a routerLink="/user/{{ data.pubKey }}" style="cursor: pointer;">{{ data.name }}</a>
+                      </div>
+                      <small>{{ data.email }}</small>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col p-0 text-right">
+              <div class="form-group row mb-0">
+                <div class="col-md-4 text-md-right">
+                  <!-- Empty Space -->
+                </div>
+                <div class="col-md-8 text-right">
+                  <div class="row m-0">
+                    <div class="col-8 pr-0">
+                      <input class="form-control {{ passphraseError ? 'is-invalid' : '' }}" type="password"
+                        id="passphrase" [(ngModel)]="passphrase" placeholder="Kata Sandi Akun Ethereum" />
+                      <span class="invalid-feedback" role="alert">
+                        <strong>Kata Sandi Dibutuhkan</strong>
+                      </span>
+                    </div>
+                    <div class="col-4">
+                      <button class="btn btn-outline-warning text-primary" (click)="voteCandidate()" [disabled]="!selectedCandidate || !passphrase">
+                        <i class="fas fa-pen"></i>
+                        Pilih Kandidat!
+                      </button>
+                  </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-confirm-modal (submitButton)="confirmModalCallback($event)"></app-confirm-modal>

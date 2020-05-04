@@ -15,8 +15,10 @@
       <div class="modal-body">
         <div class="container-fluid">
           <div class="row mb-3">
-            <h3 class="w-100 text-center">
-              {{ election.electionName }}
+            <h3 class="w-100 text-center pointer text-primary">
+              <a routerLink="/election/{{ election.id }}" class="text-decoration-none pointer">
+                {{ election.electionName }}
+              </a>
             </h3>
             <h5 class="text-muted w-100 text-center">
               {{ election.electionDescription }}
@@ -25,18 +27,39 @@
           <div class="row mb-3">
             <div class="col my-auto p-0">
               <div class="mb-3 col-12 text-center">
-                <div>// TODO :: Syarat Ketentuan Dan Data Informasi Calon Kandidat</div>
+                <ul class="list-unstyled row" style="max-height: 25vh; overflow-y: auto;">
+                  <li class="media border-bottom mb-1 p-1 list-group-item-action col-md-6 col-lg-4" *ngFor="let i of candidateListInfo">
+                    <img class="align-self-center mr-3" src="{{ i.image }}" height="64px" />
+                    <div class="media-body text-truncate text-left">
+                      <div class="m-0 pt-2">
+                        <a routerLink="/user/{{ i.pubKey }}" style="cursor: pointer;">{{ i.name }}</a>
+                      </div>
+                      <small class="pb-2">{{ i.email }}</small>
+                    </div>
+                  </li>
+                </ul>
               </div>
-              <div class="mb-3 col-12 text-center" *ngIf="!this.as.currentUserValue">
+              <div class="col-12 text-center" *ngIf="!this.as.currentUserValue">
                 <button type="button" class="btn btn-sm btn-outline-danger" routerLink="/login">
                   Harap Masuk / Daftar Untuk Ikut Serta
                 </button>
               </div>
-              <div class="mb-3 col-12 text-center" *ngIf="this.as.currentUserValue">
-                <button type="button" *ngIf="this.as.currentUserValue.role == 'voter' && election.electionCreator != this.as.currentUserValue.pubKey"
-                  class="btn btn-sm btn-outline-primary" (click)="joinElection(election.electionId)">
-                    Daftar Sebagai Partisipan Pemilih
-                </button>
+              <div class="col-12 text-center" *ngIf="this.as.currentUserValue">
+                <div *ngIf="this.as.currentUserValue.role == 'voter' && election.electionCreator != this.as.currentUserValue.pubKey">
+                  <div *ngIf="election.electionIsActive == 1">
+                    <button type="button" *ngIf="joined == null"
+                      class="btn btn-sm btn-outline-primary" (click)="confirmjoinElection()">
+                        Daftar Sebagai Partisipan Pemilih
+                    </button>
+                    <p *ngIf="joined == 0">
+                      Pendaftaran Sebagai Partisipan Telah Dikirimkan Dan Menunggu Konfirmasi Pemilik
+                    </p>
+                  </div>
+                  <button type="button" class="btn btn-sm btn-outline-primary"
+                    *ngIf="joined == 1 || election.electionIsActive == 0" routerLink="/election/{{ election.id }}" >
+                    Menuju Halaman Detail Pemilihan
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -57,3 +80,5 @@
     </div>
   </div>
 </div>
+
+<app-confirm-modal (submitButton)="confirmModalCallback($event)"></app-confirm-modal>

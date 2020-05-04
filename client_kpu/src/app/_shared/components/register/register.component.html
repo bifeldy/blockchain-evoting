@@ -98,9 +98,8 @@
                     <input type="password" id="reTypePassword" [attr.disabled]="registerStep != 2 ? '' : null" class="form-control {{
                       !fg.get('reTypePassword').valid && fg.get('reTypePassword').touched ? 'is-invalid' : ''
                     }}" placeholder="Konfirmasi Password" required formControlName="reTypePassword" autocomplete="off" />
-                    <span class="invalid-feedback"role="alert">
-                      <ng-container *ngIf="fg.controls['reTypePassword'].hasError('noPasswordMatch');else elseConfPass"
-                      >
+                    <span class="invalid-feedback" role="alert">
+                      <ng-container *ngIf="fg.controls['reTypePassword'].hasError('noPasswordMatch');else elseConfPass">
                         <strong>Password Tidak Sesuai!</strong>
                       </ng-container>
                       <ng-template #elseConfPass>
@@ -134,7 +133,7 @@
                         (change)="onFileSelected($event)" [disabled]="registerFormVal.ethAccount != 'ya'" />
                       <label class="custom-file-label text-truncate" for="ethAccountFile" style="z-index: 0;">{{ secretKeyFileName }}</label>
                     </div>
-                    <textarea id="result" id="ethAccountImport" rows="5" [attr.disabled]="registerFormVal.ethAccount != 'ya' ? '' : null"
+                    <textarea id="ethAccountImport" rows="5" [attr.disabled]="registerFormVal.ethAccount != 'ya' ? '' : null"
                       class="form-control" placeholder="{{ secretKeyFileContent }}" formControlName="ethAccountImport">
                     </textarea>
                     <span role="alert" *ngIf="registerErrorData && registerErrorData.ethAccountImport" style="font-size: 80%; color: #dc3545;">
@@ -145,7 +144,7 @@
                 <div class="form-group row">
                   <label for="walletPassword" class="col-md-4 col-form-label text-md-right">Wallet Password</label>
                   <div class="col-md-8">
-                    <input type="text" id="walletPassword" class="form-control" [attr.disabled]="registerFormVal.ethAccount != 'ya' ? '' : null"
+                    <input type="password" id="walletPassword" class="form-control" [attr.disabled]="registerFormVal.ethAccount != 'ya' ? '' : null"
                       placeholder="Wallet Passphrase / Password" formControlName="walletPassword" autocomplete="off" />
                     <span class="invalid-feedback" role="alert">
                       <strong>Wallet Tidak Boleh Kosong!</strong>

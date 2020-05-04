@@ -12,8 +12,8 @@ import { Router } from '@angular/router';
 })
 export class MyElectionComponent implements OnInit {
 
-  private createdElectionTable;
-  private joinedElectionTable;
+  createdElectionTable = null;
+  joinedElectionTable = null;
 
   columnSettings = [
     {
@@ -32,13 +32,6 @@ export class MyElectionComponent implements OnInit {
       data: 'electionDescription',
       render: (data, type, row) => `
         <div style="width: 320px;">${data}</div>
-      `
-    }, {
-      data: 'createdAt',
-      render: (data, type, row) => `
-        <div style="width: 256px;">
-          ${new Date(data).toUTCString()}
-        </div>
       `
     }
   ];
@@ -62,18 +55,42 @@ export class MyElectionComponent implements OnInit {
         dataSrc: 'results'
       },
       columns: [
-        this.columnSettings[0], this.columnSettings[1], this.columnSettings[2], this.columnSettings[3]
+        this.columnSettings[0], this.columnSettings[1], this.columnSettings[2], {
+          data: 'createdAt',
+          render: (data, type, row) => `
+            <div style="width: 256px;">
+              ${new Date(data).toUTCString()}
+            </div>
+          `
+        }
       ]
     });
     this.joinedElectionTable = ($('#joinedElectionTable') as any).DataTable({
       scrollX: true,
       ajax: {
-        url: `${environment.apiUrl}/election/?electionCreator=${this.as.currentUserValue.pubKey}&row=0`,
-        dataSrc: 'results'
+        url: `${environment.apiUrl}/election/my-joined-election`,
+        dataSrc: 'results',
+        beforeSend: request => {
+          const userToken = localStorage.getItem(environment.tokenName);
+          if (userToken) {
+            request.setRequestHeader('Authorization', `Bearer ${userToken}`);
+          }
+        }
       },
       columns: [
-        this.columnSettings[0], this.columnSettings[1], this.columnSettings[2], this.columnSettings[3]
+        this.columnSettings[0], this.columnSettings[1], this.columnSettings[2], {
+          data: 'joined',
+          render: (data, type, row) => `
+            <div style="width: 256px;">
+              ${parseInt(data, 10) === 1 ? 'Sudah Terdaftar' : 'Menunggu Penerimaan'}
+            </div>
+          `
+        }
       ]
+    });
+    ($('#joinedElectionTable tbody') as any).on('click', (event) => {
+      const electionData = this.joinedElectionTable.row($(event.target).parents('tr')).data();
+      this.router.navigateByUrl(`/election/${electionData.id}`);
     });
     ($('#createdElectionTable tbody') as any).on('click', (event) => {
       const electionData = this.createdElectionTable.row($(event.target).parents('tr')).data();

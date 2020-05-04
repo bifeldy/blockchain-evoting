@@ -25,7 +25,7 @@ export class ApiService {
     );
   }
 
-  postData(path: string, model = {}, multipart = false, timedOut = 3000): Observable<any> {
+  postData(path: string, model = {}, multipart = false, timedOut = 30000): Observable<any> {
     this.gs.log('[API_POST]', path);
     const options = {};
     let body = model;
@@ -34,7 +34,7 @@ export class ApiService {
       const headers = new HttpHeaders().append('Content-Type', 'multipart/form-data');
       Object.assign(options, { headers });
       body = this.prepareFormData(model);
-      timer = 30000;
+      timer = 60000;
     }
     return this.http.post(path.startsWith('http') ? environment.sniffCors + path : environment.apiUrl + path, body, options).pipe(
       catchError(err => throwError(err)),

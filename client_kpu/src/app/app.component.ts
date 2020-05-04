@@ -3,6 +3,8 @@ import { Title, Meta } from '@angular/platform-browser';
 
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { filter, map, mergeMap } from 'rxjs/operators';
+import { AuthService } from './_shared/services/auth.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +20,8 @@ export class AppComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private titleService: Title,
-    private meta: Meta
+    private meta: Meta,
+    private as: AuthService
   ) { }
 
   ngOnInit() {
@@ -36,6 +39,13 @@ export class AppComponent implements OnInit {
     .subscribe((event) => {
       this.updateSitePage(event.title, event.description, event.keywords);
     });
+    const token = localStorage.getItem(environment.tokenName);
+    if (token) {
+      this.as.verify(token).subscribe(
+        success => {},
+        error => this.as.logout()
+      );
+    }
   }
 
   updateSitePage(newTitle: string, newDescription: string, newKeywords: string) {

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { AdminComponent } from './admin.component';
 import { Routes, RouterModule } from '@angular/router';
+import { ConfirmModalModule } from 'src/app/_shared/components/confirm-modal/confirm-modal.module';
 
 const routes: Routes = [
   {
@@ -15,7 +16,8 @@ const routes: Routes = [
   declarations: [AdminComponent],
   imports: [
     CommonModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    ConfirmModalModule
   ]
 })
 export class AdminModule { }

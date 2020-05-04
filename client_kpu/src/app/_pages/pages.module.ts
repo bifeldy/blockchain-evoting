@@ -34,6 +34,25 @@ const routes: Routes = [
         }
       },
       {
+        path: 'explorer',
+        loadChildren: () => import('./explorer/explorer.module').then(m => m.ExplorerModule),
+        data: {
+          title: 'Ethereum Block Explorer',
+          description: 'Menjelajah Data Block',
+          keywords: 'Blockchain E-Voting'
+        }
+      },
+      {
+        path: 'fund',
+        loadChildren: () => import('./fund/fund.module').then(m => m.FundModule),
+        data: {
+          title: 'Ethereum Money Request',
+          description: 'Meminta Sejumlah Koin Untuk Biaya Transaksi',
+          keywords: 'Blockchain E-Voting',
+          roles: [Role.Admin, Role.Miner, Role.Voter]
+        }
+      },
+      {
         path: 'status',
         loadChildren: () => import('./status/status.module').then(m => m.StatusModule),
         data: {

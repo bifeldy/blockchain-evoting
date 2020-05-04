@@ -1,1 +1,151 @@
-<p>create-election works!</p>
+<div class="container py-3 bg-default">
+  <div class="row">
+    <div class="col-md-12 bg-default">
+      <form [formGroup]="fg" class="m-2" (submit)="onSubmit();">
+        <div class="row mt-3 mb-3">
+          <div class="col-12 pb-3 sticky-top bg-default">
+            <h3 class="pt-3 pb-2 border-bottom-dotted">
+              <b class="text-secondary">Create New Election</b>
+            </h3>
+          </div>
+          <div class="col-12 bg-default pt-1">
+            <div class="form-group row">
+              <label for="electionName" class="col-md-4 col-form-label text-md-right">Election Title / Name</label>
+              <div class="col-md-8">
+                <input type="text" id="electionName" class="form-control {{
+                  !fg.get('electionName').valid && (fg.get('electionName').touched || alreadySubmitted) ? 'is-invalid' : ''
+                }}" placeholder="Pemilu Blablabla" required autofocus formControlName="electionName" autocomplete="off" />
+                <span class="invalid-feedback" role="alert">
+                  <strong>Nama Tidak Boleh Kosong!</strong>
+                </span>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="electionDescription" class="col-md-4 col-form-label text-md-right">Election Description</label>
+              <div class="col-md-8">
+                <textarea id="electionDescription" rows="3" required class="form-control {{
+                  !fg.get('electionDescription').valid && (fg.get('electionDescription').touched || alreadySubmitted) ? 'is-invalid' : ''
+                }}" placeholder="Long Election Description Here ..." formControlName="electionDescription">
+                </textarea>
+                <span class="invalid-feedback" role="alert">
+                  <strong>Deskripsi Tidak Boleh Kosong!</strong>
+                </span>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="electionImage" class="col-md-4 col-form-label text-md-right">Election Image</label>
+              <div class="col-md-8">
+                <input type="text" id="electionImage" class="form-control {{
+                  !fg.get('electionImage').valid && (fg.get('electionImage').touched || alreadySubmitted) ? 'is-invalid' : ''
+                }}" placeholder="http://via.placeholder.com/144x81" autofocus formControlName="electionImage" autocomplete="off" />
+                <img class="pt-3 col-md-4 col-sm-12 px-0" src="{{ fg.get('electionImage').value }}" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3 mb-3">
+          <div class="col-12 pb-3 sticky-top bg-default">
+            <h3 class="pt-3 pb-2 border-bottom-dotted">
+              <b class="text-secondary">Candidates</b>
+            </h3>
+          </div>
+          <div class="col-12 bg-default pt-1">
+            <div class="form-group row">
+              <label for="electionCandidate" class="col-md-4 col-form-label text-md-right">Kandidat Yang Diajukan</label>
+              <div class="col-md-8">
+                <tag-input class="border-bottom px-1 border-primary" formControlName="electionCandidate" [displayBy]="'voucher_name'" [identifyBy]="'voucher_id'" [onlyFromAutocomplete]="true">
+                  <tag-input-dropdown [showDropdownIfEmpty]="true" [focusFirstElement]="true" [displayBy]="'name'" [identifyBy]="'pubKey'" [autocompleteItems]="users">
+                    <ng-template let-item="item" let-index="index">
+                      <div class="media border-bottom m-0 p-0 my-auto">
+                        <img class="mr-1 p-0 align-self-center" width="40px" height="40px" src="{{ item.image }}" />
+                        <div class="media-body m-0 p-0">
+                          {{ item.email }}
+                        </div>
+                      </div>
+                    </ng-template>
+                  </tag-input-dropdown>
+                </tag-input>
+                <!-- <input type="text" id="electionCandidate" class="form-control {{
+                  !fg.get('electionCandidate').valid && (fg.get('electionCandidate').touched || alreadySubmitted) ? 'is-invalid' : ''
+                }}" placeholder="// TODO :: Ngx-Chips Add Candidates" required autofocus formControlName="electionCandidate" autocomplete="off" /> -->
+                <span class="invalid-feedback" role="alert">
+                  <strong>Daftar Calon Tidak Boleh Kosong!</strong>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3 mb-3">
+          <div class="col-12 pb-3 sticky-top bg-default">
+            <h3 class="pt-3 pb-2 border-bottom-dotted">
+              <b class="text-secondary">Verification</b>
+            </h3>
+          </div>
+          <div class="col-12 bg-default pt-1">
+            <div class="form-group row">
+              <label for="passphrase" class="col-md-4 col-form-label text-md-right">Ethereum Account Password</label>
+              <div class="col-md-8">
+                <div class="row">
+                  <div class="col pr-0">
+                    <input type="{{ showPassword ? 'text' : 'password' }}" id="passphrase" class="col form-control {{
+                        !fg.get('passphrase').valid && (fg.get('passphrase').touched || alreadySubmitted) ? 'is-invalid' : ''
+                      }}" placeholder="Kata Sandi Akun Ethereum" required formControlName="passphrase" autocomplete="off" />
+                  </div>
+                  <a class="btn btn-link text-secondary px-2 mr-3" (click)="showHidePassword()">
+                    <i class="fa fa-fw fa-eye" *ngIf="showPassword"></i>
+                    <i class="fa fa-fw fa-eye-slash" *ngIf="!showPassword"></i>
+                  </a>
+                </div>
+                <span role="alert" *ngIf="!fg.get('passphrase').valid && (fg.get('passphrase').touched || alreadySubmitted)" style="font-size: 80%; color: #dc3545;">
+                  <ng-container *ngIf="fg.controls['passphrase'].hasError('noPasswordMin'); else elsePassword">
+                    <strong>Password Minimal 8 Karakter!</strong>
+                  </ng-container>
+                  <ng-template #elsePassword>
+                    <strong>Password Tidak Boleh Kosong!</strong>
+                  </ng-template>
+                </span>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="reTypePassphrase" class="col-md-4 col-form-label text-md-right">Ulangi Kata Sandi</label>
+              <div class="col-md-8">
+                <input type="password" id="reTypePassphrase" class="form-control {{
+                  !fg.get('reTypePassphrase').valid && (fg.get('reTypePassphrase').touched || alreadySubmitted) ? 'is-invalid' : ''
+                }}" placeholder="Konfirmasi Password" required formControlName="reTypePassphrase" autocomplete="off" />
+                <span class="invalid-feedback" role="alert">
+                  <ng-container *ngIf="fg.controls['reTypePassphrase'].hasError('noPasswordMatch');else elseConfPass">
+                    <strong>Tidak Sesuai Dengan Password Yang Diberikan!</strong>
+                  </ng-container>
+                  <ng-template #elseConfPass>
+                    <strong>Harap Tulis Ulang Password Anda!</strong>
+                  </ng-template>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3 mb-3">
+          <div class="col-12 bg-default pt-1">
+            <div class="form-group row mb-0">
+              <div class="col-md-4 text-md-right">
+                <!-- Empty Space -->
+              </div>
+              <div class="col-md-8 text-right">
+                <button type="reset" class="btn btn-danger mr-3 col-sm-6 col-md-4">
+                  <i class="fa fa-fw fa-trash"></i>
+                  Reset Form Data
+                </button>
+                <button type="submit" class="btn btn-success col-sm-6 col-md-4" [disabled]="submitted">
+                  <i class="fa fa-fw fa-plus"></i>
+                  Create New Election
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<app-confirm-modal (submitButton)="confirmModalCallback($event)"></app-confirm-modal>

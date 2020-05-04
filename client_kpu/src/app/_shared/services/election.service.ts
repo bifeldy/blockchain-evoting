@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 
-import { tap } from 'rxjs/operators';
-
 import { GlobalService } from './global.service';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
@@ -13,62 +11,61 @@ import { Election } from '../models/election';
 })
 export class ElectionService {
 
-  electionList: Election[] = null;
-
-  myElectionCreated: Election[] = [];
-  myElectionJoined: Election[] = [];
-
   constructor(
     private api: ApiService,
     private as: AuthService,
     private gs: GlobalService
   ) {
     this.loadElection('active');
-    this.as.currentUser.subscribe(user => {
-      if (user) {
-        this.loadMyElection();
-      } else {
-        this.myElectionCreated = [];
-        this.myElectionJoined = [];
-      }
-    });
+    this.loadMyJoinedElection();
   }
 
   loadElection(status = 'all', row = 10) {
-    this.api.getData(`/election?status=${status}&row=${row}`).subscribe(
-      res => {
-        this.electionList = res.results;
-        this.gs.log('[electionList]', this.electionList);
-      },
-      err => {}
-    );
+    return this.api.getData(`/election?status=${status}&row=${row}`);
+  }
+
+  loadMyJoinedElection() {
+    return this.api.getData(`/election/my-joined-election`);
   }
 
   loadElectionByCreator(electionCreator, status = 'all', row = 10) {
     return this.api.getData(`/election/?status=${status}&electionCreator=${electionCreator}&row=${row}`);
-    // .pipe(tap(
-    //   res => {},
-    //   err => {}
-    // ));
-  }
-
-  loadMyElection() {
-    this.api.getData(`/election/created`).subscribe(
-      res => this.myElectionCreated = res.results,
-      err => {}
-    );
-    this.api.getData(`/election/joined`).subscribe(
-      res => this.myElectionJoined = res.results,
-      err => {}
-    );
   }
 
   createNewElection(electionData) {
     return this.api.postData(`/election/create`, electionData);
   }
 
-  endElectionPeriode(electionId) {
-    return this.api.postData(`/election/end`, electionId);
+  endElectionPeriode(id, data) {
+    return this.api.postData(`/election/${id}/end`, data);
+  }
+
+  getElectionData(id) {
+    return this.api.getData(`/election/${id}`);
+  }
+
+  getElectionCandidate(id) {
+    return this.api.getData(`/election/${id}/candidate`);
+  }
+
+  getElectionParticipant(id) {
+    return this.api.getData(`/election/${id}/participant`);
+  }
+
+  joinElection(id) {
+    return this.api.postData(`/election/${id}/register`);
+  }
+
+  addParticipant(id, data) {
+    return this.api.postData(`/election/${id}/participant`, data);
+  }
+
+  voteCandidate(id, data) {
+    return this.api.postData(`/election/${id}/vote`, data);
+  }
+
+  myVote(id, data) {
+    return this.api.postData(`/election/${id}/my-vote`, data);
   }
 
 }

@@ -73,6 +73,10 @@
       <i class="fa fa-fw fa-home mr-2"></i>
       <div class="visibleMenu">Home Page</div>
     </a>
+    <a routerLink="/explorer" routerLinkActive="bifeldy-active">
+      <i class="fa fa-fw fa-folder-open mr-2"></i>
+      <div class="visibleMenu">Block Explorer</div>
+    </a>
     <a routerLink="/status" routerLinkActive="bifeldy-active">
       <i class="fa fa-fw fa-wifi mr-2"></i>
       <div class="visibleMenu">Network Status</div>
@@ -93,11 +97,12 @@
         <div class="visibleMenu">Admin Panel</div>
       </a>
       <hr class="style1" />
+      <a *ngIf="isAdmin || isMiner || isVoter"  routerLink="/fund" routerLinkActive="bifeldy-active">
+        <i class="fab fa-fw fa-ethereum mr-2"></i>
+        <div class="visibleMenu">{{ this.us.myCoinBase.ether.toString() | slice:0:10 }} Ether</div>
+      </a>
+      <hr class="style1" />
     </ng-template>
-    <a routerLink="/tentang" routerLinkActive="bifeldy-active">
-      <i class="fa fa-fw fa-info-circle mr-2"></i>
-      <div class="visibleMenu">Tentang Kami</div>
-    </a>
     <a href="https://discord.gg/xGWdExk" target="_blank" rel="noreferrer">
       <i class="fa mr-2">
         <svg viewBox="-357 161 245 240" style="margin-left: 3px; margin-right: 2px; height: 20px;">

@@ -1,5 +1,6 @@
 <div class="m-0">
-  <div id="carouselBanner" class="carousel slide" data-ride="carousel" data-interval="2345" *ngIf="!router.url.includes('/status') && !router.url.includes('/election/')">
+  <div id="carouselBanner" class="carousel slide" data-ride="carousel" data-interval="2345"
+    *ngIf="!router.url.includes('/status') && !router.url.includes('/election/') && !router.url.includes('/explorer')">
     <div class="carousel-inner">
       <div class="carousel-item" [ngClass]="{ active: idx == 0 }" *ngFor="let i of banner; index as idx">
         <img class="d-block img-fluid w-100" [src]="i.bannerImage" [ngStyle]="{

@@ -4,10 +4,10 @@ import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/fo
 
 import { AuthService } from '../../services/auth.service';
 import { GlobalService } from '../../services/global.service';
-import { ApiService } from '../../services/api.service';
 
 import * as CryptoJS from 'crypto-js';
 import { environment } from 'src/environments/environment';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-register',
@@ -41,7 +41,7 @@ export class RegisterComponent implements OnInit {
     private gs: GlobalService,
     private router: Router,
     public as: AuthService,
-    private api: ApiService
+    private us: UserService
   ) {
     if (this.as.currentUserValue) {
       this.router.navigate(['/home']);
@@ -94,8 +94,7 @@ export class RegisterComponent implements OnInit {
       ethAccount: [data ? data.ethAccount : '', Validators.compose([Validators.required])],
       ethAccountImport: [data ? data.ethAccountImport : null],
       walletPassword: [data ? data.walletPassword : null]
-    },
-    {
+    }, {
       validator: this.customValidator
     });
   }
@@ -121,11 +120,11 @@ export class RegisterComponent implements OnInit {
       const registerTimedOut = setTimeout(() => {
         this.registerInfo = 'Server Tidak Merespon, Silahkan Coba Lagi Nanti ..';
       }, 60 * 1000);
-      this.api.postData('/kpu/cek-nik', {
+      this.us.cekNik({
         nik: this.fg.value.nik,
         name: this.fg.value.name,
         'g-recaptcha-response': this.fg.value.googleCaptchaResponse
-      }, null).subscribe(
+      }).subscribe(
         res => {
           this.gs.log('[KPU_RI-CEK_NIK]', res);
           if (res.result.message === 'failed') {
@@ -184,7 +183,7 @@ export class RegisterComponent implements OnInit {
 
   checkWebAccount(formData) {
     this.registerInfo = 'Mengecek Data Akun ...';
-    this.api.postData('/check-account', formData, null).subscribe(
+    this.us.cekAccount(formData).subscribe(
       (res: any) => {
         this.registerInfo = res.result.message;
         this.registerStep += 1;
@@ -213,7 +212,7 @@ export class RegisterComponent implements OnInit {
     };
     this.gs.log('[REGISTER_WEB_ACCOUNT]', userData);
     if (this.kpuRiUserData) {
-      this.api.postData('/register', userData, null).subscribe(
+      this.us.registerAccount(userData).subscribe(
         (res: any) => {
           localStorage.setItem(environment.tokenName, res.result.token);
           this.as.verify(localStorage.getItem(environment.tokenName)).subscribe(
@@ -236,7 +235,6 @@ export class RegisterComponent implements OnInit {
       const reader = new FileReader();
       reader.readAsText(selectedFile);
       reader.onload = (e) => {
-        console.log(e);
         this.secretKeyFileName = selectedFile.name;
         this.fg.controls.ethAccountImport.patchValue((e as any).target.result);
       };
@@ -249,12 +247,13 @@ export class RegisterComponent implements OnInit {
     this.submitted = true;
     this.registerInfo = 'Harap Menunggu ...';
     if (this.fg.value.ethAccount === 'tidak') {
-      this.api.postData('/new-eth-account', {
+      this.us.newEthAccount({
         password: window.btoa(this.fg.value.password)
-      }, null, 30000).subscribe(
+      }).subscribe(
         res => {
           this.registerInfo = res.result.pubKey;
-          this.ethereumAddressCreatedImported = res.result.pubKey;
+          this.ethereumAddressCreatedImported = res.result.account.pubKey;
+          // const receipt = res.result.account.receipt;
           this.registerWebAccount();
         },
         err => {
@@ -280,10 +279,10 @@ export class RegisterComponent implements OnInit {
       } catch (e) {
         this.fg.controls.walletPassword.patchValue(null);
       }
-      this.api.postData('/import-eth-account', {
+      this.us.importEthAccount({
         password: walletPassword,
         wallet, secretKey: this.fg.value.ethAccountImport
-      }, null, 30000).subscribe(
+      }).subscribe(
         res => {
           this.registerInfo = res.result.pubKey;
           this.ethereumAddressCreatedImported = res.result.pubKey;

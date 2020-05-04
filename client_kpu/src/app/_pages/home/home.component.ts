@@ -16,6 +16,8 @@ export class HomeComponent implements OnInit {
 
   randomColor = [];
 
+  electionList = [];
+
   constructor(
     public gs: GlobalService,
     public es: ElectionService,
@@ -27,6 +29,12 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.es.loadElection('active').subscribe(
+      res => {
+        this.gs.log('[ElectionList]', res);
+        this.electionList = res.results;
+      }
+    );
   }
 
   openElection(electionData) {

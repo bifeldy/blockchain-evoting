@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
 import { Role } from '../../models/role';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-header',
@@ -23,6 +24,7 @@ export class HeaderComponent implements OnInit {
   constructor(
     private api: ApiService,
     public as: AuthService,
+    public us: UserService
   ) { }
 
   ngOnInit() {
@@ -33,6 +35,7 @@ export class HeaderComponent implements OnInit {
       if (this.currentUser) {
         this.slicedUserName = this.currentUser.name;
         this.sliceName();
+        this.us.getAccountBalance(this.currentUser.pubKey);
       }
     });
     this.api.getData('https://api.github.com/repos/Bifeldy/blockchain-evoting/commits').subscribe(res => {

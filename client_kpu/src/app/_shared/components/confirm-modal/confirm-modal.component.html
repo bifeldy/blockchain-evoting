@@ -1,0 +1,22 @@
+<div *ngIf="isModalOpen" [config]="{ show: true }" bsModal #autoShownModal="bs-modal" (onHidden)="onHidden()"
+  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-auto-name">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-auto-name" class="modal-title pull-left">{{ modalData.title }}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p [innerHtml]="modalData.body" *ngIf="!needTextBox"></p>
+        <textarea class="w-100" id="receipt" rows="5" [(ngModel)]="modalData.body" *ngIf="needTextBox"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="onSubmit()">
+          {{ modalData.submit }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -40,6 +40,7 @@ export class GlobalService {
   }
 
   get randomColor() {
+    // tslint:disable-next-line: no-bitwise
     return (Math.random() * 0xFFFFFF << 0).toString(16);
   }
 }

@@ -1,0 +1,114 @@
+<div *ngIf="isModalOpen" [config]="{ show: true }" bsModal #modalElectionParticipant="bs-modal" (onHidden)="onHidden()"
+  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-auto-name">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header modal-header">
+        <h4>Partisipan '{{ election.electionName }}'</h4>
+        <button type="button" class="close pull-right" aria-label="close" (click)="hideModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12 p-0">
+              <div class="row mt-3 mb-3">
+                <div class="col-12">
+                  <ul class="nav nav-tabs border-warning mb-3" id="myTab" role="tablist">
+                    <li class="nav-item ml-3">
+                      <a class="nav-link active" id="voterParticipantsAccepted-tab" data-toggle="tab" href="#voterParticipantsAccepted"
+                        role="tab" aria-controls="voterParticipantsAccepted" aria-selected="true" (click)="selectTab(1)">
+                        Diterima
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="voterParticipantsPending-tab" data-toggle="tab" href="#voterParticipantsPending"
+                        role="tab" aria-controls="voterParticipantsPending" aria-selected="false" (click)="selectTab(2)">
+                        Pending
+                      </a>
+                    </li>
+                    <li class="nav-item ml-auto mr-1">
+                      <a class="btn btn-outline-warning float-right btn-sm mt-1 text-success" (click)="refreshData();">
+                        <i class="fas fa-sync"></i>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="btn btn-outline-warning float-right btn-sm mt-1 text-success" (click)="checkAllParticipant();" *ngIf="isCreator && selectedTab == 2">
+                        <i class="fas fa-check"></i>
+                      </a>
+                    </li>
+                  </ul>
+                  <div class="tab-content">
+                    <div class="tab-pane fade show active" id="voterParticipantsAccepted" role="tabpanel" aria-labelledby="voterParticipantsAccepted-tab">
+                      <div class="row m-1" style="max-height: 25vh; overflow: auto;">
+                        <div class="col p-0">
+                          <table id="voterParticipantsAcceptedTable" class="m-0 table table-bordered table-hover table-sm">
+                            <thead>
+                              <tr>
+                                <th>Address</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let data of voterParticipantsAccepted">
+                                <td>{{ data.participantAddress }}</td>
+                              </tr>
+                              <tr *ngIf="voterParticipantsAccepted.length <= 0">
+                                <td>No Participants</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="tab-pane fade active" id="voterParticipantsPending" role="tabpanel" aria-labelledby="voterParticipantsPending-tab">
+                      <div class="row m-1" style="max-height: 25vh; overflow: auto;">
+                        <div class="col p-0">
+                          <table id="voterParticipantsPendingTable" class="m-0 table table-bordered table-hover table-sm">
+                            <thead>
+                              <tr>
+                                <th *ngIf="isCreator"> &nbsp; </th>
+                                <th>Address</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let data of voterParticipantsPending" (click)="selectedPending(data.id)">
+                                <td class="text-center" *ngIf="isCreator">
+                                  <input type="checkbox" [(ngModel)]="data.checked" id="pending_{{ data.participantAddress }}"/>
+                                </td>
+                                <td>{{ data.participantAddress }}</td>
+                              </tr>
+                              <tr *ngIf="voterParticipantsPending.length <= 0">
+                                <td>No Participants</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      <div class="row mt-3" *ngIf="isCreator">
+                        <div class="mb-0 col-md-8 pr-0">
+                          <input class="form-control {{ passphraseError ? 'is-invalid' : '' }}" type="password"
+                            id="passphrase" [(ngModel)]="passphrase" placeholder="Kata Sandi Akun Ethereum" />
+                          <span class="invalid-feedback" role="alert">
+                            <strong>Kata Sandi Dibutuhkan</strong>
+                          </span>
+                        </div>
+                        <div class="mb-0 col-md-4 pr-3">
+                          <button type="button" class="btn btn-outline-info btn-block" (click)="addSelectedParticipant()" [disabled]="this.selectedPendingAddressArray.length <= 0">
+                            <i class="fas fa-check mr-1"></i>
+                            Terima
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-confirm-modal (submitButton)="confirmModalCallback($event)"></app-confirm-modal>

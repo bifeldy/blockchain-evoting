@@ -1,0 +1,97 @@
+<div class="container py-3 bg-default" *ngIf="currentUser">
+  <div class="row">
+    <div class="col-md-12 bg-default">
+      <div class="row mt-3 mb-3">
+        <div class="col-12 pb-3 sticky-top bg-default">
+          <h3 class="pt-3 pb-2 border-bottom-dotted">
+            <a href="{{ urlExport }}" class="btn btn-outline-warning float-right btn-sm mt-1 text-primary">
+              <i class="fas fa-file-download mr-1"></i>
+              Download
+            </a>
+            <b class="text-secondary">
+              My Information
+            </b>
+          </h3>
+        </div>
+        <div class="col-12 bg-default pt-1">
+          <div class="form-group row">
+            <label for="id" class="col-md-4 col-form-label text-md-right">ID</label>
+            <div class="col-md-8">
+              <input type="number" id="id" class="form-control" required autofocus
+                autocomplete="off" disabled value="{{ currentUser.id }}" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="name" class="col-md-4 col-form-label text-md-right">Account Name</label>
+            <div class="col-md-8">
+              <input type="text" id="name" class="form-control" required autofocus
+                autocomplete="off" disabled value="{{ currentUser.name }}" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="nik" class="col-md-4 col-form-label text-md-right">NIK</label>
+            <div class="col-md-8">
+              <input type="number" id="nik" class="form-control" required autofocus
+                autocomplete="off" disabled value="{{ currentUser.nik }}" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="phone" class="col-md-4 col-form-label text-md-right">Phone Number</label>
+            <div class="col-md-8">
+              <input type="number" id="phone" class="form-control" required autofocus
+                autocomplete="off" disabled value="{{ currentUser.phone }}" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="email" class="col-md-4 col-form-label text-md-right">Email</label>
+            <div class="col-md-8">
+              <input type="text" id="email" class="form-control" required autofocus
+                autocomplete="off" disabled value="{{ currentUser.email }}" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="pubKey" class="col-md-4 col-form-label text-md-right">Publick Key Address</label>
+            <div class="col-md-8">
+              <input type="text" id="pubKey" class="form-control" required autofocus
+                autocomplete="off" disabled value="{{ currentUser.pubKey }}" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="ether" class="col-md-4 col-form-label text-md-right">Ether Coin</label>
+            <div class="col-md-8">
+              <input type="number" id="ether" class="form-control" required autofocus
+                autocomplete="off" disabled value="{{ myCoinBase.ether }}" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3 mb-3">
+        <div class="col-12 pb-3 sticky-top bg-default">
+          <h3 class="pt-3 pb-2 border-bottom-dotted">
+            <button class="btn btn-outline-warning float-right btn-sm mt-1 text-primary" (click)="sendRequestCoin()" [disabled]="submitted">
+              <i class="fab fa-ethereum mr-1"></i>
+              Kirim Permintaan
+            </button>
+            <b class="text-secondary">
+              Request Ether Coin
+            </b>
+          </h3>
+        </div>
+        <div class="col-12 bg-default pt-1">
+          <div class="form-group row">
+            <label for="amount" class="col-md-4 col-form-label text-md-right">Ether Amount</label>
+            <div class="col-md-8">
+              <input class="form-control {{ etherValueRequestedError ? 'is-invalid' : '' }}" type="number" min="1" max="25"
+                id="amount" [(ngModel)]="etherValueRequested" (change)="typingEtherValue($event)" placeholder="Jumlah Ether" />
+              <span class="invalid-feedback" role="alert">
+                <strong>Jumlah Yang Diperbolehkan 1-25</strong>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-confirm-modal (submitButton)="confirmModalCallback($event)"></app-confirm-modal>

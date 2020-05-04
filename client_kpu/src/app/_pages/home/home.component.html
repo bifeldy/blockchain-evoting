@@ -9,12 +9,12 @@
                 <small>Lihat Semua</small>
               </a>
             </small>
-            <b class="text-secondary">Active Election</b>
+            <b class="text-secondary">Latest Active Election</b>
           </h3>
         </div>
         <div class="col-12 bg-default">
           <ul class="list-unstyled">
-            <li class="media border-bottom mb-1 p-1 list-group-item-action" *ngFor="let i of es.electionList | slice: 0:5">
+            <li class="media border-bottom mb-1 p-1 list-group-item-action" *ngFor="let i of electionList | slice: 0:5">
               <img class="align-self-center mr-3" src="{{ i.electionImage }}" (click)="openElectionModal(i)" style="cursor: pointer;" />
               <div class="media-body text-truncate">
                 <h5 class="m-0 pt-2">
