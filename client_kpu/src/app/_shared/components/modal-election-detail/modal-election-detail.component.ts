@@ -24,6 +24,8 @@ export class ModalElectionDetailComponent implements OnInit {
   election: Election = null;
   isModalOpen = false;
 
+  currentUser = null;
+
   candidateListInfo = [];
 
   joined = null;
@@ -36,6 +38,9 @@ export class ModalElectionDetailComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.as.currentUser.subscribe(user => {
+      this.currentUser = user;
+    });
   }
 
   hideModal() {
@@ -60,16 +65,18 @@ export class ModalElectionDetailComponent implements OnInit {
   }
 
   findElectionInJoined() {
-    this.es.loadMyJoinedElection().subscribe(
-      res => {
-        this.gs.log('[MyJoinedElection]', res);
-        const myJoinedElection = res.results;
-        const joinedElection = myJoinedElection.find(mJE => mJE.id === this.election.id);
-        if (joinedElection) {
-          this.joined = joinedElection.joined;
+    if (this.currentUser) {
+      this.es.loadMyJoinedElection().subscribe(
+        res => {
+          this.gs.log('[MyJoinedElection]', res);
+          const myJoinedElection = res.results;
+          const joinedElection = myJoinedElection.find(mJE => mJE.id === this.election.id);
+          if (joinedElection) {
+            this.joined = joinedElection.joined;
+          }
         }
-      }
-    );
+      );
+    }
   }
 
   confirmjoinElection() {

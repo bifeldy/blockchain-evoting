@@ -23,6 +23,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
       if (e.status === 401) {
         this.as.logout();
         this.router.navigate(['/login'], { queryParams: { err: true } });
+        window.location.reload();
       }
       return throwError(e);
     }));

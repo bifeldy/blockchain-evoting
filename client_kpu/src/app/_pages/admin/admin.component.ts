@@ -17,6 +17,7 @@ export class AdminComponent implements OnInit {
   private smartContractTable;
   private usersTable;
   private fundTable;
+  private trxTable;
 
   constructor(
     private el: ElementRef,
@@ -125,11 +126,6 @@ export class AdminComponent implements OnInit {
       },
       columns: [
         {
-          data: 'id',
-          render: (data, type, row) => `
-            ${data}
-          `
-        }, {
           data: 'amount',
           render: (data, type, row) => `
             ${data}
@@ -152,6 +148,77 @@ export class AdminComponent implements OnInit {
               <i class="fas fa-check"></i>
               Terima & Berikan Coin
             </button>
+          `
+        }
+      ]
+    });
+    this.trxTable = ($('#trxTable') as any).DataTable({
+      scrollX: true,
+      ajax: {
+        url: `${environment.apiUrl}/dump`,
+        dataSrc: 'results',
+        beforeSend: request => {
+          const userToken = localStorage.getItem(environment.tokenName);
+          if (userToken) {
+            request.setRequestHeader('Authorization', `Bearer ${userToken}`);
+          }
+        }
+      },
+      columns: [
+        {
+          data: 'blockHash',
+          render: (data, type, row) => `
+            ${data}
+          `
+        }, {
+          data: 'blockNumber',
+          render: (data, type, row) => `
+            ${data}
+          `
+        }, {
+          data: 'contractAddress',
+          render: (data, type, row) => `
+            ${data}
+          `
+        }, {
+          data: 'cumulativeGasUsed',
+          render: (data, type, row) => `
+            ${data}
+          `
+        }, {
+          data: 'from',
+          render: (data, type, row) => `
+            ${data}
+          `
+        }, {
+          data: 'gasUsed',
+          render: (data, type, row) => `
+            ${data}
+          `
+        }, {
+          data: 'logsBloom',
+          render: (data, type, row) => `
+            ${data}
+          `
+        }, {
+          data: 'status',
+          render: (data, type, row) => `
+            ${data}
+          `
+        }, {
+          data: 'to',
+          render: (data, type, row) => `
+            ${data}
+          `
+        }, {
+          data: 'transactionHash',
+          render: (data, type, row) => `
+            ${data}
+          `
+        }, {
+          data: 'transactionIndex',
+          render: (data, type, row) => `
+            ${data}
           `
         }
       ]
@@ -192,6 +259,7 @@ export class AdminComponent implements OnInit {
     this.smartContractTable.ajax.reload();
     this.usersTable.ajax.reload();
     this.fundTable.ajax.reload();
+    this.trxTable.ajax.reload();
   }
 
   confirmModalCallback(callbackData) {

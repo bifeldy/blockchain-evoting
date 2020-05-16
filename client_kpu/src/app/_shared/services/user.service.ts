@@ -65,4 +65,8 @@ export class UserService {
   importEthAccount(data) {
     return this.api.postData('/import-eth-account', data);
   }
+
+  getTransactionHash(transactionHash) {
+    return this.api.getData(`/dump/${transactionHash}`);
+  }
 }

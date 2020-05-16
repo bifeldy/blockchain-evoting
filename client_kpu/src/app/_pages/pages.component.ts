@@ -21,8 +21,8 @@ export class PagesComponent implements OnInit {
     private as: AuthService
   ) {
     this.banner = [
-      { bannerImage: 'http://via.placeholder.com/1280x256/' + this.gs.randomColor },
-      { bannerImage: 'http://via.placeholder.com/1280x256/' + this.gs.randomColor }
+      { bannerImage: 'https://img.alinea.id/img/content/2020/03/04/67257/mencari-formula-terbaik-pemilu-serentak-drimdKVyAM.jpg' },
+      { bannerImage: 'https://www.goodnewsfromindonesia.id/uploads/post/large-pemilu-2-a3c65072330fe3159814fa7a3e5bbc11.jpg' }
     ];
   }
 

@@ -65,7 +65,7 @@
           </div>
         </div>
       </div>
-      <div class="row mt-3 mb-3">
+      <div class="row mt-3 mb-3" *ngIf="currentUser && currentUser.role != 'admin'">
         <div class="col-12 pb-3 sticky-top bg-default">
           <h3 class="pt-3 pb-2 border-bottom-dotted">
             <button class="btn btn-outline-warning float-right btn-sm mt-1 text-primary" (click)="sendRequestCoin()" [disabled]="submitted">

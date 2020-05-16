@@ -17,6 +17,7 @@ import { ModalElectionVoteComponent } from 'src/app/_shared/components/modal-ele
 
 import { ChartType, ChartOptions } from 'chart.js';
 import { SingleDataSet, Label, monkeyPatchChartJsLegend, monkeyPatchChartJsTooltip } from 'ng2-charts';
+import User from 'src/app/_shared/models/user';
 
 @Component({
   selector: 'app-election-detail',
@@ -30,7 +31,7 @@ export class ElectionDetailComponent implements OnInit {
   @ViewChild(ModalElectionVoteComponent, { static: true }) modalElectionVoteComponent: ModalElectionVoteComponent;
 
   electionData: Election = null;
-  currentUser = null;
+  currentUser: User = null;
 
   joined = null;
   participant = false;
@@ -49,6 +50,8 @@ export class ElectionDetailComponent implements OnInit {
 
   accountUnlocked = false;
   voteHistoryData = null;
+
+  trxVote = null;
 
   public pieChartOptions: ChartOptions = {
     responsive: true,
@@ -77,9 +80,9 @@ export class ElectionDetailComponent implements OnInit {
   ngOnInit() {
     this.as.currentUser.subscribe(user => {
       this.currentUser = user;
-    });
-    this.route.params.subscribe(params => {
-      this.getElectionData(params.electionId);
+      this.route.params.subscribe(params => {
+        this.getElectionData(params.electionId);
+      });
     });
   }
 
@@ -88,10 +91,6 @@ export class ElectionDetailComponent implements OnInit {
   }
 
   getElectionData(id) {
-    this.voterParticipantsAccepted = [];
-    this.voterParticipantsPending = [];
-    this.pieChartLabels = [];
-    this.pieChartData = [];
     this.es.getElectionData(id).subscribe(
       res1 => {
         if (res1.result) {
@@ -101,6 +100,8 @@ export class ElectionDetailComponent implements OnInit {
           this.es.getElectionCandidate(id).subscribe(
             res2 => {
               this.gs.log('[ElectionCandidate]', res2);
+              this.pieChartLabels = [];
+              this.pieChartData = [];
               this.candidateListInfo = res2.result.candidatesInfo;
               this.candidateListVoteCount = res2.result.trxVoteResults;
               this.candidateListInfo.forEach(cLI => {
@@ -117,6 +118,8 @@ export class ElectionDetailComponent implements OnInit {
           this.es.getElectionParticipant(id).subscribe(
             res3 => {
               this.gs.log('[ElectionParticipant]', res3);
+              this.voterParticipantsAccepted = [];
+              this.voterParticipantsPending = [];
               res3.results.forEach(participant => {
                 if (participant.joined === 0) {
                   this.voterParticipantsPending.push(participant);
@@ -144,7 +147,7 @@ export class ElectionDetailComponent implements OnInit {
   }
 
   findElectionInJoined() {
-    if (this.as.currentUserValue) {
+    if (this.currentUser) {
       this.es.loadMyJoinedElection().subscribe(
         res => {
           this.gs.log('[MyJoinedElection]', res);
@@ -269,6 +272,14 @@ export class ElectionDetailComponent implements OnInit {
         this.passphrase = null;
         this.voteHistoryData = res5.result.trxMyVote;
         this.voted = this.voteHistoryData.voterVoted;
+        if (this.voted) {
+          const selectedParticipant = this.voterParticipantsAccepted.find(vPA => vPA.participantAddress === this.currentUser.pubKey);
+          this.us.getTransactionHash(selectedParticipant.trxAddressVote).subscribe(
+            res => {
+              this.trxVote = res.result;
+            }
+          );
+        }
       },
       err => {
         this.passphrase = null;
@@ -287,7 +298,7 @@ export class ElectionDetailComponent implements OnInit {
   }
 
   callbackFromVote() {
-    this.voted = true;
+    this.accountUnlocked = false;
     this.getElectionData(this.electionData.id);
   }
 
