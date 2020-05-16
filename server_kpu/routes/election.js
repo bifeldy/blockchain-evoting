@@ -5,6 +5,7 @@ const createError = require('http-errors');
 const db = require('../helpers/db');
 const jwt = require('../helpers/jwt');
 const eth = require('../helpers/eth');
+const rcrd = require('../helpers/recorder');
 
 const atob = require('atob');
 
@@ -61,7 +62,8 @@ router.post('/create', function(req, res, next) {
       (errTrx1, trxCreateElection) => {
         if (errTrx1) return next(createError(500, errTrx1));
         else {
-          electionData.trxAddress = trxCreateElection;
+          rcrd.recordTransaction(trxCreateElection);
+          electionData.trxAddress = trxCreateElection.transactionHash;
           return db.mySqlQuery(`
             INSERT INTO elections
             SET ?
@@ -76,9 +78,10 @@ router.post('/create', function(req, res, next) {
                 (errTrx2, trxAddCandidate) => {
                   if (errTrx2) return next(createError(500, errTrx2));
                   else {
+                    rcrd.recordTransaction(trxAddCandidate);
                     let candidatesData = [];
                     req.body.electionCandidate.forEach(eC => {
-                      candidatesData.push([electionData.electionId, eC, trxAddCandidate]);
+                      candidatesData.push([electionData.electionId, eC, trxAddCandidate.transactionHash]);
                     });
                     return db.mySqlQuery(`
                       INSERT INTO candidates (electionId, candidateAddress, trxAddress)
@@ -329,7 +332,7 @@ router.get('/:id/participant', function(req, res, next) {
       if (resultsSql1.length <= 0) return next(createError(404));
       else {
         return db.mySqlQuery(`
-          SELECT id, joined, electionId, participantAddress, createdAt
+          SELECT id, joined, electionId, participantAddress, trxAddressVote, createdAt
           FROM participants
           WHERE electionId = ?
         `, [resultsSql1[0].electionId], (errorSql2, resultsSql2, fieldsSql2) => {
@@ -375,9 +378,10 @@ router.post('/:id/participant', function(req, res, next) {
             (errTrx, trxAddParticipant) => {
               if (errTrx) return next(createError(500, errTrx));
               else {
+                rcrd.recordTransaction(trxAddParticipant);
                 return db.mySqlQuery(`
                   UPDATE participants
-                  SET joined = 1
+                  SET joined = 1, trxAddressRegister = ${db.escape(trxAddParticipant.transactionHash)}
                   WHERE electionId = ? AND participantAddress IN ( ? )
                 `, [resultsSql1[0].electionId, req.body.participantAddress], (errorSql2, resultsSql2, fieldsSql2) => {
                   if (errorSql2) return next(createError(500));
@@ -442,7 +446,9 @@ router.get('/:id/candidate', function(req, res, next) {
             if (candidateAddressArray.length <= 0) {
               return res.status(200).json({
                 info: `😲 200 - My Joined Election 😝`,
-                results: []
+                result: {
+                  candidatesInfo: []
+                }
               });
             }
             return db.mySqlQuery(`
@@ -477,21 +483,6 @@ router.get('/:id/candidate', function(req, res, next) {
                 });
               }
             });
-            // return eth.web3ShowResultCountByCandidateAddress(
-            //   results[0].electionId,
-            //   req.query.candidateAddress,
-            //   (errTrx, trxVoteResult) => {
-            //     if (errTrx) return next(createError(500, errTrx));
-            //     else {
-            //       return res.status(200).json({
-            //         info: `😲 200 - Hasil Pemilihan #${results[0].electionId} 😝`,
-            //         result: {
-            //           trxVoteResult
-            //         }
-            //       });
-            //     }
-            //   }
-            // );
           }
         });
       }
@@ -542,10 +533,20 @@ router.post('/:id/vote', function(req, res, next) {
                         (errTrx, trxVote) => {
                           if (errTrx) return next(createError(500, errTrx));
                           else {
-                            return res.status(200).json({
-                              info: `😲 200 - Berhasil Melakukan Pemilihan 😝`,
-                              result: {
-                                trxVote
+                            rcrd.recordTransaction(trxVote);
+                            return db.mySqlQuery(`
+                              UPDATE participants
+                              SET trxAddressVote = ${db.escape(trxVote.transactionHash)}
+                              WHERE electionId = ? AND participantAddress = ?
+                            `, [resultsSql1[0].electionId, decoded.user.pubKey], (errorSql4, resultsSql4, fieldsSql4) => {
+                              if (errorSql4) return next(createError(500));
+                              else {
+                                return res.status(200).json({
+                                  info: `😲 200 - Berhasil Melakukan Pemilihan 😝`,
+                                  result: {
+                                    trxVote
+                                  }
+                                });
                               }
                             });
                           }

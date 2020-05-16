@@ -18,7 +18,6 @@ router.get('/', function(req, res, next) {
       ORDER BY id DESC
     `, null, (error, results, fields) => {
       if (error) next(createError(500));
-      else if (results.length <= 0) next(createError(404));
       else {
         res.status(200).json({
           info: `😲 200 - Smart Contracts! 😝`,

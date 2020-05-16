@@ -5,6 +5,7 @@ const createError = require('http-errors');
 const jwt = require('../helpers/jwt');
 const db = require('../helpers/db');
 const eth = require('../helpers/eth');
+const rcrd = require('../helpers/recorder');
 
 const atob = require('atob');
 
@@ -204,6 +205,7 @@ router.post('/fund/:id', function(req, res, next) {
             (errTrx, trxFunded) => {
               if (errTrx) return next(createError(500, errTrx));
               else {
+                rcrd.recordTransaction(trxFunded);
                 return db.mySqlQuery(`
                   UPDATE fund
                   SET funded = 1

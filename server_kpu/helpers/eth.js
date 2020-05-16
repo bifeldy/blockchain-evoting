@@ -205,7 +205,7 @@ function web3GetEstimatedGasPriceMethodContract(functionName, myContractFunction
   });
 }
 
-/** One-Time Run Only */
+/** One-Time Run Only, Maybe In The Future Can Run From API */
 
 function web3DeployContract(abi = truffleCompiled.abi, bytecode = truffleCompiled.bytecode, contractOwnerAddress = defaultAccount, contractOwnerPassword = defaultPassword) {
   web3SetAccount(contractOwnerAddress);
@@ -260,12 +260,9 @@ function web3TransferCoin(toPubKey, amount = '1', coinType= 'ether', callback, f
       return web3.eth.sendTransaction({
         ...trxObj,
         gasPrice: estimatedGas.toString()
-      }).then((receipt) => {
+      }).then((transactionRecipt) => {
         console.log('[ETH-TRANSFER_ETHER] \x1b[95m%s\x1b[0m - \x1b[35m%s\x1b[0m :: \x1b[91m%s\x1b[0m', fromPubKey, toPubKey, amount);
-        callback(null, {
-          pubKey: toPubKey,
-          receipt
-        });
+        callback(null, transactionRecipt);
       }).catch((error) => {
         console.log('ETH-TRANSFER_ETHER] \x1b[91m%s\x1b[0m', error);
         callback(error, null);

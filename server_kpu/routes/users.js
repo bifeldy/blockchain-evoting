@@ -18,7 +18,6 @@ router.get('/', function(req, res, next) {
       FROM users
     `, null, (error, results, fields) => {
       if (error) next(createError(500));
-      else if (results.length <= 0) next(createError(404));
       else {
         for (const r of results) {
           if ('password' in r) delete r.password;

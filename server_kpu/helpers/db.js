@@ -3,6 +3,8 @@ const mysql = require('mysql');
 
 const mySqldPath = "C:/xampp/mysql/bin/mysqld.exe";
 
+const env = require(`${__dirname}/../environments/environment.js`);
+
 var db = null;
 
 function escape(data) {
@@ -31,10 +33,10 @@ function openConnection() {
 //   if(stdout) console.log('[MYSQLD-STDOUT] \x1b[95m%s\x1b[0m', stdout.toString());
 //   if(stderr) console.log('[MYSQLD-STDERR] \x1b[91m%s\x1b[0m', stderr.toString());
   db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'blockchain-evoting'
+    host: env.dbHost,
+    user: env.dbUser,
+    password: env.dbPassword,
+    database: env.dbName
   });
   openConnection();
   db.on('error', (error) => {

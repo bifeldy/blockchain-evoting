@@ -33,6 +33,7 @@ const kpuRouter = require('./routes/kpu');
 const usersRouter = require('./routes/users');
 const electionRouter = require('./routes/election');
 const contractRouter = require('./routes/contract');
+const dumpRouter = require('./routes/dump');
 
 // connecting to node
 const eth = require('./helpers/eth');
@@ -65,6 +66,7 @@ app.use('/api/kpu', kpuRouter);
 app.use('/api/user', usersRouter);
 app.use('/api/election', electionRouter);
 app.use('/api/contract', contractRouter);
+app.use('/api/dump', dumpRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
