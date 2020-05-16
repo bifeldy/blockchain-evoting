@@ -50,7 +50,6 @@ geth --identity "node_miner2" --datadir "node_miner2" --syncmode "full" --networ
 
 geth attach http://localhost:9008
 
-
 /**********/
 
 bootnode -nodekey "boot_node/boot.key" -nat extip:3.83.8.140 -verbosity 9
@@ -63,6 +62,7 @@ geth --identity "node_miner2" --datadir "node_miner2" --syncmode "full" --networ
 
 geth attach http://localhost:9001
 
+set WS_SECRET=mysecret&& npm start
 
 /**********/
 
@@ -134,3 +134,18 @@ geth attach http://localhost:9001
   "candidateAddress": "0x0000000000000000000000000000000000000000",
   "candidateVoteCount": "0"
 }
+
+/**********/
+
+Miner1 AWS :: enode://11216aa73121253abd70364171be2795695f7bd4096c13e98c12733aa1aa3098b642bdf985dbc3c3cb62072d1a401fc9c4965a342e6599ad3c417c64a4003184@54.147.3.151:30303
+Miner2 AWS :: enode://38614c47dd93a8e9fe839f4b018c3c05bee288fccc296d5027d318c57869ad3d4ee0f3fc6b019637a7bce3bf9379cbcadc66806d9dc39089dc02d47dca1b254c@3.84.37.175:30303
+Client1 AWS :: enode://a1e08e1f8fa86844dd64ea990ac57752051bec24193bdfe3be36bc931edef4b01563a25e2eacc54f87e6215dc9c029d553557e9780a4ebeb2da9e315898d17e7@34.201.65.159:30303
+
+geth --identity "node_kpu" --datadir "node_kpu" --syncmode "full" --networkid 9999 --rpc --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d" --password "node_kpu/pass.key" --mine --ipcdisable --port 9001 --rpcport 9002 --wsport 9003 --ethstats node_kpu:mysecret@localhost:9999 --bootnodes "enode://11216aa73121253abd70364171be2795695f7bd4096c13e98c12733aa1aa3098b642bdf985dbc3c3cb62072d1a401fc9c4965a342e6599ad3c417c64a4003184@54.147.3.151:30303"
+
+geth attach http://localhost:9002
+
+admin.addPeer("enode://38614c47dd93a8e9fe839f4b018c3c05bee288fccc296d5027d318c57869ad3d4ee0f3fc6b019637a7bce3bf9379cbcadc66806d9dc39089dc02d47dca1b254c@3.84.37.175:30303");
+
+admin.addPeer("enode://a1e08e1f8fa86844dd64ea990ac57752051bec24193bdfe3be36bc931edef4b01563a25e2eacc54f87e6215dc9c029d553557e9780a4ebeb2da9e315898d17e7@34.201.65.159:30303");
+
