@@ -108,3 +108,7 @@ environments/
 
 # Documents
 skripsi/
+
+
+# Geth Blockchain Data
+geth/
