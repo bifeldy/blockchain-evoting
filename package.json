@@ -1,0 +1,9 @@
+{
+  "name": "blockchain-evoting",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "postinstall": "npm install --prefix server_kpu",
+    "start": "node ./server_kpu/bin/www"
+  }
+}
