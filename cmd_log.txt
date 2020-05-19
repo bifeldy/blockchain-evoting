@@ -36,6 +36,8 @@ bootnode -genkey boot.key
 
 /**********/
 
+set WS_SECRET=bifeldy&& npm start
+
 bootnode -nodekey "boot_node/boot.key" -addr 192.168.1.2:9000 -nat extip:36.70.77.37 -verbosity 9
 
 geth --identity "node_kpu" --datadir "node_kpu" --syncmode "full" --networkid 9999 --rpc --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d" --password "node_kpu/pass.key" --mine --ipcdisable --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@192.168.1.2:9000" --port 9001 --rpcport 9002 --wsport 9003 --ethstats node_kpu:mysecret@localhost:9999
@@ -49,20 +51,6 @@ geth attach http://localhost:9005
 geth --identity "node_miner2" --datadir "node_miner2" --syncmode "full" --networkid 9999 --rpc --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0xdA41F175c06e8fbA96A20FF9e2ed41Aca4535e44" --password "node_miner2/pass.key" --mine --ipcdisable --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@192.168.1.2:9000" --port 9007 --rpcport 9008 --wsport 9009 --ethstats node_miner2:mysecret@localhost:9999
 
 geth attach http://localhost:9008
-
-/**********/
-
-bootnode -nodekey "boot_node/boot.key" -nat extip:3.83.8.140 -verbosity 9
-
-geth --identity "node_kpu" --datadir "node_kpu" --syncmode "full" --networkid 9999 --rpc --rpcport 9001 --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsport 9002 --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d" --password "node_kpu/pass.key" --mine --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@3.83.8.140:30301" --nat extip:36.70.77.37 --ipcdisable
-
-geth --identity "node_miner1" --datadir "node_miner1" --syncmode "full" --networkid 9999 --rpc --rpcport 9001 --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsport 9002 --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0x6b9763d8b2297a4334b54f472c561eb850fbec84" --password "node_miner1/pass.key" --mine --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@3.83.8.140:30301" --nat extip:3.83.8.140 --ipcdisable
-
-geth --identity "node_miner2" --datadir "node_miner2" --syncmode "full" --networkid 9999 --rpc --rpcport 9001 --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsport 9002 --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0xdA41F175c06e8fbA96A20FF9e2ed41Aca4535e44" --password "node_miner2/pass.key" --mine --bootnodes "enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730@3.83.8.140:30301" --nat extip:3.94.117.175 --ipcdisable
-
-geth attach http://localhost:9001
-
-set WS_SECRET=mysecret&& npm start
 
 /**********/
 
@@ -137,15 +125,41 @@ set WS_SECRET=mysecret&& npm start
 
 /**********/
 
-Miner1 AWS :: enode://11216aa73121253abd70364171be2795695f7bd4096c13e98c12733aa1aa3098b642bdf985dbc3c3cb62072d1a401fc9c4965a342e6599ad3c417c64a4003184@54.147.3.151:30303
-Miner2 AWS :: enode://38614c47dd93a8e9fe839f4b018c3c05bee288fccc296d5027d318c57869ad3d4ee0f3fc6b019637a7bce3bf9379cbcadc66806d9dc39089dc02d47dca1b254c@3.84.37.175:30303
-Client1 AWS :: enode://a1e08e1f8fa86844dd64ea990ac57752051bec24193bdfe3be36bc931edef4b01563a25e2eacc54f87e6215dc9c029d553557e9780a4ebeb2da9e315898d17e7@34.201.65.159:30303
+Miner1 AWS :: enode://e87faa093bb47f728c1460dff479e9daa13a2c58de4314fe12783529331dea964da5219f32e732fc43d6061c90d96fbb33383558f49af7466833e0b90dad0d7a@54.147.3.151:30303
 
-geth --identity "node_kpu" --datadir "node_kpu" --syncmode "full" --networkid 9999 --rpc --rpccorsdomain "*" --rpcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --ws --wsorigins "*" --wsapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" --allow-insecure-unlock --unlock "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d" --password "node_kpu/pass.key" --mine --ipcdisable --port 9001 --rpcport 9002 --wsport 9003 --ethstats node_kpu:mysecret@localhost:9999 --bootnodes "enode://11216aa73121253abd70364171be2795695f7bd4096c13e98c12733aa1aa3098b642bdf985dbc3c3cb62072d1a401fc9c4965a342e6599ad3c417c64a4003184@54.147.3.151:30303"
+Miner2 AWS :: enode://2a452e470462174dcfe871c16ee30260990db0dafff7283d8d62ffc5a40d452691047ac18b7f91bfe178e78b554b48e52e2c8a8e55676e88a972fe2dde1910f6@3.84.37.175:30303
+
+Bifeldy AWS :: enode://303b25ac8649460f592dfac27783d063f4f7c569df549e0acbae6544e5e26aefb695bd2527b9429f6ba841104075420915dbbb878fe6378971aca537ee94fc3d@34.201.65.159:30303
+
+Ferdion AWS ::
+enode://de3d7d01238dbdf8f6fa9b4469e04e551ac00763d2a7b9ea61bd1ee992d7a16c72c02d95d048cfa7ae4610e320c4f82aedf35d773e040bb9dfa9e945b8018d11@52.201.231.136:30303
+
+/**********/
+
+Bifeldy-WinServer2019_EthStats
+34.203.203.43
+IRNtqX;NLwrRF3Ez?R&Wi2u*l(dx)BkL
+
+Bifeldy-WinServer2019_BlockExplorer
+18.234.240.253
+4Wd$D)jiO3;lYVW-d%QW4@piSHjs?Si)
+
+Bifeldy-WinServer2019_Client2
+52.201.231.136
+gu!T!EaLKjPFy5*VhQhzmUmI4$o2wKJq
+
+/**********/
+
+geth --identity "node_kpu" --datadir "node_kpu" --syncmode "full" --networkid 9999 --rpc --rpccorsdomain "*" --rpcapi "admin,debug,web3,eth,txpool,personal,clique,miner,net" --ws --wsorigins "*" --wsapi "admin,debug,web3,eth,txpool,personal,clique,miner,net" --allow-insecure-unlock --unlock "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d" --password "node_kpu/pass.key" --mine --ipcdisable --port 9001 --rpcport 9002 --wsport 9003 --ethstats kpu_bifeldy.ip-dynamic.net:bifeldy@34.203.203.43:3000 --bootnodes "enode://2a452e470462174dcfe871c16ee30260990db0dafff7283d8d62ffc5a40d452691047ac18b7f91bfe178e78b554b48e52e2c8a8e55676e88a972fe2dde1910f6@3.84.37.175:30303" --cache 4096
 
 geth attach http://localhost:9002
 
-admin.addPeer("enode://38614c47dd93a8e9fe839f4b018c3c05bee288fccc296d5027d318c57869ad3d4ee0f3fc6b019637a7bce3bf9379cbcadc66806d9dc39089dc02d47dca1b254c@3.84.37.175:30303");
+admin.addPeer("enode://e87faa093bb47f728c1460dff479e9daa13a2c58de4314fe12783529331dea964da5219f32e732fc43d6061c90d96fbb33383558f49af7466833e0b90dad0d7a@54.147.3.151:30303");
 
-admin.addPeer("enode://a1e08e1f8fa86844dd64ea990ac57752051bec24193bdfe3be36bc931edef4b01563a25e2eacc54f87e6215dc9c029d553557e9780a4ebeb2da9e315898d17e7@34.201.65.159:30303");
+admin.addPeer("enode://2a452e470462174dcfe871c16ee30260990db0dafff7283d8d62ffc5a40d452691047ac18b7f91bfe178e78b554b48e52e2c8a8e55676e88a972fe2dde1910f6@3.84.37.175:30303");
 
+admin.addPeer("enode://303b25ac8649460f592dfac27783d063f4f7c569df549e0acbae6544e5e26aefb695bd2527b9429f6ba841104075420915dbbb878fe6378971aca537ee94fc3d@34.201.65.159:30303");
+
+admin.addPeer("enode://de3d7d01238dbdf8f6fa9b4469e04e551ac00763d2a7b9ea61bd1ee992d7a16c72c02d95d048cfa7ae4610e320c4f82aedf35d773e040bb9dfa9e945b8018d11@52.201.231.136:30303");
+
+--rpcaddr "0.0.0.0" 
