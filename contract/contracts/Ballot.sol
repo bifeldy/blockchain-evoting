@@ -79,6 +79,17 @@ contract Ballot {
     }
   }
 
+  /// Admin Create New Election With Add Candidates
+  function createElectionWithCandidates(string memory _electionId, address[] memory _candidateAddress) public {
+    // require(contractOwner == msg.sender, "Only Contract Owner Can Create Election!");
+    elections[_electionId].electionId = _electionId;
+    elections[_electionId].electionCreator = msg.sender;
+    elections[_electionId].electionIsActive = true;
+    for (uint i = 0; i < _candidateAddress.length; i++) {
+      elections[_electionId].electionCandidates[_candidateAddress[i]].candidateAddress = _candidateAddress[i];
+    }
+  }
+
   // Admin Add New Voter Participant In Specific Election And Give 1 Ballot
   function addParticipant(string memory _electionId, address[] memory _voterAddress) public {
     require(elections[_electionId].electionCreator == msg.sender, "Only Election Creator Can Add Participants!");
