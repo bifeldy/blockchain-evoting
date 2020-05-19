@@ -14,11 +14,9 @@ export class ExplorerComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    const currentUrl = window.location.href;
-    if (currentUrl.startsWith('https')) {
-      this.gs.log(`[IFRAME-EXPLORER] 'https' Detected, Reload And Using HTTP Instead.`);
-      window.location.href = 'http' + currentUrl.slice(5, currentUrl.length);
-      window.location.reload();
+    if (window.location.protocol === 'https:') {
+      this.gs.log(`[IFRAME-STATUS] 'https' Detected, Changing To HTTP Instead.`);
+      window.location.protocol = 'http:';
     }
   }
 
