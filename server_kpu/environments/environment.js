@@ -2,6 +2,8 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+const ethIpAddress = process.env.PORT;
+
 const environment = {
   production: false,
   reCaptchaSecretKey: '6Ld4Bt4UAAAAALX2r3L0IcCKbwsXwGRX6dx5LlmM',

@@ -16,12 +16,13 @@ const truffleCompiled = JSON.parse(fs.readFileSync(`${truffleDir}/Ballot.json`))
 const defaultAccount = fs.readFileSync(`${nodeDirectory}/pub.key`).toString().toLowerCase();
 const defaultPassword = fs.readFileSync(`${nodeDirectory}/pass.key`).toString();
 
+const gethIP = process.env.GETH_IP || environment.ethIP;
 const gethPath = "C:/Program Files (x86)/Geth/geth.exe";
 const gethNetworkPortRpcWs = [9999, 9001, 9002, 9003];
 const gethBootNodeUrl = '127.0.0.1:0?discport=9000';
 
-const defaultHttp = `http://${environment.ethIP}:${gethNetworkPortRpcWs[2]}`;
-const defaultWs = `ws://${environment.ethIP}:${gethNetworkPortRpcWs[3]}`;
+const defaultHttp = `http://${gethIP}:${gethNetworkPortRpcWs[2]}`;
+const defaultWs = `ws://${gethIP}:${gethNetworkPortRpcWs[3]}`;
 const defaultEnode = `enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730`;
 
 const gethApi = 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3';
