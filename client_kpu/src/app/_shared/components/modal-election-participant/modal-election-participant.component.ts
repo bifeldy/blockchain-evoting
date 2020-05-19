@@ -41,7 +41,10 @@ export class ModalElectionParticipantComponent implements OnInit {
   }
 
   get isCreator() {
-    return this.as.currentUserValue.pubKey === this.election.electionCreator;
+    if (this.as.currentUserValue) {
+      return this.as.currentUserValue.pubKey === this.election.electionCreator;
+    }
+    return false;
   }
 
   hideModal() {

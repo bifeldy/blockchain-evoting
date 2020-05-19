@@ -99,7 +99,7 @@ export class CreateElectionComponent implements OnInit {
         this.confirmModal.showModal({
           callbackData: 'createElectionFinished',
           title: `Receipt '${this.fg.value.electionName}'`,
-          body: JSON.stringify(res.result.trxCreateElection),
+          body: JSON.stringify(res.result.trxCreateElectionWithCandidates),
           submit: 'OK'
         }, true);
       },
@@ -121,7 +121,8 @@ export class CreateElectionComponent implements OnInit {
   confirmModalCallback(callbackData) {
     if (callbackData === 'createElectionFinished') {
       this.router.navigateByUrl('/election');
-    } else if (callbackData === 'createElectionFailed') {}
+    } else if (callbackData === 'createElectionFailed') {
+    }
   }
 
 }

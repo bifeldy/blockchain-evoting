@@ -6,5 +6,6 @@ export interface Election {
   electionIsActive: number;
   electionCreator: string;
   electionImage: string;
+  contractAddress: string;
   createdAt: string;
 }

@@ -6,9 +6,8 @@ export const environment = {
   production: false,
   tokenName: 'bifeldy_token',
   sessionName: 'bifeldy_session',
-  apiUrl: 'http://bifeldy.ip-dynamic.net:82/api',
-  sniffCors: 'https://bifeldy-cors.herokuapp.com/',
-  netStats: 'http://localhost:9999'
+  apiUrl: '/api',
+  sniffCors: 'https://bifeldy-cors.herokuapp.com/'
 };
 
 /*

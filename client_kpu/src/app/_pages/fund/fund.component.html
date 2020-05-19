@@ -57,10 +57,31 @@
             </div>
           </div>
           <div class="form-group row">
-            <label for="ether" class="col-md-4 col-form-label text-md-right">Ether Coin</label>
+            <label for="ether" class="col-md-4 col-form-label text-md-right">Coin (Wei)</label>
+            <div class="col-md-8">
+              <input type="number" id="ether" class="form-control" required autofocus
+                autocomplete="off" disabled value="{{ myCoinBase.wei }}" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="ether" class="col-md-4 col-form-label text-md-right">Coin (G-Wei)</label>
+            <div class="col-md-8">
+              <input type="number" id="ether" class="form-control" required autofocus
+                autocomplete="off" disabled value="{{ myCoinBase.gwei }}" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="ether" class="col-md-4 col-form-label text-md-right">Coin (Ether)</label>
             <div class="col-md-8">
               <input type="number" id="ether" class="form-control" required autofocus
                 autocomplete="off" disabled value="{{ myCoinBase.ether }}" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="ether" class="col-md-4 col-form-label text-md-right">Coin (Tether)</label>
+            <div class="col-md-8">
+              <input type="number" id="ether" class="form-control" required autofocus
+                autocomplete="off" disabled value="{{ myCoinBase.tether }}" />
             </div>
           </div>
         </div>

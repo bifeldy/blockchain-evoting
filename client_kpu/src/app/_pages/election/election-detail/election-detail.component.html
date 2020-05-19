@@ -83,6 +83,7 @@
               {{ creator.name }}
             </a>
           </p>
+          <p class="text-truncate">Contract :: {{ electionData.contractAddress }}</p>
           <p>Dibuat :: {{ electionData.createdAt | date:'EEEE, d MMMM yyyy @ HH:mm:ss a zzzz' }}</p>
         </div>
       </div>
@@ -176,19 +177,22 @@
                 </a>
               </p>
               <p class="text-truncate">
-                voterWeight :: {{ voteHistoryData.voterWeight }}
+                Vote Weight :: {{ voteHistoryData.voterWeight }}
               </p>
               <p class="text-truncate" *ngIf="trxVote">
-                blockHash :: {{ trxVote.blockHash }}
+                Block Hash :: {{ trxVote.blockHash }}
               </p>
               <p class="text-truncate" *ngIf="trxVote">
-                blockNumber :: {{ trxVote.blockNumber }}
+                Block Number :: {{ trxVote.blockNumber }}
               </p>
               <p class="text-truncate" *ngIf="trxVote">
-                gasUsed :: {{ trxVote.gasUsed }}
+                Cumulative Gas Used :: {{ trxVote.cumulativeGasUsed }} wei
               </p>
               <p class="text-truncate" *ngIf="trxVote">
-                transactionHash :: {{ trxVote.transactionHash }}
+                Transaction Hash :: {{ trxVote.transactionHash }}
+              </p>
+              <p class="text-truncate" *ngIf="trxVote">
+                Gas Used :: {{ trxVote.gasUsed }} wei 
               </p>
             </div>
           </div>
