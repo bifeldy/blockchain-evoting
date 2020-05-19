@@ -16,7 +16,7 @@ const truffleCompiled = JSON.parse(fs.readFileSync(`${truffleDir}/Ballot.json`))
 const defaultAccount = fs.readFileSync(`${nodeDirectory}/pub.key`).toString().toLowerCase();
 const defaultPassword = fs.readFileSync(`${nodeDirectory}/pass.key`).toString();
 
-const gethIP = process.env.GETH_IP || environment.ethIP;
+const gethIP = process.env.indihome_ip || environment.ethIP;
 const gethPath = "C:/Program Files (x86)/Geth/geth.exe";
 const gethNetworkPortRpcWs = [9999, 9001, 9002, 9003];
 const gethBootNodeUrl = '127.0.0.1:0?discport=9000';
