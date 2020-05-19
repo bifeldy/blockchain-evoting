@@ -14,7 +14,7 @@ const router = express.Router();
 // GET `/api/election?status={status}&electionCreator={electionCreator}&row={row}`
 router.get('/', function(req, res, next) {
   let sqlQuery = `
-    SELECT id, electionId, electionName, electionDescription, electionIsActive, electionCreator, electionImage, trxAddress, createdAt
+    SELECT id, electionId, electionName, electionDescription, electionIsActive, electionCreator, electionImage, contractAddress, trxAddress, createdAt
     FROM elections
   `;
   if (req.query.electionCreator) sqlQuery += ` WHERE electionCreator = ${db.escape(req.query.electionCreator)} `;
@@ -55,52 +55,44 @@ router.post('/create', function(req, res, next) {
       electionCreator: decoded.user.pubKey,
       electionImage: req.body.electionImage ? req.body.electionImage : 'http://via.placeholder.com/144x81/' + (Math.random() * 0xFFFFFF << 0).toString(16)
     };
-    return eth.web3CreateElection(
+    return eth.web3CreateElectionWithCandidates(
       electionData.electionId,
+      req.body.electionCandidate,
       electionData.electionCreator,
       atob(req.body.passphrase),
-      (errTrx1, trxCreateElection) => {
-        if (errTrx1) return next(createError(500, errTrx1));
+      (errTrx, trxCreateElectionWithCandidates) => {
+        if (errTrx) {
+          console.log(errTrx);
+          return next(createError(500, errTrx));
+        }
         else {
-          rcrd.recordTransaction(trxCreateElection);
-          electionData.trxAddress = trxCreateElection.transactionHash;
+          rcrd.recordTransaction(trxCreateElectionWithCandidates);
+          electionData.trxAddress = trxCreateElectionWithCandidates.transactionHash;
+          electionData.contractAddress = eth.getContractAddress();
           return db.mySqlQuery(`
             INSERT INTO elections
             SET ?
           `, electionData, (errorSql1, resultsSql1, fieldsSql1) => {
             if (errorSql1) return next(createError(500));
             else {
-              return eth.web3AddCandidate(
-                electionData.electionId,
-                req.body.electionCandidate,
-                electionData.electionCreator,
-                atob(req.body.passphrase),
-                (errTrx2, trxAddCandidate) => {
-                  if (errTrx2) return next(createError(500, errTrx2));
-                  else {
-                    rcrd.recordTransaction(trxAddCandidate);
-                    let candidatesData = [];
-                    req.body.electionCandidate.forEach(eC => {
-                      candidatesData.push([electionData.electionId, eC, trxAddCandidate.transactionHash]);
-                    });
-                    return db.mySqlQuery(`
-                      INSERT INTO candidates (electionId, candidateAddress, trxAddress)
-                      VALUES ?
-                    `, [candidatesData], (errorSql2, resultsSql2, fieldsSql2) => {
-                      if (errorSql2) return next(createError(500));
-                      else {
-                        return res.status(200).json({
-                          info: `😲 200 - Berhasil Membuat Election Baru! 😝`,
-                          result: {
-                            trxCreateElection,
-                            trxAddCandidate
-                          }
-                        });
-                      }
-                    });
-                  }
+              let candidatesData = [];
+              req.body.electionCandidate.forEach(eC => {
+                candidatesData.push([electionData.electionId, eC, trxCreateElectionWithCandidates.transactionHash]);
+              });
+              return db.mySqlQuery(`
+                INSERT INTO candidates (electionId, candidateAddress, trxAddress)
+                VALUES ?
+              `, [candidatesData], (errorSql2, resultsSql2, fieldsSql2) => {
+                if (errorSql2) return next(createError(500));
+                else {
+                  return res.status(200).json({
+                    info: `😲 200 - Berhasil Membuat Election Baru! 😝`,
+                    result: {
+                      trxCreateElectionWithCandidates
+                    }
+                  });
                 }
-              );
+              });
             }
           });
         }
@@ -170,7 +162,7 @@ router.get('/my-joined-election', function(req, res, next) {
 // GET `/api/election/:id`
 router.get('/:id', function(req, res, next) {
   return db.mySqlQuery(`
-    SELECT id, electionId, electionName, electionDescription, electionIsActive, electionCreator, electionImage, trxAddress, createdAt
+    SELECT id, electionId, electionName, electionDescription, electionIsActive, electionCreator, electionImage, contractAddress, trxAddress, createdAt
     FROM elections
     WHERE id = ?
   `, [req.params.id], (error, results, fields) => {
@@ -195,7 +187,7 @@ router.post('/:id/end', function(req, res, next) {
     'passphrase' in req.body && req.body.passphrase != null && req.body.passphrase != '' && req.body.passphrase != undefined
   ) {
     return db.mySqlQuery(`
-      SELECT id, electionId, electionCreator
+      SELECT id, electionId, electionCreator, contractAddress
       FROM elections
       WHERE id = ? AND electionCreator = ?
     `, [req.params.id, decoded.user.pubKey], (errorSql1, resultsSql1, fieldsSql1) => {
@@ -362,7 +354,7 @@ router.post('/:id/participant', function(req, res, next) {
     'passphrase' in req.body && req.body.passphrase != null && req.body.passphrase != '' && req.body.passphrase != undefined
   ) {
     return db.mySqlQuery(`
-      SELECT id, electionId, electionCreator
+      SELECT id, electionId, electionCreator, contractAddress
       FROM elections
       WHERE id = ?
     `, [req.params.id], (errorSql1, resultsSql1, fieldsSql1) => {
@@ -410,86 +402,6 @@ router.post('/:id/participant', function(req, res, next) {
   });
 });
 
-// GET `/api/election/:id/candidate`
-router.get('/:id/candidate', function(req, res, next) {
-  return db.mySqlQuery(`
-    SELECT id, electionId, electionCreator
-    FROM elections
-    WHERE id = ?
-  `, [req.params.id], (errorSql1, resultsSql1, fieldsSql1) => {
-    if (errorSql1) return next(createError(500));
-    else {
-      if (resultsSql1.length <= 0) return next(createError(404));
-      else {
-        let candidateAddressArray = [];
-        if (
-          'candidateAddress' in req.query && req.query.candidateAddress != null && req.query.candidateAddress != '' && req.query.candidateAddress != undefined
-        ) {
-          candidateAddressArray = req.query.candidateAddress.split(',');
-        }
-        if (candidateAddressArray.length == 1 && (candidateAddressArray[0] == null || candidateAddressArray[0] == '' || candidateAddressArray[0] == undefined)) {
-          candidateAddressArray = [];
-        }
-        return db.mySqlQuery(`
-          SELECT id, electionId, candidateAddress
-          FROM candidates
-          WHERE electionId = ? ${candidateAddressArray.length <= 0 ? ' ' : ' AND candidateAddress IN ( ? ) '}
-        `, 
-          candidateAddressArray.length <= 0 ? [resultsSql1[0].electionId] : [resultsSql1[0].electionId, candidateAddressArray]
-        , (errorSql2, resultsSql2, fieldsSql2) => {
-          if (errorSql2) return next(createError(500));
-          else {
-            candidateAddressArray = [];
-            resultsSql2.forEach(rS => {
-              candidateAddressArray.push(rS.candidateAddress);
-            });
-            if (candidateAddressArray.length <= 0) {
-              return res.status(200).json({
-                info: `😲 200 - My Joined Election 😝`,
-                result: {
-                  candidatesInfo: []
-                }
-              });
-            }
-            return db.mySqlQuery(`
-              SELECT id, email, name, pubKey, image
-              FROM users
-              WHERE pubKey IN ( ? )
-            `, [candidateAddressArray], (errorSql3, resultsSql3, fieldsSql3) => {
-              if (errorSql3) next(createError(500));
-              else if (resultsSql3.length <= 0) next(createError(404));
-              else {
-                let trxVoteResults = [];
-                candidateAddressArray.forEach(cAA => {
-                  eth.web3ShowResultCountByCandidateAddress(
-                    resultsSql1[0].electionId,
-                    cAA,
-                    (errTrx, trxResultVoteCount) => {
-                      if (errTrx) return next(createError(500, errTrx));
-                      else {
-                        trxVoteResults.push(trxResultVoteCount);
-                        if (trxVoteResults.length == candidateAddressArray.length) {
-                          return res.status(200).json({
-                            info: `😲 200 - Informasi Kandidat #${resultsSql1[0].electionId} 😝`,
-                            result: {
-                              candidatesInfo: resultsSql3,
-                              trxVoteResults
-                            }
-                          });
-                        }
-                      }
-                    }
-                  );
-                });
-              }
-            });
-          }
-        });
-      }
-    }
-  });
-});
-
 // POST `/api/election/:id/vote`
 router.post('/:id/vote', function(req, res, next) {
   const decoded = jwt.JwtDecode(req, res, next);
@@ -499,7 +411,7 @@ router.post('/:id/vote', function(req, res, next) {
     'passphrase' in req.body && req.body.passphrase != null && req.body.passphrase != '' && req.body.passphrase != undefined
   ) {
     return db.mySqlQuery(`
-      SELECT id, electionId, electionCreator
+      SELECT id, electionId, electionCreator, contractAddress
       FROM elections
       WHERE id = ?
     `, [req.params.id], (errorSql1, resultsSql1, fieldsSql1) => {
@@ -578,6 +490,86 @@ router.post('/:id/vote', function(req, res, next) {
   });
 });
 
+// GET `/api/election/:id/candidate`
+router.get('/:id/candidate', function(req, res, next) {
+  return db.mySqlQuery(`
+    SELECT id, electionId, electionCreator, contractAddress
+    FROM elections
+    WHERE id = ?
+  `, [req.params.id], (errorSql1, resultsSql1, fieldsSql1) => {
+    if (errorSql1) return next(createError(500));
+    else {
+      if (resultsSql1.length <= 0) return next(createError(404));
+      else {
+        let candidateAddressArray = [];
+        if (
+          'candidateAddress' in req.query && req.query.candidateAddress != null && req.query.candidateAddress != '' && req.query.candidateAddress != undefined
+        ) {
+          candidateAddressArray = req.query.candidateAddress.split(',');
+        }
+        if (candidateAddressArray.length == 1 && (candidateAddressArray[0] == null || candidateAddressArray[0] == '' || candidateAddressArray[0] == undefined)) {
+          candidateAddressArray = [];
+        }
+        return db.mySqlQuery(`
+          SELECT id, electionId, candidateAddress
+          FROM candidates
+          WHERE electionId = ? ${candidateAddressArray.length <= 0 ? ' ' : ' AND candidateAddress IN ( ? ) '}
+        `, 
+          candidateAddressArray.length <= 0 ? [resultsSql1[0].electionId] : [resultsSql1[0].electionId, candidateAddressArray]
+        , (errorSql2, resultsSql2, fieldsSql2) => {
+          if (errorSql2) return next(createError(500));
+          else {
+            candidateAddressArray = [];
+            resultsSql2.forEach(rS => {
+              candidateAddressArray.push(rS.candidateAddress);
+            });
+            if (candidateAddressArray.length <= 0) {
+              return res.status(200).json({
+                info: `😲 200 - My Joined Election 😝`,
+                result: {
+                  candidatesInfo: []
+                }
+              });
+            }
+            return db.mySqlQuery(`
+              SELECT id, email, name, pubKey, image
+              FROM users
+              WHERE pubKey IN ( ? )
+            `, [candidateAddressArray], (errorSql3, resultsSql3, fieldsSql3) => {
+              if (errorSql3) next(createError(500));
+              else if (resultsSql3.length <= 0) next(createError(404));
+              else {
+                let trxVoteResults = [];
+                candidateAddressArray.forEach(cAA => {
+                  eth.web3ShowResultCountByCandidateAddress(
+                    resultsSql1[0].electionId,
+                    cAA,
+                    (errTrx, trxResultVoteCount) => {
+                      if (errTrx) return next(createError(500, errTrx));
+                      else {
+                        trxVoteResults.push(trxResultVoteCount);
+                        if (trxVoteResults.length == candidateAddressArray.length) {
+                          return res.status(200).json({
+                            info: `😲 200 - Informasi Kandidat #${resultsSql1[0].electionId} 😝`,
+                            result: {
+                              candidatesInfo: resultsSql3,
+                              trxVoteResults
+                            }
+                          });
+                        }
+                      }
+                    }
+                  );
+                });
+              }
+            });
+          }
+        });
+      }
+    }
+  });
+});
+
 // POST `/api/election/:id/my-vote`
 router.post('/:id/my-vote', function(req, res, next) {
   const decoded = jwt.JwtDecode(req, res, next);
@@ -586,7 +578,7 @@ router.post('/:id/my-vote', function(req, res, next) {
     'passphrase' in req.body && req.body.passphrase != null && req.body.passphrase != '' && req.body.passphrase != undefined
   ) {
     return db.mySqlQuery(`
-      SELECT id, electionId, electionCreator
+      SELECT id, electionId, electionCreator, contractAddress
       FROM elections
       WHERE id = ?
     `, [req.params.id], (error, results, fields) => {

@@ -1,7 +1,6 @@
 const db = require('../helpers/db');
 
 function recordTransaction(receipt) {
-  console.log(receipt);
   let filteredReceipt = {};
   if ('blockHash' in receipt) filteredReceipt.blockHash = receipt.blockHash;
   if ('blockNumber' in receipt) filteredReceipt.blockNumber = receipt.blockNumber;

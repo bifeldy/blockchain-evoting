@@ -1,4 +1,7 @@
 // @ts-nocheck
+
+const angularBuildPath = '../client_kpu/dist/client-kpu';
+
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -23,11 +26,10 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
-app.use(favicon(path.join(__dirname, 'public/favicon.ico')));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(favicon(path.join(__dirname, `${angularBuildPath}/favicon.ico`)));
+app.use(express.static(path.join(__dirname, angularBuildPath)));
 
 // router controller
-const indexRouter = require('./routes/index');
 const apiRouter = require('./routes/api');
 const kpuRouter = require('./routes/kpu');
 const usersRouter = require('./routes/users');
@@ -41,7 +43,7 @@ eth.gethInitWeb3();
 
 const db = require('./helpers/db');
 db.mySqlQuery(`
-    SELECT id, active, address, abi, bytecode, createdAt, updatedAt
+    SELECT id, active, address, abi
     FROM contracts
     WHERE active = 1
     ORDER BY active DESC
@@ -60,13 +62,15 @@ db.mySqlQuery(`
 });
 
 // routing
-app.use('/', indexRouter);
 app.use('/api', apiRouter);
 app.use('/api/kpu', kpuRouter);
 app.use('/api/user', usersRouter);
 app.use('/api/election', electionRouter);
 app.use('/api/contract', contractRouter);
 app.use('/api/dump', dumpRouter);
+app.get('/*', function(req, res) {
+  res.sendFile(path.join(__dirname, `${angularBuildPath}/index.html`));
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

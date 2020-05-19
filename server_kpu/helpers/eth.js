@@ -7,6 +7,7 @@ const Web3 = require('web3');
 const Miner = require('web3-eth-miner').Miner;
 
 const db = require('./db');
+const environment = require("../environments/environment");
 
 const nodeDirectory = `${__dirname}/../../node_kpu`;
 const truffleDir = `${__dirname}/../../contract/build/contracts`;
@@ -19,8 +20,8 @@ const gethPath = "C:/Program Files (x86)/Geth/geth.exe";
 const gethNetworkPortRpcWs = [9999, 9001, 9002, 9003];
 const gethBootNodeUrl = '127.0.0.1:0?discport=9000';
 
-const defaultHttp = `http://localhost:${gethNetworkPortRpcWs[2]}`;
-const defaultWs = `ws://localhost:${gethNetworkPortRpcWs[3]}`;
+const defaultHttp = `http://${environment.ethIP}:${gethNetworkPortRpcWs[2]}`;
+const defaultWs = `ws://${environment.ethIP}:${gethNetworkPortRpcWs[3]}`;
 const defaultEnode = `enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730`;
 
 const gethApi = 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3';
@@ -29,9 +30,9 @@ var geth = null;
 var web3 = null;
 var miner = null;
 
+var ballotInstance = null;
 var ballotContract = null;
 var ballotContractAddress = null;
-var ballotInstance = null;
 
 const defaultOptions = {};
 
@@ -45,6 +46,10 @@ function fromWei(number, unit = 'ether') {
   return web3.utils.fromWei(number, unit);
 }
 
+function getContractAddress() {
+  return ballotContractAddress;
+}
+
 async function makeBatchRequest(calls, callParameter) {
   let batch = new web3.BatchRequest();
   let promises = calls.map(call => {
@@ -53,7 +58,6 @@ async function makeBatchRequest(calls, callParameter) {
         if(err) rej(err);
         else res(data);
       });
-      console.log(req);
       batch.add(req);
     });
   });
@@ -108,8 +112,9 @@ function web3ChangeProvider(webSocket = defaultWs) {
   console.log('[ETH-CHANGE_PROVIDER] \x1b[95m%s\x1b[0m', webSocket);
 }
 
-function web3NewContractInstance(abi, contractAddress, version = 1) {
+function web3NewContractInstance(abi, contractAddress, version = 0) {
   ballotInstance = new web3.eth.Contract(abi, contractAddress);
+  ballotContractAddress = contractAddress;
   console.log('[ETH-CONTRACT_INSTANCE] \x1b[95m%s\x1b[0m - v%s', contractAddress, version);
 }
 
@@ -229,14 +234,15 @@ function web3DeployContract(abi = truffleCompiled.abi, bytecode = truffleCompile
             address: contractInstance.options.address,
             abi: JSON.stringify(abi),
             bytecode: JSON.stringify(bytecode)
-          }, (error, results) => {
+          }, (error, resultsSql1) => {
             if (error) {
               console.log('[ETH-DEPLOY_CONTRACT_INSTANCE] \x1b[91m%s\x1b[0m', JSON.parse(error));
             }
             else {
-              ballotContractAddress = contractInstance.options.address;
               ballotInstance = contractInstance;
-              console.log('[ETH-DEPLOY_CONTRACT_INSTANCE] \x1b[95m%s\x1b[0m - v%s', ballotContractAddress, results.insertId);
+              ballotContractAddress = contractInstance.options.address;
+              db.mySqlQuery(`UPDATE elections SET electionIsActive = 0`, null, (errorSql2, resultsSql2, fieldsSql2) => {});
+              console.log('[ETH-DEPLOY_CONTRACT_INSTANCE] \x1b[95m%s\x1b[0m - v%s', ballotContractAddress, resultsSql1.insertId);
             }
             // web3MiningStop();
           });
@@ -272,7 +278,6 @@ function web3TransferCoin(toPubKey, amount = '1', coinType= 'ether', callback, f
 }
 
 function web3CreateAccount(password, callback) {
-  console.log(password);
   return web3.eth.personal.newAccount(password).then((pubKey) => {
     console.log('[ETH-CREATE_ACCOUNT] \x1b[95m%s\x1b[0m', pubKey);
     return web3TransferCoin(pubKey, '1', 'ether', callback, defaultAccount, defaultPassword);
@@ -364,6 +369,33 @@ function web3AddCandidate(electionId, candidateAddress, electionCreator, passphr
         }
         else {
           return ballotInstance.methods.addCandidate(electionId, candidateAddress).send({
+            from: electionCreator,
+            gasPrice: estimatedGas.toString()
+          }).then((transactionRecipt) => {
+            callback(null, transactionRecipt);
+          }).catch((error) => {
+            callback(error, null);
+          });
+        }
+      }
+    );
+  });
+}
+
+function web3CreateElectionWithCandidates(electionId, candidateAddress, electionCreator, passphrase, callback) {
+  web3SetAccount(electionCreator);
+  return web3UnlockAccount(passphrase, electionCreator, (e) => {
+    if(e) return callback(e, null);
+    return web3GetEstimatedGasPriceMethodContract(
+      'createElectionWithCandidates',
+      ballotInstance.methods.createElectionWithCandidates(electionId, candidateAddress),
+      electionCreator,
+      (error, estimatedGas) => {
+        if (error) {
+          callback(error, null);
+        }
+        else {
+          return ballotInstance.methods.createElectionWithCandidates(electionId, candidateAddress).send({
             from: electionCreator,
             gasPrice: estimatedGas.toString()
           }).then((transactionRecipt) => {
@@ -494,10 +526,8 @@ function web3ShowResultCount(electionId, candidatesAddress, callback) {
   makeBatchRequest(calls, {
     from: defaultAccount
   }).then((results) => {
-    console.log(results);
     callback(null, results);
   }).catch((error) => {
-    console.log(error);
     callback(error, null);
   });
 }
@@ -515,10 +545,10 @@ function web3ShowResultCountByCandidateAddress(electionId, candidateAddress, cal
 }
 
 module.exports = {
-  toHex, fromWei, gethInitWeb3, web3InitProvider, web3InitMiner, web3SetAccount, web3ChangeProvider,
+  toHex, fromWei, getContractAddress, gethInitWeb3, web3InitProvider, web3InitMiner, web3SetAccount, web3ChangeProvider,
   web3NewContractInstance, web3UnlockAccount, web3LockAccount, web3MiningStart, web3GetAccountBalance,
   web3MiningStop, web3GetEstimatedGasPriceTransaction, web3GetGasPriceNetwork, web3GetEstimatedGasPriceDeployContract,
-  web3GetEstimatedGasPriceMethodContract, web3DeployContract, web3TransferCoin, web3CreateAccount,
-  web3ImportAccountFromUtc, web3ImportAccountFromPrivKey, web3ExportAccount, web3CreateElection, web3AddCandidate,
+  web3GetEstimatedGasPriceMethodContract, web3DeployContract, web3TransferCoin, web3CreateAccount, web3ImportAccountFromUtc,
+  web3ImportAccountFromPrivKey, web3ExportAccount, web3CreateElection, web3AddCandidate, web3CreateElectionWithCandidates,
   web3AddParticipant, web3EndElection, web3Vote, web3ShowMyVote, web3ShowResultCount, web3ShowResultCountByCandidateAddress
 };
