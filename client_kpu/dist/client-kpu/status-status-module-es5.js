@@ -95,12 +95,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       _createClass(StatusComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          var currentUrl = window.location.href;
-
-          if (currentUrl.startsWith('https')) {
-            this.gs.log("[IFRAME-STATUS] 'https' Detected, Reload And Using HTTP Instead.");
-            window.location.href = 'http' + currentUrl.slice(5, currentUrl.length);
-            window.location.reload();
+          if (window.location.protocol === 'https:') {
+            this.gs.log("[IFRAME-STATUS] 'https' Detected, Changing To HTTP Instead.");
+            window.location.protocol = 'http:';
           }
         }
       }]);
