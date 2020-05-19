@@ -21,7 +21,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = "<iframe src=\"http://18.234.240.253:8000/\" style=\"width: 100%; height: 100vh;\">\n  <p>Your browser does not support iframes.</p>\n</iframe>";
+    __webpack_exports__["default"] = "<iframe src=\"http://ec2-18-234-240-253.compute-1.amazonaws.com:8000/\" style=\"width: 100%; height: 100vh;\">\n  <p>Your browser does not support iframes.</p>\n</iframe>";
     /***/
   },
 
@@ -76,21 +76,43 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
     /*! @angular/core */
     "./node_modules/@angular/core/fesm2015/core.js");
+    /* harmony import */
+
+
+    var src_app_shared_services_global_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
+    /*! src/app/_shared/services/global.service */
+    "./src/app/_shared/services/global.service.ts");
 
     var ExplorerComponent =
     /*#__PURE__*/
     function () {
-      function ExplorerComponent() {
+      function ExplorerComponent(gs) {
         _classCallCheck(this, ExplorerComponent);
+
+        this.gs = gs;
       }
 
       _createClass(ExplorerComponent, [{
         key: "ngOnInit",
-        value: function ngOnInit() {}
+        value: function ngOnInit() {
+          var currentUrl = window.location.href;
+
+          if (currentUrl.startsWith('https')) {
+            this.gs.log("[IFRAME-EXPLORER] 'https' Detected, Reload And Using HTTP Instead.");
+            window.location.href = 'http' + currentUrl.slice(5, currentUrl.length);
+            window.location.reload();
+          }
+        }
       }]);
 
       return ExplorerComponent;
     }();
+
+    ExplorerComponent.ctorParameters = function () {
+      return [{
+        type: src_app_shared_services_global_service__WEBPACK_IMPORTED_MODULE_2__["GlobalService"]
+      }];
+    };
 
     ExplorerComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
       selector: 'app-explorer',

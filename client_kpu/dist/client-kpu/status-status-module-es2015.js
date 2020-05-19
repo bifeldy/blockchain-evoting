@@ -9,7 +9,7 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<iframe src=\"http://34.203.203.43:3000/\" style=\"width: 100%; height: 100vh;\">\n  <p>Your browser does not support iframes.</p>\n</iframe>");
+/* harmony default export */ __webpack_exports__["default"] = ("<iframe src=\"http://ec2-34-203-203-43.compute-1.amazonaws.com:3000/\" style=\"width: 100%; height: 100vh;\">\n  <p>Your browser does not support iframes.</p>\n</iframe>");
 
 /***/ }),
 
@@ -38,14 +38,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StatusComponent", function() { return StatusComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var src_app_shared_services_global_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/_shared/services/global.service */ "./src/app/_shared/services/global.service.ts");
+
 
 
 let StatusComponent = class StatusComponent {
-    constructor() {
+    constructor(gs) {
+        this.gs = gs;
     }
     ngOnInit() {
+        const currentUrl = window.location.href;
+        if (currentUrl.startsWith('https')) {
+            this.gs.log(`[IFRAME-STATUS] 'https' Detected, Reload And Using HTTP Instead.`);
+            window.location.href = 'http' + currentUrl.slice(5, currentUrl.length);
+            window.location.reload();
+        }
     }
 };
+StatusComponent.ctorParameters = () => [
+    { type: src_app_shared_services_global_service__WEBPACK_IMPORTED_MODULE_2__["GlobalService"] }
+];
 StatusComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
         selector: 'app-status',
