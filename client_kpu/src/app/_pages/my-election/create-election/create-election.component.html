@@ -35,9 +35,22 @@
             <div class="form-group row">
               <label for="electionImage" class="col-md-4 col-form-label text-md-right">Election Image</label>
               <div class="col-md-8">
-                <input type="text" id="electionImage" class="form-control {{
-                  !fg.get('electionImage').valid && (fg.get('electionImage').touched || alreadySubmitted) ? 'is-invalid' : ''
-                }}" placeholder="http://via.placeholder.com/144x81" autofocus formControlName="electionImage" autocomplete="off" />
+                <div class="input-group mb-3">
+                  <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="upload_gambar" accept="image/*" (change)="uploadImage($event)" />
+                    <label class="custom-file-label" for="upload_gambar">{{ selectedImageFileName }}</label>
+                  </div>
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" (click)="deleteImage()">Delete</button>
+                  </div>
+                </div>
+                <input type="text" id="electionImage" [attr.disabled]="usingFileUpload ? '' : null" class="form-control {{
+                  !fg.get('electionImage').valid && (fg.get('electionImage').touched || alreadySubmitted || errorImageTooBig) ? 'is-invalid' : ''
+                }}" placeholder="Alamat Url Gambar" autofocus formControlName="electionImage" autocomplete="off" (change)="imageChange()" />
+                <span class="invalid-feedback" role="alert">
+                  <strong *ngIf="!errorImageTooBig">Harap Mengisi Gambar!</strong>
+                  <strong *ngIf="errorImageTooBig">{{ errorImageTooBig }}</strong>
+                </span>
                 <img class="pt-3 col-md-4 col-sm-12 px-0" src="{{ fg.get('electionImage').value }}" />
               </div>
             </div>

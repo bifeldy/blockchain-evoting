@@ -24,6 +24,10 @@ export class CreateElectionComponent implements OnInit {
   alreadySubmitted = false;
   showPassword = false;
 
+  usingFileUpload = false;
+  selectedImageFileName = 'Pilih File / Gunakan URL';
+  errorImageTooBig = null;
+
   constructor(
     private fb: FormBuilder,
     private gs: GlobalService,
@@ -42,7 +46,7 @@ export class CreateElectionComponent implements OnInit {
     this.fg = this.fb.group({
       electionName: [data ? data.electionName : null, Validators.compose([Validators.required])],
       electionDescription: [data ? data.electionDescription : null, Validators.compose([Validators.required])],
-      electionImage: [data ? data.electionImage : 'http://via.placeholder.com/144x81', Validators.compose([])],
+      electionImage: [data ? data.electionImage : 'http://via.placeholder.com/144x81', Validators.compose([Validators.required])],
       electionCandidate: [data ? data.electionCandidate : null, Validators.compose([Validators.required])],
       passphrase: [data ? data.passphrase : null, Validators.compose([
           Validators.required,
@@ -123,6 +127,41 @@ export class CreateElectionComponent implements OnInit {
       this.router.navigateByUrl('/election');
     } else if (callbackData === 'createElectionFailed') {
     }
+  }
+
+  uploadImage(event) {
+    this.fg.controls.electionImage.patchValue(null);
+    this.usingFileUpload = true;
+    const file = event.target.files[0];
+    this.selectedImageFileName = file.name;
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = e => {
+      if (file.size < 24000) {
+        const img = document.createElement('img');
+        img.onload = () => {
+          this.fg.controls.electionImage.patchValue(reader.result.toString());
+        };
+        img.src = reader.result.toString();
+        this.errorImageTooBig = null;
+      } else {
+        this.errorImageTooBig = 'Ukuran Upload File Melebihi Batas 24 KB!';
+      }
+    };
+  }
+
+  imageChange() {
+    this.errorImageTooBig = null;
+    if (this.fg.get('electionImage').value.startsWith('data:')) {
+      this.fg.controls.electionImage.patchValue(null);
+    }
+  }
+
+  deleteImage() {
+    this.usingFileUpload = false;
+    this.selectedImageFileName = 'Pilih File / Gunakan URL';
+    this.errorImageTooBig = null;
+    this.fg.controls.electionImage.patchValue(null);
   }
 
 }
