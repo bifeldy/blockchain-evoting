@@ -1,0 +1,55 @@
+<div class="container py-3 bg-default" *ngIf="block">
+  <div class="row">
+    <div class="col-md-12 bg-default">
+      <div class="row mt-3 mb-3">
+        <div class="col-12 pb-3 sticky-top bg-default">
+          <h3 class="pt-3 pb-2 border-bottom-dotted">
+            <b class="text-secondary">
+              Block Detail
+            </b>
+          </h3>
+        </div>
+        <div class="col-12 bg-default pt-1">
+          <p style="word-wrap: break-word;">difficulty :: {{ block.difficulty }}</p>
+          <p style="word-wrap: break-word;">extraData :: {{ block.extraData }}</p>
+          <p style="word-wrap: break-word;">gasLimit :: {{ block.gasLimit }} Wei</p>
+          <p style="word-wrap: break-word;">gasUsed :: {{ block.gasUsed }} Wei</p>
+          <p style="word-wrap: break-word;">
+            hash :: 
+            <a routerLink="/explorer/block/{{ block.hash }}" class="text-success text-decoration-none">
+              {{ block.hash }}
+            </a>
+          </p>
+          <p style="word-wrap: break-word;">logsBloom :: {{ block.logsBloom }}</p>
+          <p style="word-wrap: break-word;">miner :: {{ block.miner }}</p>
+          <p style="word-wrap: break-word;">mixHash :: {{ block.mixHash }}</p>
+          <p style="word-wrap: break-word;">nonce :: {{ block.nonce }}</p>
+          <p style="word-wrap: break-word;">
+            number ::
+            <a routerLink="/explorer/block/{{ block.number }}" class="text-success text-decoration-none">
+              {{ block.number }}
+            </a>
+          </p>
+          <p style="word-wrap: break-word;">parentHash :: {{ block.parentHash }}</p>
+          <p style="word-wrap: break-word;">receiptsRoot :: {{ block.receiptsRoot }}</p>
+          <p style="word-wrap: break-word;">sha3Uncles :: {{ block.sha3Uncles }}</p>
+          <p style="word-wrap: break-word;">size :: {{ block.size }} Bytes</p>
+          <p style="word-wrap: break-word;">stateRoot :: {{ block.stateRoot }}</p>
+          <p style="word-wrap: break-word;">timestamp :: {{ block.timestamp }}</p>
+          <p style="word-wrap: break-word;">totalDifficulty :: {{ block.totalDifficulty }}</p>
+          <div style="word-wrap: break-word;">
+            transactions ::
+            <ul>
+              <li *ngFor="let trx of block.transactions">
+                <a routerLink="/explorer/transaction/{{ trx }}" class="text-success text-decoration-none">
+                  {{ trx }}
+                </a>
+              </li>
+            </ul>
+          </div>
+          <p style="word-wrap: break-word;">transactionsRoot :: {{ block.transactionsRoot }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

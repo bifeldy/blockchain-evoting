@@ -8,8 +8,8 @@
     </a>
     <ul class="nav justify-content-end">
       <li class="nav-item d-none d-md-block mr-2">
-        <form class="form-inline bifeldy-search-container mr-1" action="/search">
-          <input type="text" placeholder="Ada yang bisa dibantu?" aria-label="Search-Box" name="q" autocomplete="off" />
+        <form class="form-inline bifeldy-search-container mr-1" (submit)="searchHash();">
+          <input type="text" placeholder="Cari Blok / Transaksi Menggunakan Hash Disini ..." aria-label="Search-Box" name="q" autocomplete="off" [(ngModel)]="searchQuery" />
           <button type="submit" aria-label="search-button" title="Pencarian">
             <i class="fa fa-search"></i>
           </button>
@@ -31,14 +31,14 @@
   <!-- Font Icon Lihat Di Sini -- https://www.w3schools.com/icons/fontawesome_icons_webapp.asp -->
 
   <!-- Navbar Menu -->
-  <div id="navbar" class="bifeldy-navbar" onmouseover="navbarShowHide();" onmouseout="navbarShowHide();" onclick="mobileShowHideNavbar();">
+  <div id="navbar" class="bifeldy-navbar" onmouseover="navbarShowHide();" onmouseout="navbarShowHide();">
     <div class="clearfix d-none d-md-block"> &nbsp; </div>
     <div class="clearfix d-md-none"> &nbsp; </div>
     <div class="clearfix"> &nbsp; </div>
     <div class="clearfix"> &nbsp; </div>
     <div class="d-md-none">
-      <form class="bifeldy-search-container" action="/search">
-        <input type="text" placeholder="Ada yang bisa dibantu?" aria-label="Search-Box" name="q" />
+      <form class="bifeldy-search-container" (submit)="searchHash();">
+        <input type="text" placeholder="Cari Blok / Transaksi Menggunakan Hash Disini ..." aria-label="Search-Box" name="q" autocomplete="off" [(ngModel)]="searchQuery" />
         <button type="submit" aria-label="search-button">
           <i class="fa fa-search"></i>
         </button>
@@ -47,7 +47,7 @@
     <hr class="style1 d-md-none" />
     <a *ngIf="currentUser; then sudahLogin; else belumLogin;"></a>
     <ng-template #sudahLogin>
-      <a routerLink="/user/{{ currentUser.pubKey }}" routerLinkActive="bifeldy-active">
+      <a routerLink="/user/{{ currentUser.pubKey }}" routerLinkActive="bifeldy-active" onclick="mobileShowHideNavbar();">
         <i class="fa fa-fw fa-user mr-2"></i>
         <div class="visibleMenu">
           {{ slicedUserName }}
@@ -59,51 +59,51 @@
       </a>
     </ng-template>
     <ng-template #belumLogin>
-      <a routerLink="/login" routerLinkActive="bifeldy-active">
+      <a routerLink="/login" routerLinkActive="bifeldy-active" onclick="mobileShowHideNavbar();">
         <i class="fa fa-fw fa-sign-in-alt mr-2"></i>
         <div class="visibleMenu">Masuk</div>
       </a>
-      <a routerLink="/register" routerLinkActive="bifeldy-active">
+      <a routerLink="/register" routerLinkActive="bifeldy-active" onclick="mobileShowHideNavbar();">
         <i class="fa fa-fw fa-user-plus mr-2"></i>
         <div class="visibleMenu">Daftar</div>
       </a>
     </ng-template>
     <hr class="style1" />
-    <a routerLink="/home" routerLinkActive="bifeldy-active">
+    <a routerLink="/home" routerLinkActive="bifeldy-active" onclick="mobileShowHideNavbar();">
       <i class="fa fa-fw fa-home mr-2"></i>
       <div class="visibleMenu">Home Page</div>
     </a>
-    <a routerLink="/explorer" routerLinkActive="bifeldy-active">
+    <a routerLink="/explorer" routerLinkActive="bifeldy-active" onclick="mobileShowHideNavbar();">
       <i class="fa fa-fw fa-folder-open mr-2"></i>
       <div class="visibleMenu">Block Explorer</div>
     </a>
-    <a routerLink="/status" routerLinkActive="bifeldy-active">
+    <a routerLink="/status" routerLinkActive="bifeldy-active" onclick="mobileShowHideNavbar();">
       <i class="fa fa-fw fa-wifi mr-2"></i>
       <div class="visibleMenu">Network Status</div>
     </a>
     <hr class="style1" />
     <a *ngIf="currentUser; then loggedIn"></a>
     <ng-template #loggedIn>
-      <a *ngIf="isAdmin || isMiner || isVoter" routerLink="/library" routerLinkActive="bifeldy-active" [routerLinkActiveOptions]="{ exact: true }">
+      <a *ngIf="isAdmin || isMiner || isVoter" routerLink="/library" routerLinkActive="bifeldy-active" [routerLinkActiveOptions]="{ exact: true }" onclick="mobileShowHideNavbar();">
         <i class="fa fa-fw fa-vote-yea mr-2"></i>
         <div class="visibleMenu">My Election</div>
       </a>
-      <a *ngIf="isAdmin || isMiner || isVoter" routerLink="/library/create" routerLinkActive="bifeldy-active">
+      <a *ngIf="isAdmin || isMiner || isVoter" routerLink="/library/create" routerLinkActive="bifeldy-active" onclick="mobileShowHideNavbar();">
         <i class="fa fa-fw fa-plus mr-2"></i>
         <div class="visibleMenu">Create New Election</div>
       </a>
-      <a *ngIf="isAdmin" routerLink="/admin" routerLinkActive="bifeldy-active">
+      <a *ngIf="isAdmin" routerLink="/admin" routerLinkActive="bifeldy-active" onclick="mobileShowHideNavbar();">
         <i class="fa fa-fw fa-cogs mr-2"></i>
         <div class="visibleMenu">Admin Panel</div>
       </a>
       <hr class="style1" />
-      <a *ngIf="isAdmin || isMiner || isVoter"  routerLink="/fund" routerLinkActive="bifeldy-active">
+      <a *ngIf="isAdmin || isMiner || isVoter"  routerLink="/fund" routerLinkActive="bifeldy-active" onclick="mobileShowHideNavbar();">
         <i class="fab fa-fw fa-ethereum mr-2"></i>
         <div class="visibleMenu">{{ this.us.myCoinBase.ether.toString() | slice:0:10 }} Ether</div>
       </a>
       <hr class="style1" />
     </ng-template>
-    <a href="https://discord.gg/xGWdExk" target="_blank" rel="noreferrer">
+    <a href="https://discord.gg/xGWdExk" target="_blank" rel="noreferrer" onclick="mobileShowHideNavbar();">
       <i class="fa mr-2">
         <svg viewBox="-357 161 245 240" style="margin-left: 3px; margin-right: 2px; height: 20px;">
           <path fill="#fff"
@@ -121,7 +121,7 @@
       </i>
       <div class="visibleMenu">Discord</div>
     </a>
-    <a href="https://github.com/bifeldy/blockchain-evoting" target="_blank" rel="noreferrer">
+    <a href="https://github.com/bifeldy/blockchain-evoting" target="_blank" rel="noreferrer" onclick="mobileShowHideNavbar();">
       <i class="fab fa-fw fa-github mr-2"></i>
       <div class="visibleMenu">
         GitHub :: {{ slicedGithubSha }}

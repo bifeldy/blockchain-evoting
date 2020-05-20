@@ -1,0 +1,56 @@
+<div class="container py-3 bg-default" *ngIf="transactions">
+  <div class="row">
+    <div class="col-md-12 bg-default">
+      <div class="row mt-3 mb-3">
+        <div class="col-12 pb-3 sticky-top bg-default">
+          <h3 class="pt-3 pb-2 border-bottom-dotted">
+            <b class="text-secondary">
+              Transaction Detail
+            </b>
+          </h3>
+        </div>
+        <div class="col-12 bg-default pt-1">
+          <p style="word-wrap: break-word;">
+            blockHash ::
+            <a routerLink="/explorer/block/{{ transactions.blockHash }}" class="text-success text-decoration-none">
+              {{ transactions.blockHash }}
+            </a>
+          </p>
+          <p style="word-wrap: break-word;">
+            blockNumber ::
+            <a routerLink="/explorer/block/{{ transactions.blockNumber }}" class="text-success text-decoration-none">
+              {{ transactions.blockNumber }}
+            </a>
+          </p>
+          <p style="word-wrap: break-word;">
+            from ::
+            <a routerLink="/user/{{ transactions.from }}" class="text-success text-decoration-none">
+              {{ transactions.from }}
+            </a>
+          </p>
+          <p style="word-wrap: break-word;">gas :: {{ transactions.gas }} Wei</p>
+          <p style="word-wrap: break-word;">gasPrice :: {{ transactions.gasPrice }} Wei</p>
+          <p style="word-wrap: break-word;">
+            hash ::
+            <a routerLink="/explorer/transaction/{{ transactions.hash }}" class="text-success text-decoration-none">
+              {{ transactions.hash }}
+            </a>
+          </p>
+          <p style="word-wrap: break-word;">input :: {{ transactions.input }}</p>
+          <p style="word-wrap: break-word;">nonce :: {{ transactions.nonce }}</p>
+          <p style="word-wrap: break-word;">
+            to ::
+            <a routerLink="/user/{{ transactions.to }}" class="text-success text-decoration-none">
+              {{ transactions.to }}
+            </a>
+          </p>
+          <p style="word-wrap: break-word;">transactionIndex :: {{ transactions.transactionIndex }}</p>
+          <p style="word-wrap: break-word;">value :: {{ transactions.value }}</p>
+          <p style="word-wrap: break-word;">v :: {{ transactions.v }}</p>
+          <p style="word-wrap: break-word;">r :: {{ transactions.r }}</p>
+          <p style="word-wrap: break-word;">s :: {{ transactions.s }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

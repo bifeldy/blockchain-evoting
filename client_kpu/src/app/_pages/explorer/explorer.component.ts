@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { GlobalService } from 'src/app/_shared/services/global.service';
+import { ChainService } from 'src/app/_shared/services/chain.service';
 
 @Component({
   selector: 'app-explorer',
@@ -9,15 +9,35 @@ import { GlobalService } from 'src/app/_shared/services/global.service';
 })
 export class ExplorerComponent implements OnInit {
 
+  latestBlocks = [];
+
+  page = 1;
+  row = 20;
+
   constructor(
-    private gs: GlobalService
+    private cs: ChainService
   ) { }
 
   ngOnInit() {
-    if (window.location.protocol === 'https:') {
-      this.gs.log(`[IFRAME-PROTOCOL] 'https' Detected, Changing To HTTP Instead.`);
-      window.location.protocol = 'http:';
-    }
+    this.getLatestBlock(this.page, this.row);
+  }
+
+  nextPage() {
+    this.page += 1;
+    this.getLatestBlock(this.page, this.row);
+  }
+
+  prevPage() {
+    this.page -= 1;
+    this.getLatestBlock(this.page, this.row);
+  }
+
+  getLatestBlock(page, row) {
+    this.cs.getLatestBlock(page, row).subscribe(
+      res => {
+        this.latestBlocks = res.results.sort((a, b) => (a.number < b.number) ? 1 : -1);
+      }
+    );
   }
 
 }

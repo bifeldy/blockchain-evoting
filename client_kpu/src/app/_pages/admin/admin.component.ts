@@ -4,6 +4,7 @@ import { AuthService } from 'src/app/_shared/services/auth.service';
 import { UserService } from 'src/app/_shared/services/user.service';
 import { GlobalService } from 'src/app/_shared/services/global.service';
 import { ConfirmModalComponent } from 'src/app/_shared/components/confirm-modal/confirm-modal.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin',
@@ -20,6 +21,7 @@ export class AdminComponent implements OnInit {
   private trxTable;
 
   constructor(
+    private router: Router,
     private el: ElementRef,
     private us: UserService,
     private gs: GlobalService
@@ -223,12 +225,10 @@ export class AdminComponent implements OnInit {
         }
       ]
     });
-    // ($('#smartContractTable tbody') as any).on('click', (event) => {
-    //   const contractData = this.smartContractTable.row($(event.target).parents('tr')).data();
-    // });
-    // ($('#usersTable tbody') as any).on('click', (event) => {
-    //   const usersData = this.usersTable.row($(event.target).parents('tr')).data();
-    // });
+    ($('#trxTable tbody') as any).on('click', (event) => {
+      const trxData = this.trxTable.row($(event.target).parents('tr')).data();
+      this.router.navigateByUrl(`/explorer/transaction/${trxData.transactionHash}`);
+    });
     ($('#fundTable tbody') as any).on('click', '.tombol-terima', (event) => {
       const fundData = this.fundTable.row($(event.target).parents('tr')).data();
       this.us.adminAcceptCoinRequest(fundData.id).subscribe(

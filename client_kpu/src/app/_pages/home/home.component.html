@@ -32,7 +32,7 @@
       <div class="row mt-3 mb-3">
         <div class="col-12 pb-3 sticky-top bg-default">
           <h3 class="pt-3 pb-2 border-bottom-dotted">
-            <b class="text-secondary">Section 1</b>
+            <b class="text-secondary">Gallery</b>
           </h3>
         </div>
         <div class="col-12 bg-default">
@@ -50,7 +50,7 @@
       <div class="row mt-3 mb-3">
         <div class="col-12 pb-3 sticky-top bg-default">
           <h3 class="pt-3 pb-2 border-bottom-dotted">
-            <b class="text-secondary">Section 2</b>
+            <b class="text-secondary">Papan Informasi</b>
           </h3>
         </div>
         <div class="col-12 bg-default">
@@ -61,22 +61,27 @@
         <div class="col-12 pb-3 sticky-top bg-default">
           <h3 class="pt-3 pb-2 border-bottom-dotted">
             <small>
-              <a class="float-right text-sm text-success mt-2 text-decoration-none" routerLink="/more">
+              <a class="float-right text-sm text-success mt-2 text-decoration-none" routerLink="/explorer">
                 <small>Lihat Semua</small>
               </a>
             </small>
-            <b class="text-secondary">Section 3</b>
+            <b class="text-secondary">Lastest Blocks</b>
           </h3>
         </div>
         <div class="col-12 bg-default">
           <ul class="list-unstyled">
-            <div class="media border-bottom mb-1 p-1 list-group-item-action" *ngFor="let i of randomColor | slice: 0:5">
-              <img class="align-self-center mr-3" src="http://via.placeholder.com/80x80/{{ i }}" />
+            <div class="media border-bottom mb-1 p-1 list-group-item-action" style="cursor: pointer;" 
+              *ngFor="let i of latestBlocks" routerLink="/explorer/block/{{ i.hash }}">
+              <img class="align-self-center mr-3" src="http://via.placeholder.com/80x80/?text={{ i.number }}" />
               <div class="media-body text-truncate">
-                <h5 class="m-0 pt-2 pb-1">
-                  <b>Title {{ i }}</b>
-                </h5>
-                <p class="m-0 pb-2 text-muted">Description {{ i }}</p>
+                <p class="m-0 pt-2 text-muted">
+                  <b>{{ i.hash }}</b>
+                </p>
+                <p class="m-0 pb-2 text-muted">
+                  #<a class="text-primary">{{ i.number }}</a> |
+                  <a class="text-danger">{{ i.transactions.length }}</a> Trxs |
+                  <a class="text-danger">{{ i.gasUsed }}</a> Wei Gas
+                </p>
               </div>
             </div>
           </ul>
