@@ -52,7 +52,11 @@ db = mysql.createPool({
   host: env.dbHost,
   user: env.dbUser,
   password: env.dbPassword,
-  database: env.dbName
+  database: env.dbName,
+  connectionLimit: 1000,
+  connectTimeout: 60 * 60 * 1000,
+  acquireTimeout: 60 * 60 * 1000,
+  timeout: 60 * 60 * 1000,
 });
 
 function handleError(e) {

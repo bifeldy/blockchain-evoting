@@ -2,18 +2,23 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-const ethIpAddress = process.env.PORT;
-
 const environment = {
   production: false,
   reCaptchaSecretKey: '6Ld4Bt4UAAAAALX2r3L0IcCKbwsXwGRX6dx5LlmM',
+  /* Local */
+  dbHost: '127.0.0.1',
+  dbUser: 'root',
+  dbPassword: '',
+  dbName: 'blockchain-evoting',
+  indihome_ip: '127.0.0.1',
+  /* Deploy */
+  // dbHost: 'blockchain.coytj6xgui1h.us-east-1.rds.amazonaws.com',
+  // dbUser: 'bifeldy',
+  // dbPassword: '1234567890',
+  // dbName: 'evoting',
+  // indihome_ip: 'bifeldy.ip-dynamic.net',
+  /* From Reversed Engineer KPU-RI.apk */
   apiKpuWeb: 'https://lindungihakpilihmu.kpu.go.id/index.php/dpt/proses_ceknik',
-  dbHost: 'blockchain.coytj6xgui1h.us-east-1.rds.amazonaws.com',
-  dbUser: 'bifeldy',
-  dbPassword: '1234567890',
-  dbName: 'evoting',
-  ethIP: 'bifeldy.ip-dynamic.net',
-  // From Reversed Engineer KPU-RI.apk
   apiKpuAndroid: 'https://r.kpu.go.id/Vi/cek_pemilih_tes',
   kpuAndroidSecretKey: '907f54d9ed0bd3d148e9599e3ad83867'
 };
