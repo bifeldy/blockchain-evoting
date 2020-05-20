@@ -137,20 +137,26 @@ enode://de3d7d01238dbdf8f6fa9b4469e04e551ac00763d2a7b9ea61bd1ee992d7a16c72c02d95
 /**********/
 
 Bifeldy-WinServer2019_EthStats
-34.203.203.43
 IRNtqX;NLwrRF3Ez?R&Wi2u*l(dx)BkL
 
 Bifeldy-WinServer2019_BlockExplorer
-18.234.240.253
 4Wd$D)jiO3;lYVW-d%QW4@piSHjs?Si)
 
+Bifeldy-WinServer2019_Miner1
+%aoU)tcBP?=Udoa7Njaf=TrXJF3c8ZB@
+
+Bifeldy-WinServer2019_KPU
+.)9YX)Ouzq)wQZvR!juM?MuwHB%TnH6a
+
+Bifeldy-WinServer2019_Client1
+(Hq-BZ9mNxwr4(anwGq2.hXQrT(DbaoE
+
 Bifeldy-WinServer2019_Client2
-52.201.231.136
 gu!T!EaLKjPFy5*VhQhzmUmI4$o2wKJq
 
 /**********/
 
-geth --identity "node_kpu" --datadir "node_kpu" --syncmode "full" --networkid 9999 --rpc --rpccorsdomain "*" --rpcapi "admin,debug,web3,eth,txpool,personal,clique,miner,net" --ws --wsorigins "*" --wsapi "admin,debug,web3,eth,txpool,personal,clique,miner,net" --allow-insecure-unlock --unlock "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d" --password "node_kpu/pass.key" --mine --ipcdisable --port 9001 --rpcport 9002 --wsport 9003 --ethstats kpu_bifeldy.ip-dynamic.net:bifeldy@34.203.203.43:3000 --bootnodes "enode://2a452e470462174dcfe871c16ee30260990db0dafff7283d8d62ffc5a40d452691047ac18b7f91bfe178e78b554b48e52e2c8a8e55676e88a972fe2dde1910f6@3.84.37.175:30303" --cache 4096
+geth --identity "node_kpu" --datadir "node_kpu" --syncmode "full" --networkid 9999 --http --http.corsdomain "*" --http.api "admin,debug,web3,eth,txpool,personal,clique,miner,net" --ws --ws.origins "*" --ws.api "admin,debug,web3,eth,txpool,personal,clique,miner,net" --allow-insecure-unlock --unlock "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d" --password "node_kpu/pass.key" --mine --ipcdisable --port 9001 --http.port 9002 --ws.port 9003 --ethstats kpu_bifeldy.ip-dynamic.net:bifeldy@34.203.203.43:3000 --bootnodes "enode://2a452e470462174dcfe871c16ee30260990db0dafff7283d8d62ffc5a40d452691047ac18b7f91bfe178e78b554b48e52e2c8a8e55676e88a972fe2dde1910f6@3.84.37.175:30303" --cache 4096 --http.addr "0.0.0.0" --ws.addr "0.0.0.0" --rpcvhosts "*"
 
 geth attach http://localhost:9002
 
@@ -161,5 +167,3 @@ admin.addPeer("enode://2a452e470462174dcfe871c16ee30260990db0dafff7283d8d62ffc5a
 admin.addPeer("enode://303b25ac8649460f592dfac27783d063f4f7c569df549e0acbae6544e5e26aefb695bd2527b9429f6ba841104075420915dbbb878fe6378971aca537ee94fc3d@34.201.65.159:30303");
 
 admin.addPeer("enode://de3d7d01238dbdf8f6fa9b4469e04e551ac00763d2a7b9ea61bd1ee992d7a16c72c02d95d048cfa7ae4610e320c4f82aedf35d773e040bb9dfa9e945b8018d11@52.201.231.136:30303");
-
---rpcaddr "0.0.0.0" 
