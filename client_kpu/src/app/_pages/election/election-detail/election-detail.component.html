@@ -69,7 +69,7 @@
           </h5>
         </div>
         <div class="col-12 bg-default">
-          <p class="text-truncate">ID :: {{ electionData.electionId }}</p>
+          <p style="word-wrap: break-word;">ID :: {{ electionData.electionId }}</p>
           <p>Status :: {{ electionData.electionIsActive == 1 ? 'Aktif' : 'Non-Aktif' }}</p>
           <p>
             Partisipan ::
@@ -83,7 +83,7 @@
               {{ creator.name }}
             </a>
           </p>
-          <p class="text-truncate">Contract :: {{ electionData.contractAddress }}</p>
+          <p style="word-wrap: break-word;">Contract :: {{ electionData.contractAddress }}</p>
           <p>Dibuat :: {{ electionData.createdAt | date:'EEEE, d MMMM yyyy @ HH:mm:ss a zzzz' }}</p>
         </div>
       </div>
@@ -170,28 +170,28 @@
           </div>
           <div *ngIf="currentUser && currentUser.role == 'voter' && participant && voted && electionData && electionData.electionCreator != currentUser.pubKey">
             <div *ngIf="voteHistoryData">
-              <p class="text-truncate">
+              <p style="word-wrap: break-word;">
                 Kandidat Dipilih ::
                 <a routerLink="/user/{{ voteHistoryData.voterSelectedCandidate }}" class="text-success text-decoration-none">
                   {{ getCandidateByAddress(voteHistoryData.voterSelectedCandidate).name }}
                 </a>
               </p>
-              <p class="text-truncate">
+              <p style="word-wrap: break-word;">
                 Vote Weight :: {{ voteHistoryData.voterWeight }}
               </p>
-              <p class="text-truncate" *ngIf="trxVote">
+              <p style="word-wrap: break-word;" *ngIf="trxVote">
                 Block Hash :: {{ trxVote.blockHash }}
               </p>
-              <p class="text-truncate" *ngIf="trxVote">
+              <p style="word-wrap: break-word;" *ngIf="trxVote">
                 Block Number :: {{ trxVote.blockNumber }}
               </p>
-              <p class="text-truncate" *ngIf="trxVote">
+              <p style="word-wrap: break-word;" *ngIf="trxVote">
                 Cumulative Gas Used :: {{ trxVote.cumulativeGasUsed }} wei
               </p>
-              <p class="text-truncate" *ngIf="trxVote">
+              <p style="word-wrap: break-word;" *ngIf="trxVote">
                 Transaction Hash :: {{ trxVote.transactionHash }}
               </p>
-              <p class="text-truncate" *ngIf="trxVote">
+              <p style="word-wrap: break-word;" *ngIf="trxVote">
                 Gas Used :: {{ trxVote.gasUsed }} wei 
               </p>
             </div>
