@@ -68,7 +68,7 @@
           <div class="row">
             <small class="col-6 text-left text-muted mt-auto">{{ election.electionId }}</small>
             <small class="col-6 text-right text-muted" *ngIf="this.as.currentUserValue">
-              <a routerLink="/my-election" class="text-danger"
+              <a routerLink="/library" class="text-danger"
                 *ngIf="election.electionCreator == this.as.currentUserValue.pubKey && !router.url.includes('/election/')">
                   You're The Owner, Manage This Election
                   <i class="fa fa-fw fa-arrow-right"></i>
