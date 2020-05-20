@@ -297,7 +297,7 @@ export class ElectionDetailComponent implements OnInit {
     return this.candidateListInfo.find(cLI => cLI.pubKey.toLowerCase() === address.toLowerCase());
   }
 
-  callbackFromVote() {
+  callbackFromVote($event) {
     this.accountUnlocked = false;
     this.getElectionData(this.electionData.id);
   }
