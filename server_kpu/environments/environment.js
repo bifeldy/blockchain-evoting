@@ -5,18 +5,18 @@
 const environment = {
   production: false,
   reCaptchaSecretKey: '6Ld4Bt4UAAAAALX2r3L0IcCKbwsXwGRX6dx5LlmM',
-  /* Local */
-  dbHost: '127.0.0.1',
-  dbUser: 'root',
-  dbPassword: '',
-  dbName: 'blockchain-evoting',
-  indihome_ip: '127.0.0.1',
-  /* Deploy */
-  // dbHost: 'blockchain.coytj6xgui1h.us-east-1.rds.amazonaws.com',
-  // dbUser: 'bifeldy',
-  // dbPassword: '1234567890',
-  // dbName: 'evoting',
-  // indihome_ip: 'bifeldy.ip-dynamic.net',
+  /* Development */
+  // dbHost: '127.0.0.1',
+  // dbUser: 'root',
+  // dbPassword: '',
+  // dbName: 'blockchain-evoting',
+  // indihome_ip: '127.0.0.1',
+  /* Production */
+  dbHost: 'blockchain.coytj6xgui1h.us-east-1.rds.amazonaws.com',
+  dbUser: 'bifeldy',
+  dbPassword: '1234567890',
+  dbName: 'evoting',
+  indihome_ip: 'bifeldy.ip-dynamic.net',
   /* From Reversed Engineer KPU-RI.apk */
   apiKpuWeb: 'https://lindungihakpilihmu.kpu.go.id/index.php/dpt/proses_ceknik',
   apiKpuAndroid: 'https://r.kpu.go.id/Vi/cek_pemilih_tes',
