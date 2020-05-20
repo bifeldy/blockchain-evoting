@@ -183,7 +183,7 @@ router.get('/fund', function(req, res, next) {
   else next(createError(403));
 });
 
-// POST `/api//fund/:id`
+// POST `/api/fund/:id`
 router.post('/fund/:id', function(req, res, next) {
   const decoded = jwt.JwtDecode(req, res, next);
   if (decoded == null || decoded == undefined) return;
@@ -427,6 +427,48 @@ router.post('/import-eth-account', function(req, res, next) {
     info: '🙄 400 - Pendaftaran Gagal! 😪',
     result: {
       message: 'Data tidak valid atau tidak lengkap'
+    }
+  });
+});
+
+// GET `/api/block`
+router.get('/block', function(req, res, next) {
+  const page = parseInt(req.query.page) || 1;
+  const row = parseInt(req.query.row) || 10;
+  return eth.web3GetLastestBlocks(page, row, (error, result) => {
+    if (error) return next(createError(500, error));
+    else {
+      return res.status(200).json({
+        info: `😲 200 - Latest 25 Blocks! 😝`,
+        results: result
+      });
+    }
+  });
+});
+
+// GET `/api/block/:blockHash`
+router.get('/block/:blockHash', function(req, res, next) {
+  const showDetail = (req.query.showDetail == 'true');
+  return eth.web3GetBlock(req.params.blockHash, showDetail, (error, result) => {
+    if (error) return next(createError(500, error));
+    else {
+      return res.status(200).json({
+        info: `😲 200 - Block ${req.params.blockHash}! 😝`,
+        result: result
+      });
+    }
+  });
+});
+
+// GET `/api/transaction/:transactionHash`
+router.get('/transaction/:transactionHash', function(req, res, next) {
+  return eth.web3GetTransaction(req.params.transactionHash, (error, result) => {
+    if (error) return next(createError(500, error));
+    else {
+      return res.status(200).json({
+        info: `😲 200 - Transaction ${req.params.transactionHash}! 😝`,
+        result: result
+      });
     }
   });
 });

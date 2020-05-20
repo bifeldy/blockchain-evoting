@@ -61,10 +61,7 @@ router.post('/create', function(req, res, next) {
       electionData.electionCreator,
       atob(req.body.passphrase),
       (errTrx, trxCreateElectionWithCandidates) => {
-        if (errTrx) {
-          console.log(errTrx);
-          return next(createError(500, errTrx));
-        }
+        if (errTrx) return next(createError(500, errTrx));
         else {
           rcrd.recordTransaction(trxCreateElectionWithCandidates);
           electionData.trxAddress = trxCreateElectionWithCandidates.transactionHash;

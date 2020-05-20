@@ -545,11 +545,53 @@ function web3ShowResultCountByCandidateAddress(electionId, candidateAddress, cal
   });
 }
 
+/** Explorer */
+
+function web3GetLastestBlocks(page = 1, row = 10, callback) {
+  let latestBlocks = [];
+  web3.eth.getBlockNumber()
+  .then((result1) => {
+    const lastBlockNumber = result1;
+    for (let index = lastBlockNumber - ((page - 1) * row); index > lastBlockNumber - ((page - 1) * row) - row; index--) {
+      web3.eth.getBlock(index)
+      .then((result2) => {
+        latestBlocks.push(result2);
+        if (latestBlocks.length == row) {
+          callback(null, latestBlocks);
+        }
+      }).catch((error) => {
+        callback(error, null);
+      });
+    }
+  }).catch((error) => {
+    callback(error, null);
+  });
+}
+
+function web3GetBlock(blockNumberOrHash = 1, detailTransaction = false, callback) {
+  web3.eth.getBlock(blockNumberOrHash, detailTransaction)
+  .then((result) => {
+    callback(null, result);
+  }).catch((error) => {
+    callback(error, null);
+  });
+}
+
+function web3GetTransaction(transactionHash, callback) {
+  web3.eth.getTransaction(transactionHash)
+  .then((result) => {
+    callback(null, result);
+  }).catch((error) => {
+    callback(error, null);
+  });
+}
+
 module.exports = {
   toHex, fromWei, getContractAddress, gethInitWeb3, web3InitProvider, web3InitMiner, web3SetAccount, web3ChangeProvider,
   web3NewContractInstance, web3UnlockAccount, web3LockAccount, web3MiningStart, web3GetAccountBalance,
   web3MiningStop, web3GetEstimatedGasPriceTransaction, web3GetGasPriceNetwork, web3GetEstimatedGasPriceDeployContract,
   web3GetEstimatedGasPriceMethodContract, web3DeployContract, web3TransferCoin, web3CreateAccount, web3ImportAccountFromUtc,
   web3ImportAccountFromPrivKey, web3ExportAccount, web3CreateElection, web3AddCandidate, web3CreateElectionWithCandidates,
-  web3AddParticipant, web3EndElection, web3Vote, web3ShowMyVote, web3ShowResultCount, web3ShowResultCountByCandidateAddress
+  web3AddParticipant, web3EndElection, web3Vote, web3ShowMyVote, web3ShowResultCount, web3ShowResultCountByCandidateAddress,
+  web3GetLastestBlocks, web3GetBlock, web3GetTransaction
 };
