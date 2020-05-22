@@ -8,11 +8,13 @@ const Miner = require('web3-eth-miner').Miner;
 
 const db = require('./db');
 
-let env = null;
+var env = null;
 try {
   env = require(`${__dirname}/../environments/secretKeyProd.js`);
+  console.log(`[ETH_DEVELOPMENT]` + ' \x1b[91m%s\x1b[0m', env);
 } catch (error) {
   env = JSON.parse(process.env.secretKeyProduction);
+  console.log(`[ETH_PRODUCTION]` + ' \x1b[91m%s\x1b[0m', env);
 }
 
 const nodeDirectory = `${__dirname}/../../node_kpu`;
@@ -28,12 +30,12 @@ const gethNetworkPortRpcWs = [9999, 9001, 9002, 9003];
 const defaultHttp = `http://${gethIP}:${gethNetworkPortRpcWs[2]}`;
 const defaultWs = `ws://${gethIP}:${gethNetworkPortRpcWs[3]}`;
 
-let web3 = null;
-let miner = null;
+var web3 = null;
+var miner = null;
 
-let ballotInstance = null;
-let ballotContract = null;
-let ballotContractAddress = null;
+var ballotInstance = null;
+var ballotContract = null;
+var ballotContractAddress = null;
 
 const defaultOptions = {};
 
