@@ -442,7 +442,8 @@ router.post('/import-eth-account', function(req, res, next) {
 // GET `/api/block`
 router.get('/block', function(req, res, next) {
   const page = parseInt(req.query.page) || 1;
-  const row = parseInt(req.query.row) || 10;
+  let row = parseInt(req.query.row) || 10;
+  if (row >= 100) row = 100;
   return eth.web3GetLastestBlocks(page, row, (error, result) => {
     if (error) return next(createError(500, error));
     else {
