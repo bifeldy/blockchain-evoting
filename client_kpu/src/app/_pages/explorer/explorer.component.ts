@@ -23,6 +23,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.getLatestBlock(this.page, this.row);
     this.refreshBlockLive = setInterval(() => {
       this.getLatestBlock(this.page, this.row);
     }, 5000);

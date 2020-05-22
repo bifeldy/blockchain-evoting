@@ -24,6 +24,11 @@
               </a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" id="signer-tab" data-toggle="tab" href="#signer" role="tab" aria-controls="signer" aria-selected="false">
+                Sealer / Miner
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" id="fund-tab" data-toggle="tab" href="#fund" role="tab" aria-controls="fund" aria-selected="false">
                 Pending Requested Fund
               </a>
@@ -59,6 +64,22 @@
                     <th>PubKey</th>
                   </tr>
                 </thead>
+              </table>
+            </div>
+            <div class="tab-pane fade p-3" id="signer" role="tabpanel" aria-labelledby="signer-tab">
+              <table id="signerTable" class="pt-1 table table-bordered table-hover table-sm w-100">
+                <thead>
+                  <tr>
+                    <th>Address</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let s of signers">
+                    <td>
+                      {{ s }}
+                    </td>
+                  </tr>
+                </tbody>
               </table>
             </div>
             <div class="tab-pane fade p-3" id="fund" role="tabpanel" aria-labelledby="fund-tab">

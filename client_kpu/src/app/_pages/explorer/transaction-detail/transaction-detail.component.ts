@@ -27,7 +27,7 @@ export class TransactionDetailComponent implements OnInit {
       params => {
         this.cs.getDetailTransaction(params.get('transactionHash')).subscribe(
           res => {
-            this.gs.log('[Transaction]', res);
+            this.gs.log('[TRANSACTION]', res);
             this.transactions = res.result;
             if (!this.transactions) {
               this.router.navigateByUrl('/explorer');

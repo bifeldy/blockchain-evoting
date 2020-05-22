@@ -22,4 +22,12 @@ export class ChainService {
   getDetailTransaction(transactionHash) {
     return this.api.getData(`/transaction/${transactionHash}`);
   }
+
+  getSigners() {
+    return this.api.getData(`/signer`);
+  }
+
+  getBlockSigner(blockHash) {
+    return this.api.getData(`/signer/${blockHash}`);
+  }
 }

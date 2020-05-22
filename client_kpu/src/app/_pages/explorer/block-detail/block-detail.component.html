@@ -38,7 +38,7 @@
           <p style="word-wrap: break-word;">timestamp :: {{ block.timestamp }}</p>
           <p style="word-wrap: break-word;">totalDifficulty :: {{ block.totalDifficulty }}</p>
           <div style="word-wrap: break-word;">
-            transactions ::
+            transactions :: {{ block.transactions.length }}
             <ul>
               <li *ngFor="let trx of block.transactions">
                 <a routerLink="/explorer/transaction/{{ trx }}" class="text-success text-decoration-none">
@@ -48,6 +48,16 @@
             </ul>
           </div>
           <p style="word-wrap: break-word;">transactionsRoot :: {{ block.transactionsRoot }}</p>
+          <div style="word-wrap: break-word;" *ngIf="signers">
+            signers ::  {{ signers.length }}
+            <ul>
+              <li *ngFor="let addrs of signers">
+                <a routerLink="/user/{{ addrs }}" class="text-success text-decoration-none">
+                  {{ addrs }}
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>

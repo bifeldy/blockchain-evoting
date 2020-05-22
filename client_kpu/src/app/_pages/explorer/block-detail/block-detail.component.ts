@@ -14,6 +14,7 @@ import { GlobalService } from 'src/app/_shared/services/global.service';
 export class BlockDetailComponent implements OnInit {
 
   block: Block = null;
+  signers = null;
 
   constructor(
     private router: Router,
@@ -26,11 +27,17 @@ export class BlockDetailComponent implements OnInit {
     this.route.paramMap.subscribe(
       params => {
         this.cs.getDetailBlock(params.get('blockHash')).subscribe(
-          res => {
-            this.gs.log('[Block]', res);
-            this.block = res.result;
+          res1 => {
+            this.gs.log('[BLOCK]', res1);
+            this.block = res1.result;
             if (!this.block) {
               this.router.navigateByUrl('/explorer');
+            } else {
+              this.cs.getBlockSigner(params.get('blockHash')).subscribe(
+                res2 => {
+                  this.signers = res2.results;
+                }
+              );
             }
           },
           err => {

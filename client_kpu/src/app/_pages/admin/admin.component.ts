@@ -5,6 +5,7 @@ import { UserService } from 'src/app/_shared/services/user.service';
 import { GlobalService } from 'src/app/_shared/services/global.service';
 import { ConfirmModalComponent } from 'src/app/_shared/components/confirm-modal/confirm-modal.component';
 import { Router } from '@angular/router';
+import { ChainService } from 'src/app/_shared/services/chain.service';
 
 @Component({
   selector: 'app-admin',
@@ -17,18 +18,23 @@ export class AdminComponent implements OnInit {
 
   private smartContractTable;
   private usersTable;
+  private signerTable;
   private fundTable;
   private trxTable;
+
+  signers = null;
 
   constructor(
     private router: Router,
     private el: ElementRef,
     private us: UserService,
-    private gs: GlobalService
+    private gs: GlobalService,
+    private cs: ChainService
   ) { }
 
   ngOnInit() {
     this.initDataTable();
+    this.getSigners();
   }
 
   initDataTable() {
@@ -260,12 +266,22 @@ export class AdminComponent implements OnInit {
     this.usersTable.ajax.reload();
     this.fundTable.ajax.reload();
     this.trxTable.ajax.reload();
+    this.getSigners();
   }
 
   confirmModalCallback(callbackData) {
     if (callbackData === 'acceptCoinFinished') {
     } else if (callbackData === 'acceptCoinFailed') {
     }
+  }
+
+  getSigners() {
+    this.cs.getSigners().subscribe(
+      res2 => {
+        this.signers = res2.results;
+        this.signerTable = ($('#signerTable') as any).DataTable();
+      }
+    );
   }
 
 }
