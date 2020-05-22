@@ -448,7 +448,7 @@ router.get('/block', function(req, res, next) {
     if (error) return next(createError(500, error));
     else {
       return res.status(200).json({
-        info: `😲 200 - Latest 25 Blocks! 😝`,
+        info: `😲 200 - Latest Blocks! 😝`,
         results: result
       });
     }
