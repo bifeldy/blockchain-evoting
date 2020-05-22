@@ -107,3 +107,6 @@ skripsi/
 
 # Geth Blockchain Data
 geth/
+
+# Server Env
+secretKeyProd.json
