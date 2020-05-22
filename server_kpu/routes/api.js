@@ -508,7 +508,7 @@ router.get('/signer', function(req, res, next) {
 router.post('/signer', function(req, res, next) {
   const decoded = jwt.JwtDecode(req, res, next);
   if (decoded == null || decoded == undefined) return;
-  else if (decoded.user.role == 'admin' || decoded.user.role == 'miner') {
+  else if (decoded.user.role == 'admin') {
     if ('address' in req.body) {
       return request({
         method: 'POST',
