@@ -526,7 +526,7 @@ router.post('/signer', function(req, res, next) {
       }, (error, result, body) => {
         if (error) return next(createError(500));
         return res.json({
-          info: `😲 200 - Signer Blok ${req.params.blockHash} 😝`,
+          info: `😲 200 - Pendaftaran Gagal! 😝`,
           results: JSON.parse(body).result
         });
       });
