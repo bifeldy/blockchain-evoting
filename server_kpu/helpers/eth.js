@@ -7,7 +7,13 @@ const Web3 = require('web3');
 const Miner = require('web3-eth-miner').Miner;
 
 const db = require('./db');
-const environment = require("../environments/environment");
+
+let env = null;
+try {
+  env = require(`${__dirname}/../environments/secretKeyProd.js`);
+} catch (error) {
+  env = JSON.parse(process.env.secretKeyProduction);
+}
 
 const nodeDirectory = `${__dirname}/../../node_kpu`;
 const truffleDir = `${__dirname}/../../contract/build/contracts`;
@@ -16,24 +22,18 @@ const truffleCompiled = JSON.parse(fs.readFileSync(`${truffleDir}/Ballot.json`))
 const defaultAccount = fs.readFileSync(`${nodeDirectory}/pub.key`).toString().toLowerCase();
 const defaultPassword = fs.readFileSync(`${nodeDirectory}/pass.key`).toString();
 
-const gethIP = process.env.indihome_ip || environment.indihome_ip;
-const gethPath = "C:/Program Files (x86)/Geth/geth.exe";
+const gethIP = env.indihomeIp;
 const gethNetworkPortRpcWs = [9999, 9001, 9002, 9003];
-const gethBootNodeUrl = '127.0.0.1:0?discport=9000';
 
 const defaultHttp = `http://${gethIP}:${gethNetworkPortRpcWs[2]}`;
 const defaultWs = `ws://${gethIP}:${gethNetworkPortRpcWs[3]}`;
-const defaultEnode = `enode://31212ed29e7a80d3e6d5ef7211397c22a599f08a74630768b796f82d387384b3eec80efe594e44422c5bd216b9fca5e8d46e0012aa907221795594186c55f730`;
 
-const gethApi = 'admin,db,eth,debug,miner,net,shh,txpool,personal,web3';
+let web3 = null;
+let miner = null;
 
-var geth = null;
-var web3 = null;
-var miner = null;
-
-var ballotInstance = null;
-var ballotContract = null;
-var ballotContractAddress = null;
+let ballotInstance = null;
+let ballotContract = null;
+let ballotContractAddress = null;
 
 const defaultOptions = {};
 
@@ -69,26 +69,6 @@ async function makeBatchRequest(calls, callParameter) {
 /** Procedural */
 
 function gethInitWeb3() {
-  // execFile('rmdir', [
-  //   '/Q', '/S', `${nodeDirectory}/geth`
-  // ], (err, stdout, stderr) => {
-  //   if (err) throw err;
-  //   if(stdout) console.log('[RMDIR-STDOUT] \x1b[95m%s\x1b[0m', stdout.toString());
-  //   if(stderr) console.log('[RMDIR-STDERR] \x1b[91m%s\x1b[0m', stderr.toString());
-  //   geth = execFile(gethPath, [
-  //     '--identity', 'node_kpu', '--datadir', nodeDirectory,
-  //     '--port', gethNetworkPortRpcWs[1], '--syncmode', "full", '--networkid', gethNetworkPortRpcWs[0],
-  //     '--rpc', '--rpcport', gethNetworkPortRpcWs[2], '--rpccorsdomain', "*", '--rpcapi', gethApi,
-  //     '--ws', '--wsport', gethNetworkPortRpcWs[3], '--wsorigins', "*", '--wsapi', gethApi,
-  //     '--nat', 'none', '--ipcdisable', '--allow-insecure-unlock',
-  //     '--unlock', defaultAccount, '--password', `${nodeDirectory}/pass.key`,
-  //     '--bootnodes', `${defaultEnode}@${gethBootNodeUrl}`, '--mine', '--verbosity', 5
-  //   ], (err, stdout, stderr) => {
-  //     if (err) throw err;
-  //     if(stdout) console.log('[GETH-CONSOLE_STDOUT] \x1b[95m%s\x1b[0m', stdout.toString());
-  //     if(stderr) console.log('[GETH-CONSOLE_STDERR] \x1b[91m%s\x1b[0m', stderr.toString());
-  //   });
-  // });
   web3InitProvider();
   web3InitMiner();
 }

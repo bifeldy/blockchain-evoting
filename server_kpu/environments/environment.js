@@ -4,23 +4,12 @@
 
 const environment = {
   production: false,
-  reCaptchaSecretKey: '6Ld4Bt4UAAAAALX2r3L0IcCKbwsXwGRX6dx5LlmM',
-  /* Development */
-  // dbHost: '127.0.0.1',
-  // dbUser: 'root',
-  // dbPassword: '',
-  // dbName: 'blockchain-evoting',
-  // indihome_ip: '127.0.0.1',
-  /* Production */
-  dbHost: 'blockchain.coytj6xgui1h.us-east-1.rds.amazonaws.com',
-  dbUser: 'bifeldy',
-  dbPassword: '1234567890',
-  dbName: 'evoting',
-  indihome_ip: 'bifeldy.ip-dynamic.net',
-  /* From Reversed Engineer KPU-RI.apk */
-  apiKpuWeb: 'https://lindungihakpilihmu.kpu.go.id/index.php/dpt/proses_ceknik',
-  apiKpuAndroid: 'https://r.kpu.go.id/Vi/cek_pemilih_tes',
-  kpuAndroidSecretKey: '907f54d9ed0bd3d148e9599e3ad83867'
+  reCaptchaSecretKey: '',
+  dbHost: '127.0.0.1',
+  dbUser: 'root',
+  dbPassword: '',
+  dbName: 'blockchain-evoting',
+  indihomeIp: '127.0.0.1'
 };
 
 module.exports = environment;

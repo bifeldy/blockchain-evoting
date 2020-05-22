@@ -4,7 +4,12 @@ const createError = require('http-errors');
 
 const router = express.Router();
 
-const env = require(`${__dirname}/../environments/environment.js`);
+let env = null;
+try {
+  env = require(`${__dirname}/../environments/secretKeyProd.js`);
+} catch (error) {
+  env = JSON.parse(process.env.secretKeyProduction);
+}
 
 const recaptchaApiUrl = 'https://www.google.com/recaptcha/api/siteverify';
 
