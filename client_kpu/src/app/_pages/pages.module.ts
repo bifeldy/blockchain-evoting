@@ -37,8 +37,8 @@ const routes: Routes = [
         path: 'explorer',
         loadChildren: () => import('./explorer/explorer.module').then(m => m.ExplorerModule),
         data: {
-          title: 'Ethereum Block Explorer',
-          description: 'Menjelajah Data Block',
+          title: 'Ethereum Blockchain Explorer',
+          description: 'Menjelajah Data Blockchain',
           keywords: 'Blockchain E-Voting'
         }
       },

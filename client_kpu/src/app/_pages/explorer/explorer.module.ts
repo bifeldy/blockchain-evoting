@@ -9,11 +9,21 @@ import { TransactionDetailComponent } from './transaction-detail/transaction-det
 const routes: Routes = [
   {
     path: 'block/:blockHash',
-    component: BlockDetailComponent
+    component: BlockDetailComponent,
+    data: {
+      title: 'Block Detail',
+      description: 'Halaman Detail Blok',
+      keywords: 'Blockchain E-Voting'
+    }
   },
   {
     path: 'transaction/:transactionHash',
-    component: TransactionDetailComponent
+    component: TransactionDetailComponent,
+    data: {
+      title: 'Transaction Detail',
+      description: 'Halaman Detail Transaksi',
+      keywords: 'Blockchain E-Voting'
+    }
   },
   {
     path: '',
