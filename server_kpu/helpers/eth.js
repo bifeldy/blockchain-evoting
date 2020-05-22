@@ -10,11 +10,9 @@ const db = require('./db');
 
 var env = null;
 try {
-  env = require(`${__dirname}/../environments/secretKeyProd.js`);
-  console.log(`[ETH_DEVELOPMENT]` + ' \x1b[91m%s\x1b[0m', env);
+  env = require(`${__dirname}/../environments/secretKeyProd.json`);
 } catch (error) {
   env = JSON.parse(process.env.secretKeyProduction);
-  console.log(`[ETH_PRODUCTION]` + ' \x1b[91m%s\x1b[0m', env);
 }
 
 const nodeDirectory = `${__dirname}/../../node_kpu`;

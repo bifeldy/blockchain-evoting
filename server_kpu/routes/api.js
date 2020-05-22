@@ -1,6 +1,7 @@
 // @ts-nocheck
 const express = require('express');
 const createError = require('http-errors');
+const request = require('request');
 
 const jwt = require('../helpers/jwt');
 const db = require('../helpers/db');
@@ -8,6 +9,13 @@ const eth = require('../helpers/eth');
 const rcrd = require('../helpers/recorder');
 
 const atob = require('atob');
+
+var env = null;
+try {
+  env = require(`${__dirname}/../environments/secretKeyProd.json`);
+} catch (error) {
+  env = JSON.parse(process.env.secretKeyProduction);
+}
 
 const router = express.Router();
 
@@ -470,6 +478,88 @@ router.get('/transaction/:transactionHash', function(req, res, next) {
         result: result
       });
     }
+  });
+});
+
+// GET `/api/signer`
+router.get('/signer', function(req, res, next) {
+  return request({
+    method: 'POST',
+    uri: `http://${env.indihomeIp}:9002`,
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      method: 'clique_getSigners',
+      params: [],
+      id: 1
+    })
+  }, (error, result, body) => {
+    if (error) return next(createError(500));
+    return res.json({
+      info: '😲 200 - Daftar Seluruh Signer / Sealer / Miner! 😝',
+      results: JSON.parse(body).result
+    });
+  });
+});
+
+// POST `/api/signer`
+router.post('/signer', function(req, res, next) {
+  const decoded = jwt.JwtDecode(req, res, next);
+  if (decoded == null || decoded == undefined) return;
+  else if (decoded.user.role == 'admin' || decoded.user.role == 'miner') {
+    if ('address' in req.body) {
+      return request({
+        method: 'POST',
+        uri: `http://${env.indihomeIp}:9002`,
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          method: 'clique_propose',
+          params: [req.body.address, true],
+          id: 1
+        })
+      }, (error, result, body) => {
+        if (error) return next(createError(500));
+        return res.json({
+          info: `😲 200 - Signer Blok ${req.params.blockHash} 😝`,
+          results: JSON.parse(body).result
+        });
+      });
+    }
+    return res.status(400).json({
+      info: '🙄 400 - Pendaftaran Gagal! 😪',
+      result: {
+        message: 'Data tidak valid atau tidak lengkap'
+      }
+    });
+  }
+  else next(createError(403));
+});
+
+// GET `/api/signer/:blockHash`
+router.get('/signer/:blockHash', function(req, res, next) {
+  return request({
+    method: 'POST',
+    uri: `http://${env.indihomeIp}:9002`,
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      method: 'clique_getSignersAtHash',
+      params: [req.params.blockHash],
+      id: 1
+    })
+  }, (error, result, body) => {
+    if (error) return next(createError(500));
+    return res.json({
+      info: `😲 200 - Signer Blok ${req.params.blockHash} 😝`,
+      results: JSON.parse(body).result
+    });
   });
 });
 

@@ -6,11 +6,9 @@ const router = express.Router();
 
 var env = null;
 try {
-  env = require(`${__dirname}/../environments/secretKeyProd.js`);
-  console.log(`[KPU_DEVELOPMENT]` + ' \x1b[91m%s\x1b[0m', env);
+  env = require(`${__dirname}/../environments/secretKeyProd.json`);
 } catch (error) {
   env = JSON.parse(process.env.secretKeyProduction);
-  console.log(`[KPU_PRODUCTION]` + ' \x1b[91m%s\x1b[0m', env);
 }
 
 const recaptchaApiUrl = 'https://www.google.com/recaptcha/api/siteverify';
@@ -35,7 +33,6 @@ router.post('/cek-nik', function(req, res, next) {
       newUserData.name != null &&  newUserData.name != '' &&  newUserData.name != undefined &&
       newUserData['g-recaptcha-response'] != null && newUserData['g-recaptcha-response'] != '' && newUserData['g-recaptcha-response'] != undefined
     ) {
-      console.log('[ReCAPTCHA] \x1b[95m%s\x1b[0m - \x1b[35m%s\x1b[0m', req.body['g-recaptcha-response'], req.connection.remoteAddress);
       return request(`
         ${recaptchaApiUrl}?secret=${env.reCaptchaSecretKey}&response=${req.body['g-recaptcha-response']}&remoteip=${req.connection.remoteAddress}
       `.trim(), (e1, r1, b1) => {
@@ -57,7 +54,6 @@ router.post('/cek-nik', function(req, res, next) {
             ck_kpu: env.kpuAndroidSecretKey
           })
         }, (e2, r2, b2) => {
-          console.log('[KPU_RI] \x1b[95m%s\x1b[0m', b2);
           return res.json({
             info: '🙄 400 - Data Kartu Tanda Penduduk! 😪',
             result: JSON.parse(b2)
