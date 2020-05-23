@@ -65,24 +65,18 @@ router.post('/profile', function(req, res, next) {
   }
 });
 
-// POST `/api/user/export`
+// GET `/api/user/export`
 router.get('/export', function(req, res, next) {
-  if (
-    'jwt' in req.query && req.query.jwt != null && req.query.jwt != '' && req.query.jwt != undefined
-  ) {
-    req.body.token = req.query.jwt
-    const decoded = jwt.JwtDecode(req, res, next);
-    if (decoded == null || decoded == undefined) return;
-    else if ('pubKey' in decoded.user) {
-      let pubKey = decoded.user.pubKey;
-      if(pubKey.startsWith('0x')) pubKey = pubKey.slice(2, pubKey.length);
-      eth.web3ExportAccount(pubKey, function(files) {
-        if (files) res.download(files);
-        else next(createError(404));
-      });
-    }
+  const decoded = jwt.JwtDecode(req, res, next);
+  if (decoded == null || decoded == undefined) return;
+  else if ('pubKey' in decoded.user) {
+    let pubKey = decoded.user.pubKey;
+    if(pubKey.startsWith('0x')) pubKey = pubKey.slice(2, pubKey.length);
+    eth.web3ExportAccount(pubKey, function(files) {
+      if (files) res.download(files);
+      else next(createError(404));
+    });
   }
-  else next(createError(400));
 });
 
 // POST `/api/user/import`
