@@ -23,8 +23,6 @@ export class FundComponent implements OnInit {
 
   currUser: User = null;
 
-  urlExport = `${environment.apiUrl}/user/export?jwt=${localStorage.getItem(environment.tokenName)}`;
-
   etherValueRequested = null;
   etherValueRequestedError = false;
 
