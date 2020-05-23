@@ -25,7 +25,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+  exposedHeaders: [
+    'Cache-Control',
+    'Content-Language',
+    'Content-Type',
+    'Expires',
+    'Last-Modified',
+    'Pragma',
+    'Content-Length',
+    'Content-Disposition'
+  ],
+}));
 app.use(favicon(path.join(__dirname, `${angularBuildPath}/favicon.ico`)));
 app.use(express.static(path.join(__dirname, angularBuildPath)));
 
