@@ -17,6 +17,23 @@ export class ApiService {
     private gs: GlobalService,
   ) {}
 
+  downloadFile(path: string): Observable<any> {
+    this.gs.log('[API_DOWNLOAD]', path);
+    return this.http.get(environment.apiUrl + path, {
+      observe: 'response',
+      responseType: 'blob'
+    }).pipe(
+      catchError(err => throwError(err)),
+      map(res => {
+        const contentType = res.headers.get('content-type');
+        const contentDisposition = res.headers.get('content-disposition');
+        const fileName = contentDisposition.substr(contentDisposition.indexOf('filename=') + 9).replace(/\"/g, '');
+        const fileData = new Blob([res.body], { type: contentType });
+        return { fileName, fileData };
+      })
+    );
+  }
+
   getData(path: string, timedOut = 5000): Observable<any> {
     this.gs.log('[API_GET]', path);
     return this.http.get(path.startsWith('http') ? environment.sniffCors + path : environment.apiUrl + path).pipe(

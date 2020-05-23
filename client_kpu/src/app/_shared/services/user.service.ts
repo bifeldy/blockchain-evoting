@@ -21,6 +21,10 @@ export class UserService {
   ) {
   }
 
+  exportAccount() {
+    return this.api.downloadFile(`/user/export`);
+  }
+
   getAccountBalance(accountAddress) {
     this.api.getData(`/coinbase?accountAddress=${accountAddress}`).subscribe(
       res => {

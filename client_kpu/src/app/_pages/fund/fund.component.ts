@@ -1,10 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AuthService } from 'src/app/_shared/services/auth.service';
-import User from 'src/app/_shared/models/user';
-import { UserService } from 'src/app/_shared/services/user.service';
 import { Router } from '@angular/router';
+
+import { saveAs } from 'file-saver';
 import { environment } from 'src/environments/environment';
+
+import User from 'src/app/_shared/models/user';
+
+import { AuthService } from 'src/app/_shared/services/auth.service';
+import { UserService } from 'src/app/_shared/services/user.service';
 import { GlobalService } from 'src/app/_shared/services/global.service';
+
 import { ConfirmModalComponent } from 'src/app/_shared/components/confirm-modal/confirm-modal.component';
 
 @Component({
@@ -29,7 +34,7 @@ export class FundComponent implements OnInit {
     private as: AuthService,
     private us: UserService,
     private router: Router,
-    private gs: GlobalService
+    private gs: GlobalService,
   ) { }
 
   ngOnInit() {
@@ -47,6 +52,14 @@ export class FundComponent implements OnInit {
 
   get myCoinBase() {
     return this.us.myCoinBase;
+  }
+
+  downloadUtcFile() {
+    this.us.exportAccount().subscribe(
+      res => {
+        saveAs(res.fileData, res.fileName);
+      }
+    );
   }
 
   typingEtherValue($event) {
