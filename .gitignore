@@ -109,4 +109,4 @@ skripsi/
 geth/
 
 # Server Env
-secretKeyProd.json
+secretKey.json
