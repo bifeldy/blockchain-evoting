@@ -10,7 +10,7 @@ const db = require('./db');
 
 var env = null;
 try {
-  env = require(`${__dirname}/../environments/secretKeyProd.json`);
+  env = require(`${__dirname}/../environments/secretKey.json`);
 } catch (error) {
   env = JSON.parse(process.env.secretKeyProduction);
 }
@@ -249,7 +249,12 @@ function web3TransferCoin(toPubKey, amount = '1', coinType= 'ether', callback, f
         gasPrice: estimatedGas.toString()
       }).then((transactionRecipt) => {
         console.log('[ETH-TRANSFER_ETHER] \x1b[95m%s\x1b[0m - \x1b[35m%s\x1b[0m :: \x1b[91m%s\x1b[0m', fromPubKey, toPubKey, amount);
-        callback(null, transactionRecipt);
+        callback(null, {
+          account: {
+            pubKey: toPubKey
+          },
+          trxTransferCoin: transactionRecipt
+        });
       }).catch((error) => {
         console.log('ETH-TRANSFER_ETHER] \x1b[91m%s\x1b[0m', error);
         callback(error, null);

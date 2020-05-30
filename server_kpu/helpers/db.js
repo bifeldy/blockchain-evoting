@@ -5,7 +5,7 @@ const mySqldPath = "C:/xampp/mysql/bin/mysqld.exe";
 
 var env = null;
 try {
-  env = require(`${__dirname}/../environments/secretKeyProd.json`);
+  env = require(`${__dirname}/../environments/secretKey.json`);
 } catch (error) {
   env = JSON.parse(process.env.secretKeyProduction);
 }
