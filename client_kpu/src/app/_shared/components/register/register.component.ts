@@ -251,9 +251,9 @@ export class RegisterComponent implements OnInit {
         password: window.btoa(this.fg.value.password)
       }).subscribe(
         res => {
-          this.registerInfo = res.result.pubKey;
+          this.registerInfo = res.result.account.pubKey;
           this.ethereumAddressCreatedImported = res.result.account.pubKey;
-          // const receipt = res.result.account.receipt;
+          // const receipt = res.result.trxCreateAccount;
           this.registerWebAccount();
         },
         err => {
@@ -284,8 +284,9 @@ export class RegisterComponent implements OnInit {
         wallet, secretKey: this.fg.value.ethAccountImport
       }).subscribe(
         res => {
-          this.registerInfo = res.result.pubKey;
-          this.ethereumAddressCreatedImported = res.result.pubKey;
+          this.registerInfo = res.result.account.pubKey;
+          this.ethereumAddressCreatedImported = res.result.account.pubKey;
+          // const receipt = res.result.trxCreateAccount;
           this.registerWebAccount();
         },
         err => {
