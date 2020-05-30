@@ -253,7 +253,7 @@ export class RegisterComponent implements OnInit {
         res => {
           this.registerInfo = res.result.account.pubKey;
           this.ethereumAddressCreatedImported = res.result.account.pubKey;
-          // const receipt = res.result.trxCreateAccount;
+          // const receipt = res.result.trxTransferCoin;
           this.registerWebAccount();
         },
         err => {
@@ -286,7 +286,7 @@ export class RegisterComponent implements OnInit {
         res => {
           this.registerInfo = res.result.account.pubKey;
           this.ethereumAddressCreatedImported = res.result.account.pubKey;
-          // const receipt = res.result.trxCreateAccount;
+          // const receipt = res.result.trxTransferCoin;
           this.registerWebAccount();
         },
         err => {
