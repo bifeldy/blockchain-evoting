@@ -12,7 +12,7 @@ const atob = require('atob');
 
 var env = null;
 try {
-  env = require(`${__dirname}/../environments/secretKeyProd.json`);
+  env = require(`${__dirname}/../environments/secretKey.json`);
 } catch (error) {
   env = JSON.parse(process.env.secretKeyProduction);
 }
@@ -43,9 +43,10 @@ function userCheckAccountModule(newUserData, res, next, registerMode) {
   let iNik = 0;
   let iPhone = 0;
   let iEmail = 0;
+  let iPubKey = 0;
   if ('nik' in newUserData) {
     db.mySqlQuery(`
-      SELECT id, nik, phone, email
+      SELECT id, nik, phone, email, pubKey
       FROM users
       WHERE nik = ?
     `, [newUserData.nik], (error, results, fields) => {
@@ -55,7 +56,7 @@ function userCheckAccountModule(newUserData, res, next, registerMode) {
   }
   if ('phone' in newUserData) {
     db.mySqlQuery(`
-      SELECT id, nik, phone, email
+      SELECT id, nik, phone, email, pubKey
       FROM users
       WHERE phone = ?
     `, [newUserData.phone], (error, results, fields) => {
@@ -65,7 +66,7 @@ function userCheckAccountModule(newUserData, res, next, registerMode) {
   }
   if ('email' in newUserData) {
     db.mySqlQuery(`
-      SELECT id, nik, phone, email
+      SELECT id, nik, phone, email, pubKey
       FROM users
       WHERE email = ?
     `, [newUserData.email], (error, results, fields) => {
@@ -73,12 +74,23 @@ function userCheckAccountModule(newUserData, res, next, registerMode) {
       else iEmail = results.length;
     });
   }
+  if ('pubKey' in newUserData) {
+    db.mySqlQuery(`
+      SELECT id, nik, phone, email, pubKey
+      FROM users
+      WHERE pubKey = ?
+    `, [newUserData.pubKey], (error, results, fields) => {
+      if (error) return next(createError(500));
+      else iPubKey = results.length;
+    });
+  }
   return setTimeout(() => {
     const reg = {};
     if(iNik > 0) reg.nik = 'Nik Sudah Terpakai';
     if(iPhone > 0) reg.phone = 'Nomor Telepon Sudah Terpakai';
     if(iEmail > 0) reg.email = 'Email Sudah Terpakai';
-    const index = Math.max(iNik, iPhone, iEmail);
+    if(iPubKey > 0) reg.pubKey = 'PubKey Sudah Terpakai';
+    const index = Math.max(iNik, iPhone, iEmail, iPubKey);
     if(index > 0) {
       return res.status(400).json({
         info: '🙄 400 - Pendaftaran Gagal! 😪',
@@ -86,7 +98,8 @@ function userCheckAccountModule(newUserData, res, next, registerMode) {
           message: 'Data Akun Sudah Digunakan!',
           nik: reg.nik,
           phone: reg.phone,
-          email: reg.email
+          email: reg.email,
+          pubKey: reg.pubKey
         }
       });
     }
@@ -99,7 +112,7 @@ function userCheckAccountModule(newUserData, res, next, registerMode) {
         }
       });
     }
-  }, 500);
+  }, 1000);
 }
 
 // GET `/api`
@@ -362,13 +375,12 @@ router.post('/new-eth-account', function(req, res, next) {
   ) {
     return eth.web3CreateAccount(
       atob(newUserData.password),
-      (error, account) => {
+      (error, result) => {
         if (error) return next(createError(400));
+        rcrd.recordTransaction(result.trxCreateAccount);
         return res.status(200).json({
           info: '😍 200 - Berhasil Membuat Akun Ethereum! 🥰',
-          result: {
-            account
-          }
+          result
         });
       }
     );
@@ -411,6 +423,7 @@ router.post('/import-eth-account', function(req, res, next) {
           }
         }); 
       }
+      rcrd.recordTransaction(result.trxCreateAccount);
       return res.status(200).json({
         info: '😍 200 - Berhasil Import Akun Ethereum! 🥰',
         result
