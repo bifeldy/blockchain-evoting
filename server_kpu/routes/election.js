@@ -46,7 +46,8 @@ router.post('/create', function(req, res, next) {
   if (
     'electionName' in req.body && req.body.electionName != null && req.body.electionName != '' && req.body.electionName != undefined &&
     'electionDescription' in req.body && req.body.electionDescription != null && req.body.electionDescription != '' && req.body.electionDescription != undefined &&
-    'passphrase' in req.body && req.body.passphrase != null && req.body.passphrase != '' && req.body.passphrase != undefined
+    'passphrase' in req.body && req.body.passphrase != null && req.body.passphrase != '' && req.body.passphrase != undefined &&
+    'electionCandidate' in req.body && req.body.electionCandidate != null && req.body.electionCandidate != '' && req.body.electionCandidate != undefined && Array.isArray(req.body.electionCandidate)
   ) {
     const electionData = {
       electionId: eth.toHex(decoded.user.nik + new Date().getTime()),
@@ -343,11 +344,7 @@ router.post('/:id/participant', function(req, res, next) {
   const decoded = jwt.JwtDecode(req, res, next);
   if (decoded == null || decoded == undefined) return;
   if (
-    'participantAddress' in req.body &&
-    req.body.participantAddress != null &&
-    req.body.participantAddress != '' &&
-    req.body.participantAddress != undefined &&
-    Array.isArray(req.body.participantAddress) &&
+    'participantAddress' in req.body && req.body.participantAddress != null && req.body.participantAddress != '' && req.body.participantAddress != undefined && Array.isArray(req.body.participantAddress) &&
     'passphrase' in req.body && req.body.passphrase != null && req.body.passphrase != '' && req.body.passphrase != undefined
   ) {
     return db.mySqlQuery(`
