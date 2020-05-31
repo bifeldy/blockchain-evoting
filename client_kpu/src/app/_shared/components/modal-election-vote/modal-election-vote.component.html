@@ -14,8 +14,7 @@
             <div class="col-md-12 p-3">
               <ul class="list-unstyled row text-center" style="max-height: 50vh; overflow-y: auto;">
                 <li class="media border p-0 list-group-item-action col-md-6 col-lg-4" *ngFor="let data of candidateListInfo">
-                  <input type="radio" id="candidate_{{ data.pubKey }}" style="position: fixed;"
-                    value="{{ data.pubKey }}" [(ngModel)]="selectedCandidate" />
+                  <input type="radio" id="candidate_{{ data.pubKey }}" value="{{ data.pubKey }}" [(ngModel)]="selectedCandidate" />
                   <label for="candidate_{{ data.pubKey }}" class="w-100 text-truncate m-0 p-1">
                     <img class="align-self-center" src="{{ data.image }}" height="64px" />
                     <div class="media-body text-truncate">
