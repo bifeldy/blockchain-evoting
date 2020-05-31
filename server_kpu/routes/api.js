@@ -377,7 +377,7 @@ router.post('/new-eth-account', function(req, res, next) {
       atob(newUserData.password),
       (error, result) => {
         if (error) return next(createError(400));
-        rcrd.recordTransaction(result.trxCreateAccount);
+        rcrd.recordTransaction(result.trxTransferCoin);
         return res.status(200).json({
           info: '😍 200 - Berhasil Membuat Akun Ethereum! 🥰',
           result
@@ -423,7 +423,7 @@ router.post('/import-eth-account', function(req, res, next) {
           }
         }); 
       }
-      rcrd.recordTransaction(result.trxCreateAccount);
+      rcrd.recordTransaction(result.trxTransferCoin);
       return res.status(200).json({
         info: '😍 200 - Berhasil Import Akun Ethereum! 🥰',
         result
