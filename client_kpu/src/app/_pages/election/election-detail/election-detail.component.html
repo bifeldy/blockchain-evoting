@@ -42,7 +42,7 @@
           </ul>
         </div>
       </div>
-      <div class="row mt-3 mb-3" *ngIf="chartData.length > 0 && chartLabels.length > 0">
+      <div class="row mt-3 mb-3" *ngIf="chartData.length > 0 && pieChartLabels.length > 0 && barChartLabels.length > 0">
         <div class="col-12 pb-3 sticky-top bg-default">
           <h5 class="pt-3 pb-2 border-bottom-dotted">
             <b class="text-secondary">Grafik dan Statistik</b>
@@ -51,7 +51,7 @@
         <div class="col-12 bg-default mb-3">
           <canvas baseChart 
             [data]="chartData" 
-            [labels]="chartLabels" 
+            [labels]="pieChartLabels" 
             [chartType]="pieChartType"
             [options]="chartOptions"
             [plugins]="chartPlugins"
@@ -62,7 +62,7 @@
         <div class="col-12 bg-default mt-3">
           <canvas baseChart 
             [data]="chartData" 
-            [labels]="chartLabels" 
+            [labels]="barChartLabels" 
             [chartType]="barChartType"
             [options]="chartOptions"
             [plugins]="chartPlugins"

@@ -56,12 +56,14 @@ export class ElectionDetailComponent implements OnInit {
   public chartOptions: ChartOptions = {
     responsive: true,
     legend: {
-      position: 'right',
-    },
+      position: 'right'
+    }
   };
-  public chartLabels: Label[] = [];
   public chartData: SingleDataSet = [];
   public chartPlugins = [];
+
+  public pieChartLabels: Label[] = [];
+  public barChartLabels: Label[] = [];
 
   public pieChartType: ChartType = 'pie';
   public barChartType: ChartType = 'horizontalBar';
@@ -101,19 +103,22 @@ export class ElectionDetailComponent implements OnInit {
           this.es.getElectionCandidate(id).subscribe(
             res2 => {
               this.gs.log('[ElectionCandidate]', res2);
-              this.chartLabels = [];
+              this.pieChartLabels = [];
+              this.barChartLabels = [];
               this.chartData = [];
               this.candidateListInfo = res2.result.candidatesInfo;
               this.candidateListVoteCount = res2.result.trxVoteResults;
               this.candidateListInfo.forEach(cLI => {
                 const candidate = this.candidateListVoteCount.find(cLV => cLV.candidateAddress.toLowerCase() === cLI.pubKey.toLowerCase());
                 if (candidate) {
-                  this.chartLabels.push(cLI.name);
+                  this.pieChartLabels.push(cLI.name.length > 15 ? cLI.name.slice(0, 15) + '...' : cLI.name);
+                  this.barChartLabels.push(cLI.name);
                   this.chartData.push(parseInt(candidate.candidateVoteCount, 10));
                 }
               });
-              this.gs.log('[pieChartLabels]', this.chartLabels);
-              this.gs.log('[pieChartData]', this.chartData);
+              this.gs.log('[pieChartLabels]', this.pieChartLabels);
+              this.gs.log('[barChartLabels]', this.barChartLabels);
+              this.gs.log('[chartData]', this.chartData);
             }
           );
           this.es.getElectionParticipant(id).subscribe(
