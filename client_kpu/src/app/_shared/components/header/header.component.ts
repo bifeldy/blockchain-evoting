@@ -116,7 +116,7 @@ export class HeaderComponent implements OnInit {
   }
 
   searchHash() {
-    console.log(this.searchQuery);
+    this.gs.log('[SearchQuery]', this.searchQuery);
     this.cs.getDetailBlock(this.searchQuery).subscribe(
       res1 => {
         this.gs.log('[Block]', res1);

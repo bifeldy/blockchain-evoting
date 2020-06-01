@@ -56,6 +56,7 @@ export class ElectionDetailComponent implements OnInit {
   public chartOptions: ChartOptions = {
     responsive: true,
     legend: {
+      display: (window.innerWidth <= 768 ? false : true),
       position: 'right'
     }
   };
@@ -111,7 +112,11 @@ export class ElectionDetailComponent implements OnInit {
               this.candidateListInfo.forEach(cLI => {
                 const candidate = this.candidateListVoteCount.find(cLV => cLV.candidateAddress.toLowerCase() === cLI.pubKey.toLowerCase());
                 if (candidate) {
-                  this.pieChartLabels.push(cLI.name.length > 15 ? cLI.name.slice(0, 15) + '...' : cLI.name);
+                  if (window.innerWidth <= 768) {
+                    this.pieChartLabels.push(cLI.name);
+                  } else {
+                    this.pieChartLabels.push(cLI.name.length > 15 ? cLI.name.slice(0, 15) + '...' : cLI.name);
+                  }
                   this.barChartLabels.push(cLI.name);
                   this.chartData.push(parseInt(candidate.candidateVoteCount, 10));
                 }

@@ -39,13 +39,13 @@
           <p style="word-wrap: break-word;">totalDifficulty :: {{ block.totalDifficulty }}</p>
           <div style="word-wrap: break-word;">
             transactions :: {{ block.transactions.length }}
-            <ul>
+            <ol start="0">
               <li *ngFor="let trx of block.transactions">
                 <a routerLink="/explorer/transaction/{{ trx }}" class="text-success text-decoration-none">
                   {{ trx }}
                 </a>
               </li>
-            </ul>
+            </ol>
           </div>
           <p style="word-wrap: break-word;">transactionsRoot :: {{ block.transactionsRoot }}</p>
           <div style="word-wrap: break-word;" *ngIf="signers">

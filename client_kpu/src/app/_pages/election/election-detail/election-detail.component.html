@@ -26,7 +26,7 @@
           </h5>
         </div>
         <div class="col-12 bg-default">
-          <ul class="list-unstyled" style="max-height: 512px; overflow-y: auto;">
+          <ul class="list-unstyled" style="max-height: 384px; overflow-y: auto;">
             <li class="media border-bottom mb-1 p-1 list-group-item-action" *ngFor="let i of candidateListInfo">
               <img class="align-self-center mr-3" src="{{ i.image }}" height="96px" />
               <div class="media-body text-truncate">
@@ -191,7 +191,10 @@
                 Vote Weight :: {{ voteHistoryData.voterWeight }}
               </p>
               <p style="word-wrap: break-word;" *ngIf="trxVote">
-                Block Hash :: {{ trxVote.blockHash }}
+                Block Hash ::
+                <a routerLink="/explorer/block/{{ trxVote.blockHash }}" class="text-success text-decoration-none">
+                  {{ trxVote.blockHash }}
+                </a>
               </p>
               <p style="word-wrap: break-word;" *ngIf="trxVote">
                 Block Number :: {{ trxVote.blockNumber }}
@@ -200,10 +203,16 @@
                 Cumulative Gas Used :: {{ trxVote.cumulativeGasUsed }} wei
               </p>
               <p style="word-wrap: break-word;" *ngIf="trxVote">
-                Transaction Hash :: {{ trxVote.transactionHash }}
+                Transaction Hash ::
+                <a routerLink="/explorer/transaction/{{ trxVote.transactionHash }}" class="text-success text-decoration-none">
+                  {{ trxVote.transactionHash }}
+                </a>
               </p>
               <p style="word-wrap: break-word;" *ngIf="trxVote">
                 Gas Used :: {{ trxVote.gasUsed }} wei 
+              </p>
+              <p style="word-wrap: break-word;" *ngIf="trxVote">
+                Transaction Index :: {{ trxVote.transactionIndex }}
               </p>
             </div>
           </div>
