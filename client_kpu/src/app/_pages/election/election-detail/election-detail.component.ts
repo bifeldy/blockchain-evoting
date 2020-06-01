@@ -108,7 +108,7 @@ export class ElectionDetailComponent implements OnInit {
               this.candidateListInfo.forEach(cLI => {
                 const candidate = this.candidateListVoteCount.find(cLV => cLV.candidateAddress.toLowerCase() === cLI.pubKey.toLowerCase());
                 if (candidate) {
-                  this.chartLabels.push(cLI.email);
+                  this.chartLabels.push(cLI.name);
                   this.chartData.push(parseInt(candidate.candidateVoteCount, 10));
                 }
               });
