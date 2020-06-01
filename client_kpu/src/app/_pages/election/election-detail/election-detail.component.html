@@ -28,7 +28,14 @@
         <div class="col-12 bg-default">
           <ul class="list-unstyled" style="max-height: 384px; overflow-y: auto;">
             <li class="media border-bottom mb-1 p-1 list-group-item-action" *ngFor="let i of candidateListInfo">
-              <img class="align-self-center mr-3" src="{{ i.image }}" height="96px" />
+              <div class="card p-0 text-white mr-3">
+                <img class="align-self-center" src="{{ i.image }}" height="96px" />
+                <div class="card-img-overlay d-flex p-0">
+                  <p class="align-self-center mx-auto my-0 w-100 text-center" style="word-wrap: break-word; font-size: larger; background-color: rgba(0, 0, 0, 0.25);">
+                    <b>{{ getCandidateVoteCount(i.pubKey).candidateVoteCount | number: '1.' }}</b>
+                  </p>
+                </div>
+              </div>
               <div class="media-body text-truncate">
                 <h5 class="m-0 pt-2">
                   <a routerLink="/user/{{ i.pubKey }}" style="cursor: pointer;">{{ i.name }}</a>
