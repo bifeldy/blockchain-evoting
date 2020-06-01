@@ -42,20 +42,31 @@
           </ul>
         </div>
       </div>
-      <div class="row mt-3 mb-3" *ngIf="pieChartData.length > 0 && pieChartLabels.length > 0">
+      <div class="row mt-3 mb-3" *ngIf="chartData.length > 0 && chartLabels.length > 0">
         <div class="col-12 pb-3 sticky-top bg-default">
           <h5 class="pt-3 pb-2 border-bottom-dotted">
             <b class="text-secondary">Grafik dan Statistik</b>
           </h5>
         </div>
-        <div class="col-12 bg-default">
+        <div class="col-12 bg-default mb-3">
           <canvas baseChart 
-            [data]="pieChartData" 
-            [labels]="pieChartLabels" 
+            [data]="chartData" 
+            [labels]="chartLabels" 
             [chartType]="pieChartType"
-            [options]="pieChartOptions"
-            [plugins]="pieChartPlugins"
-            [legend]="pieChartLegend"
+            [options]="chartOptions"
+            [plugins]="chartPlugins"
+            [legend]="true"
+          >
+          </canvas>
+        </div>
+        <div class="col-12 bg-default mt-3">
+          <canvas baseChart 
+            [data]="chartData" 
+            [labels]="chartLabels" 
+            [chartType]="barChartType"
+            [options]="chartOptions"
+            [plugins]="chartPlugins"
+            [legend]="false"
           >
           </canvas>
         </div>

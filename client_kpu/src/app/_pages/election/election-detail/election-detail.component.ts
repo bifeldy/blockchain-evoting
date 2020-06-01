@@ -53,17 +53,18 @@ export class ElectionDetailComponent implements OnInit {
 
   trxVote = null;
 
-  public pieChartOptions: ChartOptions = {
+  public chartOptions: ChartOptions = {
     responsive: true,
     legend: {
       position: 'right',
     },
   };
-  public pieChartLabels: Label[] = [];
-  public pieChartData: SingleDataSet = [];
+  public chartLabels: Label[] = [];
+  public chartData: SingleDataSet = [];
+  public chartPlugins = [];
+
   public pieChartType: ChartType = 'pie';
-  public pieChartLegend = true;
-  public pieChartPlugins = [];
+  public barChartType: ChartType = 'horizontalBar';
 
   constructor(
     private router: Router,
@@ -100,19 +101,19 @@ export class ElectionDetailComponent implements OnInit {
           this.es.getElectionCandidate(id).subscribe(
             res2 => {
               this.gs.log('[ElectionCandidate]', res2);
-              this.pieChartLabels = [];
-              this.pieChartData = [];
+              this.chartLabels = [];
+              this.chartData = [];
               this.candidateListInfo = res2.result.candidatesInfo;
               this.candidateListVoteCount = res2.result.trxVoteResults;
               this.candidateListInfo.forEach(cLI => {
                 const candidate = this.candidateListVoteCount.find(cLV => cLV.candidateAddress.toLowerCase() === cLI.pubKey.toLowerCase());
                 if (candidate) {
-                  this.pieChartLabels.push(cLI.email);
-                  this.pieChartData.push(parseInt(candidate.candidateVoteCount, 10));
+                  this.chartLabels.push(cLI.email);
+                  this.chartData.push(parseInt(candidate.candidateVoteCount, 10));
                 }
               });
-              this.gs.log('[pieChartLabels]', this.pieChartLabels);
-              this.gs.log('[pieChartData]', this.pieChartData);
+              this.gs.log('[pieChartLabels]', this.chartLabels);
+              this.gs.log('[pieChartData]', this.chartData);
             }
           );
           this.es.getElectionParticipant(id).subscribe(
