@@ -1,8 +1,6 @@
 import { Injectable, isDevMode } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
-import { Observable, of } from 'rxjs';
-
 @Injectable({
   providedIn: 'root'
 })

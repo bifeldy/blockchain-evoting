@@ -1,5 +1,5 @@
 export const environment = {
-  production: false,
+  production: true,
   tokenName: 'bifeldy_token',
   sessionName: 'bifeldy_session',
   apiUrl: '/api',
