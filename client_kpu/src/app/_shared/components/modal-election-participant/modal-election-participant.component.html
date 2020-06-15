@@ -46,14 +46,16 @@
                             <thead>
                               <tr>
                                 <th>Address</th>
+                                <th>Vote Transaction</th>
                               </tr>
                             </thead>
                             <tbody>
                               <tr *ngFor="let data of voterParticipantsAccepted">
-                                <td>{{ data.participantAddress }}</td>
+                                <td routerLink="/user/{{ data.participantAddress }}">{{ data.participantAddress }}</td>
+                                <td routerLink="/explorer/transaction/{{ data.trxAddressVote }}">{{ data.trxAddressVote }}</td>
                               </tr>
                               <tr *ngIf="voterParticipantsAccepted.length <= 0">
-                                <td>No Participants</td>
+                                <td colspan="2" class="text-center">No Participants</td>
                               </tr>
                             </tbody>
                           </table>
@@ -78,7 +80,7 @@
                                 <td>{{ data.participantAddress }}</td>
                               </tr>
                               <tr *ngIf="voterParticipantsPending.length <= 0">
-                                <td>No Participants</td>
+                                <td colspan="2" class="text-center">No Participants</td>
                               </tr>
                             </tbody>
                           </table>
