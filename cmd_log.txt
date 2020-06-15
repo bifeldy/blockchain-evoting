@@ -152,7 +152,7 @@ gu!T!EaLKjPFy5*VhQhzmUmI4$o2wKJq
 
 /**********/
 
-geth --identity "node_kpu" --datadir "node_kpu" --syncmode "full" --networkid 9999 --http --http.corsdomain "*" --http.api "admin,debug,web3,eth,txpool,personal,clique,miner,net" --ws --ws.origins "*" --ws.api "admin,debug,web3,eth,txpool,personal,clique,miner,net" --allow-insecure-unlock --unlock "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d" --password "node_kpu/pass.key" --mine --port 9001 --http.port 9002 --ws.port 9003 --ethstats node_kpu_bifeldy.ip-dynamic.net:bifeldy@52.87.249.175:3000 --bootnodes "enode://e87faa093bb47f728c1460dff479e9daa13a2c58de4314fe12783529331dea964da5219f32e732fc43d6061c90d96fbb33383558f49af7466833e0b90dad0d7a@3.83.112.96:30303" --cache 4096 --http.addr "0.0.0.0" --ws.addr "0.0.0.0" --rpcvhosts "*"
+geth --identity "node_kpu" --datadir "node_kpu" --syncmode "full" --networkid 9999 --http --http.corsdomain "*" --http.api "admin,debug,web3,eth,txpool,personal,clique,miner,net" --ws --ws.origins "*" --ws.api "admin,debug,web3,eth,txpool,personal,clique,miner,net" --allow-insecure-unlock --unlock "0xfd34e338336fdd5f25e9280c06b5f9df62aa689d" --password "node_kpu/pass.key" --mine --port 9001 --http.port 9002 --ws.port 9003 --ethstats node_kpu_bifeldy.ip-dynamic.net:bifeldy@52.87.249.175:3000 --bootnodes "enode://e87faa093bb47f728c1460dff479e9daa13a2c58de4314fe12783529331dea964da5219f32e732fc43d6061c90d96fbb33383558f49af7466833e0b90dad0d7a@3.83.112.96:30303" --cache 4096 --http.addr "0.0.0.0" --ws.addr "0.0.0.0" --http.vhosts "*" --gasprice 0 --mine
 
 geth attach http://localhost:9002
 
