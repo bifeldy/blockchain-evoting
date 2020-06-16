@@ -5,6 +5,7 @@ import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { filter, map, mergeMap } from 'rxjs/operators';
 import { AuthService } from './_shared/services/auth.service';
 import { environment } from 'src/environments/environment';
+import { GlobalService } from './_shared/services/global.service';
 
 @Component({
   selector: 'app-root',
@@ -21,10 +22,15 @@ export class AppComponent implements OnInit {
     private route: ActivatedRoute,
     private titleService: Title,
     private meta: Meta,
-    private as: AuthService
+    private as: AuthService,
+    private gs: GlobalService
   ) { }
 
   ngOnInit() {
+    if (window.location.protocol === 'https:') {
+      this.gs.log(`[IFRAME-PROTOCOL] 'https' Detected, Changing To HTTP Instead.`);
+      return window.location.protocol = 'http:';
+    }
     this.router.events
     .pipe(filter((event) => event instanceof NavigationEnd))
     .pipe(map(() => this.route))
