@@ -2504,7 +2504,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         });
       },
       data: {
-        title: 'Bifeldy | Login Page',
+        title: 'Login Page',
         description: 'Halaman Login',
         keywords: 'Blockchain E-Voting'
       }
@@ -2520,7 +2520,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         });
       },
       data: {
-        title: 'Bifeldy | Register Page',
+        title: 'Register Page',
         description: 'Halaman Pendaftaran',
         keywords: 'Blockchain E-Voting'
       }

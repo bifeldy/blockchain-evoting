@@ -7,7 +7,7 @@ const routes: Routes = [
     path: 'login',
     loadChildren: () => import('./_shared/components/login/login.module').then(m => m.LoginModule),
     data: {
-      title: 'Bifeldy | Login Page',
+      title: 'Login Page',
       description: 'Halaman Login',
       keywords: 'Blockchain E-Voting'
     }
@@ -16,7 +16,7 @@ const routes: Routes = [
     path: 'register',
     loadChildren: () => import('./_shared/components/register/register.module').then(m => m.RegisterModule),
     data: {
-      title: 'Bifeldy | Register Page',
+      title: 'Register Page',
       description: 'Halaman Pendaftaran',
       keywords: 'Blockchain E-Voting'
     }

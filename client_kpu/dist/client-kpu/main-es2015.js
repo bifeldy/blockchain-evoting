@@ -1333,7 +1333,7 @@ const routes = [
         path: 'login',
         loadChildren: () => __webpack_require__.e(/*! import() | _shared-components-login-login-module */ "_shared-components-login-login-module").then(__webpack_require__.bind(null, /*! ./_shared/components/login/login.module */ "./src/app/_shared/components/login/login.module.ts")).then(m => m.LoginModule),
         data: {
-            title: 'Bifeldy | Login Page',
+            title: 'Login Page',
             description: 'Halaman Login',
             keywords: 'Blockchain E-Voting'
         }
@@ -1342,7 +1342,7 @@ const routes = [
         path: 'register',
         loadChildren: () => __webpack_require__.e(/*! import() | _shared-components-register-register-module */ "_shared-components-register-register-module").then(__webpack_require__.bind(null, /*! ./_shared/components/register/register.module */ "./src/app/_shared/components/register/register.module.ts")).then(m => m.RegisterModule),
         data: {
-            title: 'Bifeldy | Register Page',
+            title: 'Register Page',
             description: 'Halaman Pendaftaran',
             keywords: 'Blockchain E-Voting'
         }
