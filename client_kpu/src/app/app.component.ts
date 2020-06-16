@@ -32,7 +32,7 @@ export class AppComponent implements OnInit {
         this.gs.log(`[IFRAME-PROTOCOL] 'https' Detected, Changing To HTTP Instead.`);
         window.location.protocol = 'http:';
         window.location.reload();
-      }, 1234);
+      }, 5678);
     }
     this.router.events
     .pipe(filter((event) => event instanceof NavigationEnd))
