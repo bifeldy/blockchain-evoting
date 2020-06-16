@@ -22,7 +22,7 @@ const truffleCompiled = JSON.parse(fs.readFileSync(`${truffleDir}/Ballot.json`))
 const defaultAccount = fs.readFileSync(`${nodeDirectory}/pub.key`).toString().toLowerCase();
 const defaultPassword = fs.readFileSync(`${nodeDirectory}/pass.key`).toString();
 
-const gethIP = env.indihomeIp;
+const gethIP = env.gethIp;
 const gethNetworkPortRpcWs = [9999, 9001, 9002, 9003];
 
 const defaultHttp = `http://${gethIP}:${gethNetworkPortRpcWs[2]}`;

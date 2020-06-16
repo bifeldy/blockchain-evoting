@@ -226,7 +226,7 @@ router.post('/fund/:id', function(req, res, next) {
             (errTrx, trxFunded) => {
               if (errTrx) return next(createError(500, errTrx));
               else {
-                rcrd.recordTransaction(trxFunded);
+                // rcrd.recordTransaction(trxFunded);
                 return db.mySqlQuery(`
                   UPDATE fund
                   SET funded = 1
@@ -377,7 +377,7 @@ router.post('/new-eth-account', function(req, res, next) {
       atob(newUserData.password),
       (error, result) => {
         if (error) return next(createError(400));
-        rcrd.recordTransaction(result.trxTransferCoin);
+        // rcrd.recordTransaction(result.trxTransferCoin);
         return res.status(200).json({
           info: '😍 200 - Berhasil Membuat Akun Ethereum! 🥰',
           result
@@ -423,7 +423,7 @@ router.post('/import-eth-account', function(req, res, next) {
           }
         }); 
       }
-      rcrd.recordTransaction(result.trxTransferCoin);
+      // rcrd.recordTransaction(result.trxTransferCoin);
       return res.status(200).json({
         info: '😍 200 - Berhasil Import Akun Ethereum! 🥰',
         result
@@ -499,7 +499,7 @@ router.get('/transaction/:transactionHash', function(req, res, next) {
 router.get('/signer', function(req, res, next) {
   return request({
     method: 'POST',
-    uri: `http://${env.indihomeIp}:9002`,
+    uri: `http://${env.gethIp}:9002`,
     headers: {
       'content-type': 'application/json'
     },
@@ -526,7 +526,7 @@ router.post('/signer', function(req, res, next) {
     if ('address' in req.body) {
       return request({
         method: 'POST',
-        uri: `http://${env.indihomeIp}:9002`,
+        uri: `http://${env.gethIp}:9002`,
         headers: {
           'content-type': 'application/json'
         },
@@ -558,7 +558,7 @@ router.post('/signer', function(req, res, next) {
 router.get('/signer/:blockHash', function(req, res, next) {
   return request({
     method: 'POST',
-    uri: `http://${env.indihomeIp}:9002`,
+    uri: `http://${env.gethIp}:9002`,
     headers: {
       'content-type': 'application/json'
     },
