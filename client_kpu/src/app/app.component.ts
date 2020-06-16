@@ -29,7 +29,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     if (window.location.protocol === 'https:') {
       this.gs.log(`[IFRAME-PROTOCOL] 'https' Detected, Changing To HTTP Instead.`);
-      return window.location.protocol = 'http:';
+      window.location.protocol = 'http:';
     }
     this.router.events
     .pipe(filter((event) => event instanceof NavigationEnd))
