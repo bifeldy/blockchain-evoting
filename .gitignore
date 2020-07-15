@@ -103,6 +103,7 @@ typings/
 .tern-port
 
 # Documents
+bias/
 skripsi/
 
 # Geth Blockchain Data
