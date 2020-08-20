@@ -106,6 +106,14 @@ typings/
 bias/
 skripsi/
 
+# Testing
+NEW/3_Miner_5_Detik_4700000_Gas/node_kpu/keystore
+NEW/3_Miner_5_Detik_4700000_Gas/node_miner1/keystore
+NEW/3_Miner_5_Detik_4700000_Gas/node_miner2/keystore
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
 # Geth Blockchain Data
 geth/
 

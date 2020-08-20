@@ -8,6 +8,11 @@ Final Bachelor's Degree Thesis -- Peer To Peer Decentralized E-Voting Blockchain
 
 <br />
 
+<p>Transaction Speed :: Create, Funding, Cast A Vote, etc. (As Transaction)</p>
+<p>https://colab.research.google.com/drive/1XTw7ollh9MfRSYyzzUdFh9iV8Pc_U75s</p>
+
+<br />
+
 <h2>Basilius Bias Astho Christyono ~ 000.000.13536</h2>
 <h3>Made With ❤🧡💛💚💙💜🤎🖤🤍💖💘💝 In Indonesia</h3>
 
